@@ -18,13 +18,13 @@
   "dependencies": {
     "@sanity/client": "^7.23.0",
     "@sanity/image-url": "^2.1.1",
-    "@sentry/nextjs": "^10.59.0",
-    "framer-motion": "^12.40.0",
-    "lucide-react": "^1.21.0",
-    "next": "^16.2.9",
+    "@sentry/nextjs": "^10.68.0",
+    "framer-motion": "^12.42.2",
+    "lucide-react": "^1.27.0",
+    "next": "^16.2.12",
     "next-sanity": "^13.1.1",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
     "sanity": "^6.1.0"
   },
   "devDependencies": {
