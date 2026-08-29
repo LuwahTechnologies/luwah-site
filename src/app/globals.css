@@ -24,7 +24,7 @@
   /* Text */
   --color-text-primary: #fafafa;
   --color-text-secondary: #a1a1aa;
-  --color-text-muted: #52525b;
+  --color-text-muted: #8b8b93;
 
   /* Borders */
   --color-border: rgba(255, 255, 255, 0.06);
@@ -290,4 +290,354 @@ h1, h2, h3, h4, h5, h6 {
   html {
     scroll-behavior: auto;
   }
+}
+/* =========================================================================
+   ACCESSIBILITY TOOLKIT
+   Ported from eldaifurology.com. The widget's chrome runs on its own
+   a11y* tokens below rather than on this site's brand tokens, so the
+   panel can never be restyled by a future theme change and can never
+   collide with a token this site already defines. The values are this
+   site's palette. Luwah Technologies: the site is dark, the widget panel is light, so the two palettes are deliberately independent.
+   ========================================================================= */
+
+@theme {
+  --color-a11ybrand-900: #0c0a14;
+  --color-a11ybrand-700: #1d1a2b;
+  --color-a11ybrand-500: #332e47;
+  --color-a11ybrand-300: #9a94ad;
+  --color-a11ybrand-100: #f1eff5;
+  --color-a11yaccent-600: #8a5a1e;
+  --color-a11yaccent-400: #E0A565;
+  --color-a11yink-900: #141414;
+  --color-a11yink-700: #424242;
+  --color-a11yink-500: #656f72;
+  --color-a11yline: #767686;
+  --color-a11ysurface-alt: #f5f5f8;
+  --color-a11ydanger: #a8342b;
+
+  /* Atkinson Hyperlegible, the Braille Institute's low-vision typeface.
+     Drives the widget's "Readable font" toggle only. */
+  --font-readable: var(--font-atkinson), sans-serif;
+}
+
+/* Keyboard-only skip target. Visible the moment it takes focus. */
+@layer utilities {
+  .sr-only-focusable {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  .sr-only-focusable:focus {
+    position: fixed;
+    top: 0.5rem;
+    left: 0.5rem;
+    width: auto;
+    height: auto;
+    padding: 0.75rem 1.25rem;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+    background-color: var(--color-a11ybrand-700);
+    color: white;
+    z-index: 100;
+    border-radius: 0.25rem;
+  }
+}
+
+/* Accessibility widget modes. Toggled as classes on <html> by
+   src/components/a11y/AccessibilityWidget.tsx, restored from localStorage
+   on mount (see src/lib/a11y.ts). Grouped to match the widget panel's
+   three cards: Content / Color / Orientation.
+
+   #a11y-page-content (set in src/app/layout.tsx) wraps everything except
+   the widget button/panel and the reading/image/read-mode/magnifier
+   overlays, so the page-wide filter and theme rules below leave the
+   widget's own controls legible instead of also filtering/theming them. */
+
+/* ---- Content ---- */
+
+/* Content scaling and font sizing are applied as an inline font-size
+   percentage on <html> by applyPrefs (src/lib/a11y.ts). One authoritative
+   value, so the two controls multiply instead of overriding each other.
+   Everything on this site is sized in rem, so this scales the page. The
+   a11y-text-large/a11y-text-larger classes are still toggled for that
+   reason (observable signal for tests and any future rule) but carry no
+   font-size rule here anymore. */
+
+/* Line height 1.5 plus letter spacing step 2 (2px/4px) covers the WCAG
+   1.4.12 (Text Spacing) target metrics the old single "Spacing" toggle
+   used to guarantee. That guarantee is still available, just reachable
+   as two independent steps instead of one boolean. */
+html.a11y-line-height-1 #a11y-page-content,
+html.a11y-line-height-1 #a11y-page-content * {
+  line-height: 1.5 !important;
+}
+html.a11y-line-height-2 #a11y-page-content,
+html.a11y-line-height-2 #a11y-page-content * {
+  line-height: 1.75 !important;
+}
+html.a11y-line-height-3 #a11y-page-content,
+html.a11y-line-height-3 #a11y-page-content * {
+  line-height: 2 !important;
+}
+
+html:is(.a11y-line-height-1, .a11y-line-height-2, .a11y-line-height-3) #a11y-page-content p {
+  margin-bottom: 1.5em !important;
+}
+
+html.a11y-letter-spacing-1 #a11y-page-content,
+html.a11y-letter-spacing-1 #a11y-page-content * {
+  letter-spacing: 1px !important;
+  word-spacing: 2px !important;
+}
+html.a11y-letter-spacing-2 #a11y-page-content,
+html.a11y-letter-spacing-2 #a11y-page-content * {
+  letter-spacing: 2px !important;
+  word-spacing: 4px !important;
+}
+html.a11y-letter-spacing-3 #a11y-page-content,
+html.a11y-letter-spacing-3 #a11y-page-content * {
+  letter-spacing: 3px !important;
+  word-spacing: 6px !important;
+}
+
+html.a11y-align-left #a11y-page-content :is(p, li, h1, h2, h3, h4, h5, h6, blockquote, dt, dd, figcaption, td, th) {
+  text-align: left !important;
+}
+html.a11y-align-center #a11y-page-content :is(p, li, h1, h2, h3, h4, h5, h6, blockquote, dt, dd, figcaption, td, th) {
+  text-align: center !important;
+}
+html.a11y-align-right #a11y-page-content :is(p, li, h1, h2, h3, h4, h5, h6, blockquote, dt, dd, figcaption, td, th) {
+  text-align: right !important;
+}
+
+html.a11y-font-serif body {
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+/* Atkinson Hyperlegible, self-hosted via next/font (src/lib/fonts.ts). */
+html.a11y-font-readable body {
+  font-family: var(--font-readable), sans-serif;
+}
+
+/* a11y-text-magnifier carries no CSS: it is rendered by TextMagnifier.tsx.
+   See the "still toggled purely for observability" note under
+   Orientation below, the same reasoning applies here. */
+
+/* ---- Color ---- */
+
+/* Redefining the theme color variables here works because Tailwind v4's
+   generated utilities (e.g. .text-ink-900) reference var(--color-ink-900).
+   Since html.a11y-high-contrast targets the same element as :root (html),
+   its higher-specificity selector wins and every ink/border utility
+   site-wide picks up the darker value without touching component markup. */
+html.a11y-high-contrast {
+  /* The widget's own chrome, so the panel goes high contrast with the page. */
+  --color-a11yink-900: #000000;
+  --color-a11yink-700: #000000;
+  --color-a11yink-500: #101010;
+  --color-a11yline: #000000;
+  --color-a11ysurface-alt: #eeeeee;
+  /* Luwah Technologies's own theme tokens, so the rule reaches page
+     content the widget never renders. */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #ffffff;
+  --color-text-muted: #e4e4e7;
+  --color-border: rgba(255, 255, 255, 0.85);
+  --color-border-hover: #ffffff;
+  --color-copper: #f0b878;
+  --color-copper-hover: #f7cd9c;
+  --color-blue: #7fc4d8;
+}
+
+html.a11y-high-contrast :where(.border, .border-t, .border-b, .border-l, .border-r) {
+  border-width: 2px;
+}
+
+html.a11y-high-contrast a {
+  text-decoration: underline;
+}
+
+/* Dark and light contrast replace the page's own theme outright. Both
+   drop CSS background images inside the page content: the accepted
+   tradeoff for a predictable, readable theme, and it only happens when
+   one of these modes is on. */
+html.a11y-contrast-dark #a11y-page-content,
+html.a11y-contrast-dark #a11y-page-content * {
+  background-color: #0d0d12 !important;
+  background-image: none !important;
+  color: #f5f5f7 !important;
+  border-color: #3f3f52 !important;
+}
+html.a11y-contrast-dark #a11y-page-content :is(a, a *) {
+  color: #8ab4ff !important;
+}
+html.a11y-contrast-dark #a11y-page-content :is(img, picture, video, iframe, svg) {
+  background-color: transparent !important;
+}
+
+html.a11y-contrast-light #a11y-page-content,
+html.a11y-contrast-light #a11y-page-content * {
+  background-color: #ffffff !important;
+  background-image: none !important;
+  color: #101010 !important;
+  border-color: #767686 !important;
+}
+html.a11y-contrast-light #a11y-page-content :is(a, a *) {
+  color: #0b3ea8 !important;
+}
+html.a11y-contrast-light #a11y-page-content :is(img, picture, video, iframe, svg) {
+  background-color: transparent !important;
+}
+
+/* Inverted contrast and saturation are both expressed as CSS filters on
+   #a11y-page-content, composed into one custom property by applyPrefs
+   (src/lib/a11y.ts) instead of compound class selectors: four contrast
+   values times four saturation values is sixteen combinations, which
+   does not scale as selectors. Resolves to the literal "none" when
+   nothing is on, see the comment on --a11y-page-filter in a11y.ts for
+   why that default matters for fixed-position layout. */
+#a11y-page-content {
+  filter: var(--a11y-page-filter, none);
+}
+
+/* a11y-saturation-high/-low/-mono carry no CSS rule of their own: the
+   actual filter() value they contribute is composed into
+   --a11y-page-filter above by applyPrefs. They are still toggled as
+   classes purely so every active mode is observable the same way. */
+
+/* Custom colors. !important plus the #a11y-page-content id is what makes
+   these beat Tailwind utility colors like text-ink-700 and bg-white;
+   that is the only reason the id is in the selector. The title rule
+   comes after the text rule so headings win when both are set. */
+html.a11y-custom-text #a11y-page-content,
+html.a11y-custom-text #a11y-page-content *:not(:is(h1, h2, h3, h4, h5, h6)) {
+  color: var(--a11y-text-color) !important;
+}
+html.a11y-custom-title #a11y-page-content :is(h1, h2, h3, h4, h5, h6),
+html.a11y-custom-title #a11y-page-content :is(h1, h2, h3, h4, h5, h6) * {
+  color: var(--a11y-title-color) !important;
+}
+html.a11y-custom-bg #a11y-page-content,
+html.a11y-custom-bg #a11y-page-content * {
+  background-color: var(--a11y-bg-color) !important;
+  background-image: none !important;
+}
+html.a11y-custom-bg #a11y-page-content :is(img, picture, video, iframe, svg) {
+  background-color: transparent !important;
+}
+
+@layer theme {
+  html.a11y-highlight-links a,
+  html.a11y-highlight-links a * {
+    text-decoration: underline !important;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 2px;
+    background-color: #ffe89a !important;
+    color: #1a1a1a !important;
+  }
+}
+
+html.a11y-highlight-headings h1,
+html.a11y-highlight-headings h2,
+html.a11y-highlight-headings h3,
+html.a11y-highlight-headings h4,
+html.a11y-highlight-headings h5,
+html.a11y-highlight-headings h6 {
+  outline: 2px solid var(--color-a11ybrand-700);
+  outline-offset: 2px;
+  background-color: rgba(41, 37, 98, 0.06);
+}
+
+html.a11y-highlight-buttons button,
+html.a11y-highlight-buttons a[role="button"] {
+  outline: 2px solid var(--color-a11ybrand-700);
+  outline-offset: 2px;
+}
+
+/* ---- Orientation ---- */
+
+html.a11y-focus-strong :focus-visible {
+  outline: 4px double #000000 !important;
+  outline-offset: 3px !important;
+}
+
+/* Big cursor, black and white variants, inline SVG data URIs, no image
+   requests. Hotspot at (4,4), near the tip. Same pattern as before: a
+   general rule plus an interactive-element rule with the pointer cursor. */
+html.a11y-cursor-black,
+html.a11y-cursor-black * {
+  cursor:
+    url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDQ4IDQ4Ij48cGF0aCBkPSJNNiAzIEw2IDM5IEwxNiAzMCBMMjIgNDQgTDI5IDQxIEwyMyAyNyBMMzYgMjcgWiIgZmlsbD0iIzAwMDAwMCIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=")
+      4 4,
+    auto !important;
+}
+html.a11y-cursor-black :is(a, button, [role="button"], input, select, textarea, label) {
+  cursor:
+    url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDQ4IDQ4Ij48cGF0aCBkPSJNNiAzIEw2IDM5IEwxNiAzMCBMMjIgNDQgTDI5IDQxIEwyMyAyNyBMMzYgMjcgWiIgZmlsbD0iIzAwMDAwMCIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=")
+      4 4,
+    pointer !important;
+}
+
+html.a11y-cursor-white,
+html.a11y-cursor-white * {
+  cursor:
+    url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDQ4IDQ4Ij48cGF0aCBkPSJNNiAzIEw2IDM5IEwxNiAzMCBMMjIgNDQgTDI5IDQxIEwyMyAyNyBMMzYgMjcgWiIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=")
+      4 4,
+    auto !important;
+}
+html.a11y-cursor-white :is(a, button, [role="button"], input, select, textarea, label) {
+  cursor:
+    url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDQ4IDQ4Ij48cGF0aCBkPSJNNiAzIEw2IDM5IEwxNiAzMCBMMjIgNDQgTDI5IDQxIEwyMyAyNyBMMzYgMjcgWiIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=")
+      4 4,
+    pointer !important;
+}
+
+/* :not(:has(*:hover)) keeps the outline on the innermost hovered element
+   instead of every ancestor in the chain. */
+html.a11y-highlight-hover #a11y-page-content *:hover:not(:has(*:hover)) {
+  outline: 3px solid #127a98 !important;
+  outline-offset: 2px;
+  background-color: rgba(18, 122, 152, 0.14) !important;
+}
+
+/* visibility:hidden, not display:none, so layout does not collapse and
+   HiddenImageAltText.tsx can position its panels over the reserved
+   boxes. */
+html.a11y-hide-images #a11y-page-content :is(img, picture, video, iframe[src*="youtube"]) {
+  visibility: hidden !important;
+}
+html.a11y-hide-images #a11y-page-content * {
+  background-image: none !important;
+}
+
+/* Reading guide, reading window, read mode, image descriptions, hide
+   images' alt panels, mute sounds and the text magnifier are all
+   rendered or driven by client components (ReadingOverlays,
+   ImageDescriptions, ReadMode, HiddenImageAltText, MuteSounds,
+   TextMagnifier in src/components/a11y), not CSS. a11y-reading-guide /
+   a11y-reading-window / a11y-read-mode / a11y-image-descriptions /
+   a11y-mute-sounds / a11y-text-magnifier are still toggled as root
+   classes (see applyPrefs in src/lib/a11y.ts) purely so every active
+   mode is visible and testable the same consistent way, they have no
+   CSS rule here. */
+
+/* ---- Motion ---- */
+
+html.a11y-reduce-motion,
+html.a11y-reduce-motion *,
+html.a11y-reduce-motion *::before,
+html.a11y-reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
 }

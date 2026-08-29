@@ -59,8 +59,16 @@ export default function TermsPage() {
               <p>This website is provided for informational purposes. Content is owned by Luwah Technologies LLC and may not be reproduced without permission. We reserve the right to modify these terms at any time. Continued use of the website constitutes acceptance of updated terms.</p>
             </section>
 
+            <section id="accessibility">
+              <h2 className="mb-3 text-lg font-semibold" style={{ color: "var(--color-text-primary)", fontFamily: "var(--font-display)" }}>8. Accessibility</h2>
+              <p>We build and test this website against the Web Content Accessibility Guidelines (WCAG) 2.2, Level AA. Our <a href="/accessibility-statement" className="underline underline-offset-2" style={{ color: "var(--color-copper)" }}>Accessibility Statement</a> describes what we test, what the Accessibility Center can adjust, and the limits we know about. That statement is a self-assessment. It is not a third-party audit, and nothing in it or in these terms is a certification of conformance with the Americans with Disabilities Act or any other law.</p>
+              <p className="mt-3">The Accessibility Center is provided as a convenience. Every setting in it is one you turn on yourself, and it changes only how this website is presented to you. It does not change the meaning of any content, and it is not assistive technology or a substitute for the screen reader, magnifier, or other tool you already use. Your settings live in your own browser, so they do not follow you to another device or browser.</p>
+              <p className="mt-3">Parts of this website embed third-party services, including scheduling, video, and bot protection. Their accessibility is controlled by those providers and not by us. This section covers this website only. Accessibility standards for work we deliver to a client are set in that project&apos;s proposal.</p>
+              <p className="mt-3">If any part of this website is a barrier to you, tell us and we will help you right away and work to fix the underlying issue. Use the contact details below, or the report form on the Accessibility Statement page. We will also provide the same information or complete the same task another way while a fix is in progress. Nothing in this section limits the limitation of liability stated above.</p>
+            </section>
+
             <section>
-              <h2 className="mb-3 text-lg font-semibold" style={{ color: "var(--color-text-primary)", fontFamily: "var(--font-display)" }}>8. Governing Law</h2>
+              <h2 className="mb-3 text-lg font-semibold" style={{ color: "var(--color-text-primary)", fontFamily: "var(--font-display)" }}>9. Governing Law</h2>
               <p>These terms are governed by the laws of the State of Colorado. Any disputes shall be resolved in the courts of Arapahoe County, Colorado.</p>
             </section>
 

@@ -34,6 +34,7 @@ Open [http://localhost:3000](http://localhost:3000).
 - [ ] Connect contact form to Next.js API route → n8n webhook + Resend
 - [ ] Connect consultation form to API route → n8n webhook (full + partial)
 - [ ] Add Cloudflare Turnstile to consultation form
+- [ ] Decide whether the accessibility report form should keep its Turnstile check. See `docs/accessibility-report-form-captcha.md`
 - [ ] Set up Sanity.io CMS for blog posts
 - [ ] Integrate Pagefind for site search
 - [ ] Replace placeholder hero testimonial (Jamal Ortiz → real client)
