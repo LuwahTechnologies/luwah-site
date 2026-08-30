@@ -77,12 +77,12 @@ export function ContactSection({ contact }: { contact?: ContactInfo }) {
   return (
     <section id="contact" className="py-24 md:py-32" ref={ref}>
       <div className="mx-auto max-w-[var(--container-max)] px-6">
-        <h2
+        <h1
           className="mb-14 text-3xl font-bold md:text-4xl"
           style={{ fontFamily: "var(--font-display)" }}
         >
           Get in touch
-        </h2>
+        </h1>
 
         <div className="grid gap-12 md:grid-cols-2">
           <motion.div
@@ -97,12 +97,12 @@ export function ContactSection({ contact }: { contact?: ContactInfo }) {
                 className="mb-3"
                 style={{ color: "var(--color-copper)" }}
               />
-              <h3
+              <h2
                 className="mb-1 text-sm font-semibold"
                 style={{ fontFamily: "var(--font-display)" }}
               >
                 Email
-              </h3>
+              </h2>
               <SecureEmail
                 className="text-sm no-underline"
                 display={email}
@@ -116,12 +116,12 @@ export function ContactSection({ contact }: { contact?: ContactInfo }) {
                 className="mb-3"
                 style={{ color: "var(--color-copper)" }}
               />
-              <h3
+              <h2
                 className="mb-1 text-sm font-semibold"
                 style={{ fontFamily: "var(--font-display)" }}
               >
                 Phone
-              </h3>
+              </h2>
               <a
                 href={telHref}
                 className="text-sm no-underline"
@@ -137,12 +137,12 @@ export function ContactSection({ contact }: { contact?: ContactInfo }) {
                 className="mb-3"
                 style={{ color: "var(--color-copper)" }}
               />
-              <h3
+              <h2
                 className="mb-1 text-sm font-semibold"
                 style={{ fontFamily: "var(--font-display)" }}
               >
                 Office
-              </h3>
+              </h2>
               <p
                 className="text-sm"
                 style={{ color: "var(--color-text-secondary)" }}
@@ -266,7 +266,11 @@ export function ContactSection({ contact }: { contact?: ContactInfo }) {
                   />
                 </div>
 
-                <Turnstile onToken={handleToken} onExpire={handleExpire} />
+                {/* Contains Cloudflare's fixed ~300px widget so it cannot
+                    widen the page at a 320px viewport. */}
+                <div className="max-w-full overflow-x-auto">
+                  <Turnstile onToken={handleToken} onExpire={handleExpire} />
+                </div>
 
                 <button
                   type="submit"

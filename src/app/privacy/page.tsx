@@ -57,6 +57,18 @@ export default function PrivacyPage() {
               <p>We use Plausible Analytics, a privacy-friendly analytics tool that does not use cookies and does not collect personal data. Cloudflare Turnstile is used for bot prevention and is cookieless. We do not use tracking cookies, retargeting pixels, or third-party advertising scripts.</p>
             </section>
 
+            <section id="accessibility">
+              <h2 className="mb-3 text-lg font-semibold" style={{ color: "var(--color-text-primary)", fontFamily: "var(--font-display)" }}>Accessibility Preferences</h2>
+              <p>Every page carries an Accessibility Center, a panel you open from the button in the lower left corner. It lets you change contrast, text size, spacing, motion, cursor, and other display settings. It is our own code. This site does not use a third-party accessibility overlay.</p>
+              <ul className="mt-3 list-disc space-y-1 pl-6">
+                <li><strong>Where your choices are stored.</strong> In your own browser, in local storage, under the keys <code>a11y-prefs</code>, <code>a11y-interface-hidden</code>, and <code>a11y-lang</code>.</li>
+                <li><strong>What we receive.</strong> Nothing. Your accessibility choices never reach our servers, are never attached to a lead record or an email, are never used to identify or profile you, and are never shared. We cannot see what you selected.</li>
+                <li><strong>Why no cookie notice covers it.</strong> These values exist only to render the page the way you asked. They carry no identifier and they are not analytics.</li>
+                <li><strong>How to clear them.</strong> Clear this site&apos;s browsing data in your browser. That also restores the accessibility button if you used Hide interface.</li>
+              </ul>
+              <p className="mt-3">If you report an accessibility problem through the form on our <a href="/accessibility-statement" className="underline underline-offset-2" style={{ color: "var(--color-copper)" }}>Accessibility Statement</a> page, we receive only what you type: your name, email, an optional phone number, the category you pick, and your description. It reaches us through the same intake as our contact form, is stored and retained the same way, and we use it to answer you and to fix the underlying issue.</p>
+            </section>
+
             <section>
               <h2 className="mb-3 text-lg font-semibold" style={{ color: "var(--color-text-primary)", fontFamily: "var(--font-display)" }}>Your Rights</h2>
               <p>You have the right to: access the personal data we hold about you, request correction of inaccurate data, request deletion of your data, and withdraw consent for communications at any time. To exercise any of these rights, contact us at hello@luwahtechnologies.com.</p>

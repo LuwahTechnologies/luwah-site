@@ -19,6 +19,7 @@ const FOOTER_LINKS = {
   legal: [
     { href: "/terms", label: "Terms & Conditions" },
     { href: "/privacy", label: "Privacy Policy" },
+    { href: "/accessibility-statement", label: "Accessibility" },
     { href: "/#faq", label: "FAQ" },
   ],
 };
@@ -91,12 +92,12 @@ export function Footer() {
             ] as const
           ).map((section) => (
             <div key={section.title}>
-              <h4
+              <h3
                 className="mb-4 text-xs font-semibold uppercase tracking-widest"
                 style={{ color: "var(--color-text-muted)" }}
               >
                 {section.title}
-              </h4>
+              </h3>
               <ul className="flex flex-col gap-2">
                 {section.links.map((link) => (
                   <li key={link.href}>
@@ -124,13 +125,13 @@ export function Footer() {
           </p>
           <div className="flex items-center gap-4">
             {process.env.NEXT_PUBLIC_BUILD_ID && (
-              <p className="text-xs" style={{ color: "var(--color-text-muted)", opacity: 0.5 }}>
+              <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>
                 {process.env.NEXT_PUBLIC_BUILD_ID}
               </p>
             )}
             <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>
               Made by{" "}
-              <Link href="/about" className="no-underline" style={{ color: "var(--color-copper)" }}>Daniel Cooke</Link>
+              <Link href="/about" className="underline underline-offset-2" style={{ color: "var(--color-copper)" }}>Daniel Cooke</Link>
             </p>
           </div>
         </div>
