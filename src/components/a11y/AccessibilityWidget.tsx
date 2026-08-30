@@ -474,7 +474,7 @@ export function AccessibilityWidget() {
         </button>
         <span
           aria-hidden="true"
-          className="pointer-events-none ml-3 rounded-lg bg-a11yink-900 px-4 py-2.5 text-[16px] font-medium whitespace-nowrap text-white opacity-0 shadow-md transition-opacity duration-150 group-focus-within:opacity-100 group-hover:opacity-100"
+          className="pointer-events-none ml-3 hidden rounded-lg bg-a11yink-900 px-4 py-2.5 text-[16px] font-medium whitespace-nowrap text-white opacity-0 shadow-md transition-opacity duration-150 group-focus-within:opacity-100 group-hover:opacity-100 sm:inline-block"
         >
           {t.launcher.pill}
         </span>

@@ -104,3 +104,43 @@ a photograph.
 The public statement is a self-assessment. It claims only what the code
 actually does. Never add certification badges or compliance claims for
 laws the site has not been audited against.
+
+## Manual pass, 2026-08-30
+
+Run alongside the rule-based scan: a keyboard walk of every template,
+reflow at 200 and 400 percent zoom, the panel at 320 and 360 pixels wide,
+and an accessibility-tree audit standing in for a screen reader. 311 of 323
+checks passed across the four Luwah sites.
+
+Verified working on every template here: the skip link is the first focus
+stop and moves focus into the main landmark, every focus stop shows a
+focus indicator, no positive tabindex, the launcher is reachable and opens
+with Enter, the panel is non-modal, Escape closes it and returns focus to
+the launcher, every panel control is named, one h1 per page with no
+skipped levels, and no horizontal scrolling at 200 percent zoom.
+
+Two things the toolkit itself got wrong and that are now fixed, worth
+knowing if you port it somewhere new:
+
+- The launcher's hover pill is `whitespace-nowrap` and sat in the
+  launcher's flex row, so it widened the document past a 320px viewport.
+  It is hidden below the `sm` breakpoint.
+- Cloudflare renders Turnstile at a fixed ~300px, wider than a 320px
+  viewport once padding is counted. Every Turnstile slot is wrapped in
+  `max-w-full overflow-x-auto` so it scrolls in its own box instead of
+  widening the page.
+
+### Known gaps
+
+- On /accessibility-statement and /contact, the Cloudflare Turnstile
+  container elements take focus without a visible focus ring. That markup
+  is Cloudflare's and cannot be styled from here. See
+  `accessibility-report-form-captcha.md`, which is the open question about
+  whether that form should carry a captcha at all.
+- /contact still scrolls horizontally by about 4px at 400 percent zoom
+  (a 320px viewport). 200 percent is clean.
+
+A human screen-reader session (VoiceOver or JAWS) is still outstanding.
+The audit above confirms every control HAS an accessible name and a
+correct role. It cannot judge whether those names read well aloud.
+

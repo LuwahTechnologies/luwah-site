@@ -92,12 +92,12 @@ export function Footer() {
             ] as const
           ).map((section) => (
             <div key={section.title}>
-              <h4
+              <h3
                 className="mb-4 text-xs font-semibold uppercase tracking-widest"
                 style={{ color: "var(--color-text-muted)" }}
               >
                 {section.title}
-              </h4>
+              </h3>
               <ul className="flex flex-col gap-2">
                 {section.links.map((link) => (
                   <li key={link.href}>
