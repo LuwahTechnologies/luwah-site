@@ -12,6 +12,7 @@ import { TextMagnifier } from "@/components/a11y/TextMagnifier";
 import { HiddenImageAltText } from "@/components/a11y/HiddenImageAltText";
 import { MuteSounds } from "@/components/a11y/MuteSounds";
 import { ReadMode } from "@/components/a11y/ReadMode";
+import { EmbedFocusRing } from "@/components/a11y/EmbedFocusRing";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -113,6 +114,7 @@ export default function RootLayout({
         <HiddenImageAltText />
         <MuteSounds />
         <ReadMode />
+        <EmbedFocusRing />
       </body>
     </html>
   );

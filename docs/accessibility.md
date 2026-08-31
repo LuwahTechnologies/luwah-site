@@ -144,3 +144,31 @@ A human screen-reader session (VoiceOver or JAWS) is still outstanding.
 The audit above confirms every control HAS an accessible name and a
 correct role. It cannot judge whether those names read well aloud.
 
+### Update, 2026-08-30
+
+All 328 manual-pass checks now pass on all four sites, and the WCAG 2.2 AA
+scan is clean on every page in both the default and panel-open states.
+
+The gaps recorded above are fixed:
+
+- Third-party embeds now get a focus ring. This could not be done in CSS.
+  Cloudflare puts Turnstile's controls in a closed shadow root and map
+  frames are cross-origin, so the host element matches neither `:focus` nor
+  `:focus-within` even while `document.activeElement` points at it, and
+  Chrome fires no focus event in this document when Tab lands there.
+  `EmbedFocusRing.tsx` watches for it and marks the host, which the
+  stylesheet rings. The ring is two-tone, white inside and near-black
+  outside, because these embeds sit on a white card on some pages and a
+  dark background on others and no single colour clears 3:1 against both.
+- Horizontal scrolling at 400 percent zoom is gone. The cause on three
+  sites was the same: a grid or flex ancestor of a fixed-width embed keeps
+  `min-width: auto`, so one ~300px widget held a whole column open. A
+  `:has(.a11y-embed-slot) { min-width: 0 }` rule lets those ancestors
+  shrink. Knotless also needed `minmax(0, 1fr)` on its booking grid.
+
+The only remaining scanner output is the accepted gradient exception
+described above.
+
+A human screen-reader session (VoiceOver or JAWS) is still the one thing
+not covered here.
+

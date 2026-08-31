@@ -244,7 +244,7 @@ export function AccessibilityReportForm() {
         ) : null}
       </div>
 
-      <div className="max-w-full overflow-x-auto">
+      <div className="a11y-embed-slot max-w-full min-w-0 overflow-x-auto">
         <A11yCaptcha onVerify={setCaptchaToken} />
       </div>
       {captchaError ? (

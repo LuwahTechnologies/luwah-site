@@ -641,3 +641,40 @@ html.a11y-reduce-motion *::after {
   transition-duration: 0.01ms !important;
   scroll-behavior: auto !important;
 }
+
+/* Third-party embeds. Cloudflare's Turnstile container and provider map
+   frames are focusable but ship no focus style, and their internals cannot
+   be reached from this stylesheet. This gives the parts that ARE in our
+   document a visible ring, so a keyboard user never loses track of where
+   they are.
+
+   :focus, not only :focus-visible. Chrome does not treat these embeds as
+   keyboard-interactive, so :focus-visible never matches them and the ring
+   never appeared. Two rings, not one, because the embeds sit on a white
+   form card on some pages and a dark page background on others, and no
+   single colour clears 3:1 against both. White inner plus near-black outer
+   means one layer always contrasts: 19.7:1 on white, 19.6:1 on the darkest
+   background in use.
+
+   .a11y-embed-focused is set by EmbedFocusRing.tsx. Turnstile uses a
+   closed shadow root and map frames are cross-origin, so their host
+   element matches neither :focus nor :focus-within and CSS alone can
+   never reach them. */
+iframe:focus,
+.a11y-embed-slot:focus,
+.a11y-embed-slot *:focus,
+.a11y-embed-focused {
+  outline: 2px solid #ffffff;
+  outline-offset: 0;
+  box-shadow: 0 0 0 5px #0b0b0b;
+}
+
+/* Grid and flex items default to min-width:auto, which means they refuse
+   to shrink below their content. One fixed-width third-party embed
+   (Turnstile is ~300px) therefore held an entire column open and pushed
+   the page into horizontal scrolling at a 320px viewport, even though the
+   slot itself clips its own content. This lets every ancestor of a slot
+   shrink to the space actually available. */
+:has(.a11y-embed-slot) {
+  min-width: 0;
+}

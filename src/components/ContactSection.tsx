@@ -268,7 +268,7 @@ export function ContactSection({ contact }: { contact?: ContactInfo }) {
 
                 {/* Contains Cloudflare's fixed ~300px widget so it cannot
                     widen the page at a 320px viewport. */}
-                <div className="max-w-full overflow-x-auto">
+                <div className="a11y-embed-slot max-w-full min-w-0 overflow-x-auto">
                   <Turnstile onToken={handleToken} onExpire={handleExpire} />
                 </div>
 
