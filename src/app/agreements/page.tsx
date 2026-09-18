@@ -123,7 +123,7 @@ export default function AgreementsPage() {
                   <a
                     href={`/agreements/${agreement.slug}.pdf`}
                     className="btn-primary"
-                    aria-label={`Download ${agreement.name} as PDF`}
+                    aria-label={`Download PDF, ${agreement.name}`}
                     download
                   >
                     Download PDF
@@ -131,7 +131,7 @@ export default function AgreementsPage() {
                   <a
                     href={`/agreements/${agreement.slug}.docx`}
                     className="btn-secondary"
-                    aria-label={`Download ${agreement.name} as a Word document`}
+                    aria-label={`Word version (.docx), ${agreement.name}`}
                     download
                   >
                     Word version (.docx)

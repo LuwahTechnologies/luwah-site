@@ -817,6 +817,21 @@ def add_field(run, instr: str):
             run._element.append(el)
 
 
+def mark_header_row(row):
+    """Flag a table's first row as a header row. Screen readers associate the
+    column names with each cell, and Word repeats the row across page breaks."""
+    trpr = row._tr.get_or_add_trPr()
+    if trpr.find(qn("w:tblHeader")) is None:
+        trpr.append(OxmlElement("w:tblHeader"))
+
+
+def describe_picture(run, description: str):
+    """Alt text for an inline picture. python-docx exposes no API for it."""
+    for docpr in run._element.iter(qn("wp:docPr")):
+        docpr.set("descr", description)
+        docpr.set("title", description)
+
+
 def set_cell_widths(table, widths_in: list[float]):
     table.autofit = False
     for row in table.rows:
@@ -902,7 +917,9 @@ def new_document() -> Document:
     header = section.header
     hp = header.paragraphs[0]
     hp.paragraph_format.space_after = Pt(4)
-    hp.add_run().add_picture(str(LOGO), width=Inches(2.3))
+    logo_run = hp.add_run()
+    logo_run.add_picture(str(LOGO), width=Inches(2.3))
+    describe_picture(logo_run, "Luwah Technologies LLC logo")
     tab_run = hp.add_run("\t\t")
     ver = hp.add_run(f"Template {VERSION}")
     set_font(ver, HEAD_FONT, 9, False, MUTED)
@@ -954,6 +971,7 @@ def render_table(doc, header: list[str], rows: list[list[str]], widths: list[flo
         cell = table.rows[0].cells[idx]
         cell_text(cell, text, bold=True, size=9, color=RGBColor(0xFF, 0xFF, 0xFF))
         shade(cell, "4A90A4")
+    mark_header_row(table.rows[0])
     for row_values in rows:
         row = table.add_row()
         for idx, text in enumerate(row_values):
@@ -977,6 +995,7 @@ def render_signature(doc, left: str, right: str, left_rows, right_rows):
         cell = table.rows[0].cells[idx]
         cell_text(cell, title, bold=True, size=10, color=RGBColor(0xFF, 0xFF, 0xFF))
         shade(cell, "4A90A4")
+    mark_header_row(table.rows[0])
     for (llabel, lvalue), (rlabel, rvalue) in zip(left_rows, right_rows):
         row = table.add_row()
         for cell, label, value in ((row.cells[0], llabel, lvalue), (row.cells[1], rlabel, rvalue)):
@@ -1039,7 +1058,8 @@ def render_blocks(doc, blocks, section_no: int | None):
             bottom_border(para, "D9E2E6", 4)
             add_text(para, block[1], size=9.5, color=MUTED, italic=True)
         elif kind == "h":
-            doc.add_heading(block[1], level=3)
+            # Level 2 under the level 1 exhibit title, so no heading level is skipped.
+            doc.add_heading(block[1], level=2)
         elif kind == "t":
             render_table(doc, block[1], block[2], block[3])
         elif kind == "f":
@@ -1155,6 +1175,7 @@ def build_docx(spec: Doc, out_dir: Path) -> Path:
         render_blocks(doc, exhibit.blocks, None)
 
     core = doc.core_properties
+    core.language = "en-US"
     core.title = f"{spec.title} - {COMPANY} Template {VERSION}"
     core.author = COMPANY
     core.subject = spec.subtitle
