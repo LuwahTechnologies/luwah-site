@@ -85,6 +85,9 @@ class Doc:
     exhibits: list[Section]
     left_signer: list[tuple[str, str]]
     right_signer: list[tuple[str, str]]
+    doc_prefix: str = "LT-DOC"  # id family printed on the cover, e.g. [MSA-YYYY-NN]
+    cover_line: str = "[Client name]   |   [Client website or project]"
+    cover_parties: tuple[str, ...] = (f"{COMPANY} (\"Provider\")", "[Client legal name] (\"Client\")")
 
 
 def C(text: str):
@@ -343,6 +346,7 @@ MSA = Doc(
     parties=("Provider", "Client"),
     left_signer=PROVIDER_SIGNER,
     right_signer=CLIENT_SIGNER,
+    doc_prefix="MSA",
     exhibits=[
         Section("Exhibit A: Statement of Work", [
             N("Use one SOW per project or recurring service. Every SOW incorporates the Master Services Agreement. Keep the fields below in this order so the contract tracker can read them."),
@@ -528,6 +532,7 @@ WFH = Doc(
     parties=("Provider", "Client"),
     left_signer=PROVIDER_SIGNER,
     right_signer=CLIENT_SIGNER,
+    doc_prefix="WFH",
     exhibits=[
         Section("Exhibit A: Project Description", [
             N("Describe the Project in enough detail that a third party could tell what is and is not Work Product. Where a Statement of Work exists, reference it and attach it rather than repeating it."),
@@ -693,6 +698,9 @@ ICA = Doc(
     parties=("Company", "Contractor"),
     left_signer=COMPANY_SIGNER,
     right_signer=CONTRACTOR_SIGNER,
+    doc_prefix="ICA",
+    cover_line="[Contractor name]   |   [Client and project, or Internal]",
+    cover_parties=(f"{COMPANY} (\"Company\")", "[Contractor legal name] (\"Contractor\")"),
     exhibits=[
         Section("Exhibit A: Work Order", [
             N("One Work Order per assignment. Every Work Order incorporates the Independent Contractor Agreement. Work starts only after both Parties sign."),
@@ -851,15 +859,33 @@ def new_document() -> Document:
     for attr in ("w:ascii", "w:hAnsi", "w:cs", "w:eastAsia"):
         rfonts.set(qn(attr), BODY_FONT)
 
-    for name, size, color in (("Heading 1", 13, BLUE), ("Heading 2", 11.5, BLUE), ("Heading 3", 10.5, INK)):
+    for name, size, color in (("Heading 1", 12.5, RGBColor(0xFF, 0xFF, 0xFF)), ("Heading 2", 11.5, BLUE), ("Heading 3", 10.5, INK)):
         style = doc.styles[name]
         style.font.name = HEAD_FONT
         style.font.size = Pt(size)
-        style.font.bold = True
+        style.font.bold = name != "Heading 1"
         style.font.color.rgb = color
         style.paragraph_format.space_before = Pt(14 if name == "Heading 1" else 10)
-        style.paragraph_format.space_after = Pt(4)
+        style.paragraph_format.space_after = Pt(6 if name == "Heading 1" else 4)
         style.paragraph_format.keep_with_next = True
+        if name == "Heading 1":
+            # Section band in the house Letter of Agreement style: white on copper.
+            ppr = style.element.get_or_add_pPr()
+            shd = OxmlElement("w:shd")
+            shd.set(qn("w:val"), "clear")
+            shd.set(qn("w:color"), "auto")
+            shd.set(qn("w:fill"), "B87333")
+            ppr.append(shd)
+            style.paragraph_format.left_indent = Inches(0.12)
+            pbdr = OxmlElement("w:pBdr")
+            for side in ("top", "bottom"):
+                el = OxmlElement(f"w:{side}")
+                el.set(qn("w:val"), "single")
+                el.set(qn("w:sz"), "12")
+                el.set(qn("w:space"), "3")
+                el.set(qn("w:color"), "B87333")
+                pbdr.append(el)
+            ppr.append(pbdr)
         srpr = style.element.get_or_add_rPr()
         srfonts = srpr.find(qn("w:rFonts"))
         if srfonts is None:
@@ -1024,10 +1050,77 @@ def render_blocks(doc, blocks, section_no: int | None):
             raise ValueError(f"unknown block {kind}")
 
 
+def render_cover(doc, spec: Doc):
+    """Dark cover page in the house Letter of Agreement style: tag line, thin
+    wordmark, document title, client line, Between and Document blocks, tagline.
+    One shaded single-cell table fills the page. Word paints cell shading edge to
+    edge, which a paragraph background cannot do."""
+    section = doc.sections[0]
+    section.different_first_page_header_footer = True
+    table = doc.add_table(rows=1, cols=1)
+    table.alignment = WD_TABLE_ALIGNMENT.CENTER
+    cell = table.rows[0].cells[0]
+    cell.width = Inches(6.5)
+    shade(cell, "1C1C1E")
+    tcpr = cell._element.get_or_add_tcPr()
+    margins = OxmlElement("w:tcMar")
+    for side, value in (("top", 900), ("start", 720), ("bottom", 720), ("end", 720)):
+        el = OxmlElement(f"w:{side}")
+        el.set(qn("w:w"), str(value))
+        el.set(qn("w:type"), "dxa")
+        margins.append(el)
+    tcpr.append(margins)
+    row = table.rows[0]
+    trpr = row._tr.get_or_add_trPr()
+    height = OxmlElement("w:trHeight")
+    height.set(qn("w:val"), str(int(8.7 * 1440)))
+    height.set(qn("w:hRule"), "exact")
+    trpr.append(height)
+
+    white = RGBColor(0xFF, 0xFF, 0xFF)
+    soft = RGBColor(0xCC, 0xCC, 0xCC)
+
+    def line(text: str, font: str, size: float, color: RGBColor, bold: bool = False,
+             before: float = 0, after: float = 0, spacing: int | None = None,
+             align=WD_ALIGN_PARAGRAPH.LEFT):
+        para = cell.add_paragraph()
+        para.alignment = align
+        para.paragraph_format.space_before = Pt(before)
+        para.paragraph_format.space_after = Pt(after)
+        run = para.add_run(text)
+        set_font(run, font, size, bold, color)
+        if spacing is not None:
+            rpr = run._element.get_or_add_rPr()
+            sp = OxmlElement("w:spacing")
+            sp.set(qn("w:val"), str(spacing))
+            rpr.append(sp)
+        return para
+
+    cell.paragraphs[0].paragraph_format.space_after = Pt(0)
+    tag = line(f"CLIENT AGREEMENT   ·   {spec.title.upper()}", HEAD_FONT, 9, BLUE, spacing=60, after=6)
+    bottom_border(tag, "B87333", 18)
+    line("LUWAH", HEAD_FONT, 30, white, before=36, after=0, spacing=40)
+    line("TECHNOLOGIES", HEAD_FONT, 30, COPPER, after=0, spacing=40)
+    line(spec.title, HEAD_FONT, 24, white, before=96, after=0)
+    sub = line(spec.subtitle, HEAD_FONT, 13, COPPER, after=4)
+    bottom_border(sub, "555555", 4)
+    line(spec.cover_line, BODY_FONT, 10.5, soft, before=6, after=0)
+    line("BETWEEN", HEAD_FONT, 8.5, BLUE, before=110, after=2, spacing=40)
+    for party in spec.cover_parties:
+        line(party, BODY_FONT, 10, soft, after=0)
+    line("DOCUMENT", HEAD_FONT, 8.5, BLUE, before=12, after=2, spacing=40)
+    line(f"[{spec.doc_prefix}-YYYY-NN]   |   [Month DD, YYYY]   |   Template {VERSION}", BODY_FONT, 10, soft, after=0)
+    line(TAGLINE, BODY_FONT, 10, COPPER, before=40, after=0, align=WD_ALIGN_PARAGRAPH.CENTER)
+
+
 def build_docx(spec: Doc, out_dir: Path) -> Path:
     doc = new_document()
+    render_cover(doc, spec)
 
     title = doc.add_paragraph()
+    # The title is the first paragraph after the cover table. Breaking before it
+    # keeps the cover to one page. A break paragraph after the table spills over.
+    title.paragraph_format.page_break_before = True
     title.paragraph_format.space_before = Pt(6)
     title.paragraph_format.space_after = Pt(2)
     run = title.add_run(spec.title)
@@ -1119,6 +1212,32 @@ end tell
     return pdf_path
 
 
+def word_open_documents() -> int:
+    """How many documents Word has open. Zero when Word is not running."""
+    import subprocess
+
+    script = '''
+if application "Microsoft Word" is running then
+  tell application "Microsoft Word" to return count of documents
+end if
+return 0
+'''
+    result = subprocess.run(["osascript", "-e", script], capture_output=True, text=True, timeout=60)
+    if result.returncode != 0:
+        raise RuntimeError(f"could not query Word: {result.stderr.strip()}")
+    return int(result.stdout.strip() or "0")
+
+
+def quit_word() -> None:
+    """Quit Word so the next run opens fresh files. Only called when nothing is open,
+    so "saving no" cannot discard anyone's work. Word re-serves a same-named document
+    it already has open, which silently exports a stale PDF."""
+    import subprocess
+
+    subprocess.run(["osascript", "-e", 'tell application "Microsoft Word" to quit saving no'],
+                   capture_output=True, text=True, timeout=60)
+
+
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--out", type=Path, default=OUT_DEFAULT, help="output directory (default public/agreements)")
@@ -1131,6 +1250,13 @@ def main(argv: list[str]) -> int:
         print(f"logo missing: {LOGO}", file=sys.stderr)
         return 2
 
+    if not args.no_pdf:
+        open_docs = word_open_documents()
+        if open_docs:
+            print(f"Microsoft Word has {open_docs} document(s) open. Close them, then rerun. "
+                  "An open document with a template's name would export stale.", file=sys.stderr)
+            return 3
+
     outputs: list[Path] = []
     for spec in DOCS:
         if args.only and spec.stem != args.only:
@@ -1142,6 +1268,9 @@ def main(argv: list[str]) -> int:
             pdf_path = export_pdf(docx_path)
             outputs.append(pdf_path)
             print(f"wrote {pdf_path.relative_to(ROOT) if pdf_path.is_relative_to(ROOT) else pdf_path}")
+
+    if not args.no_pdf and word_open_documents() == 0:
+        quit_word()
 
     # The page reads this so the site and the documents state one version.
     version_file = ROOT / "src" / "app" / "agreements" / "version.json"
