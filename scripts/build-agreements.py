@@ -163,6 +163,27 @@ AI_TOOLS_CLAUSE = (
     "portion."
 )
 
+# Clauses shared word for word across documents. Hoisted so a change lands everywhere.
+DTSA_NOTICE = (
+    "Under the Defend Trade Secrets Act, 18 U.S.C. § 1833(b), an individual is not liable under any "
+    "federal or state trade secret law for disclosing a trade secret in confidence to a federal, state "
+    "or local government official, or to an attorney, solely to report or investigate a suspected "
+    "violation of law, or in a complaint or other document filed under seal in a lawsuit. Nothing in "
+    "this Agreement limits that immunity or prevents any person from reporting a possible violation of "
+    "law to a government agency."
+)
+
+GENERAL_KNOWLEDGE_CLAUSE = (
+    "Nothing in this Agreement prohibits {party} from using the general training, knowledge, skills and "
+    "experience {party} gains through the Services, including methods and techniques of general "
+    "application, provided {party} does not use or disclose Confidential Information in doing so. This "
+    "clause grants no license under any intellectual property right."
+)
+
+NOTICES_CLAUSE = CL("Notices.", "Notices must be in writing and sent by email to the address in the signature block. A notice of breach or termination must also be sent by courier or certified mail to the notice address in the signature block. Email notice is effective on the next business day after sending, unless the sender receives a delivery failure. A Party may change its notice address by notice under this Section.")
+SEVERABILITY_CLAUSE = CL("Severability, counterparts and electronic signature.", "If a court finds a term unenforceable, the court will limit it to the minimum extent needed and the rest of this Agreement stays in effect. This Agreement and any document signed under it may be signed in counterparts and electronically. An electronic or scanned signature has the same effect as an original.")
+HEADINGS_CLAUSE = CL("Headings and independent advice.", "Headings are for convenience only and do not affect interpretation. Each Party has had the opportunity to obtain independent legal advice before signing.")
+
 TEMPLATE_NOTE = (
     f"Template {VERSION}, {VERSION_DATE}. Replace every bracketed field, fill or delete "
     "every schedule, and delete this note before sending. The signed document governs, "
@@ -310,15 +331,13 @@ MSA = Doc(
             C("The prevailing Party in any action to enforce this Agreement may recover its reasonable attorneys' fees and costs."),
         ]),
         Section("General", [
-            CL("Notices.", "Notices must be in writing and sent by email to the address in the signature block. A notice of breach or termination must also be sent by courier or certified mail to the notice address in the signature block. Email notice is effective on the next business day after sending, unless the sender receives a delivery failure."),
-            CL("Entire agreement.", "This Agreement, its Exhibits and each SOW are the entire agreement between the Parties about their subject matter. They replace all earlier proposals, discussions and agreements about it, except a Work Made for Hire Agreement or non-disclosure agreement the Parties signed for a specific project, which continues to govern that project."),
+            NOTICES_CLAUSE,
+            CL("Entire agreement.", "This Agreement, its Exhibits and each SOW are the entire agreement between the Parties about their subject matter. They replace all earlier proposals, discussions and agreements about it, except a mutual non-disclosure agreement, a Work Made for Hire Agreement or another non-disclosure agreement the Parties signed, each of which continues to govern as it provides."),
             CL("Amendment and waiver.", "Changes must be in writing and signed by both Parties. A signature by email or through an e-signature platform counts. A Party's failure to enforce a term is not a waiver of it."),
             CL("Assignment.", "Neither Party may assign this Agreement without the other Party's written consent, except to a successor to substantially all of its business, on written notice."),
             CL("Force majeure.", "Neither Party is liable for delay or failure caused by events beyond its reasonable control, including natural disaster, epidemic, government action, war, civil unrest, labor dispute, or failure of the internet, a utility or a third-party platform. The affected Party will notify the other promptly and resume performance as soon as it can. Payment for work already performed is not excused."),
-            CL("Severability.", "If a court finds a term unenforceable, the court will limit it to the minimum extent needed, and the rest of this Agreement stays in effect."),
-            CL("Counterparts and electronic signature.", "This Agreement and any SOW may be signed in counterparts and electronically. An electronic or scanned signature has the same effect as an original."),
-            CL("Headings.", "Headings are for convenience only and do not affect interpretation."),
-            CL("Independent advice.", "Each Party has had the opportunity to obtain independent legal advice before signing."),
+            SEVERABILITY_CLAUSE,
+            HEADINGS_CLAUSE,
         ]),
     ],
     parties=("Provider", "Client"),
@@ -499,11 +518,11 @@ WFH = Doc(
         ]),
         Section("General", [
             CL("Governing law and disputes.", f"The law of the State of {STATE} governs this Agreement. The Parties will first negotiate any dispute in good faith for 30 days, then mediate in {COUNTY} or by video conference with a mediator they agree on, sharing the mediator's fees equally. If mediation fails, either Party may bring the dispute in the state or federal courts located in {COUNTY}, and each Party submits to their jurisdiction. Either Party may seek an injunction in any court to protect its Confidential Information or intellectual property without first negotiating or mediating. The prevailing Party may recover its reasonable attorneys' fees and costs."),
-            CL("Notices.", "Notices must be in writing and sent by email to the address in the signature block. A notice of breach or termination must also be sent by courier or certified mail to the notice address in the signature block. Email notice is effective on the next business day after sending, unless the sender receives a delivery failure."),
+            NOTICES_CLAUSE,
             CL("Entire agreement and precedence.", "This Agreement and its Exhibits are the entire agreement between the Parties about ownership of the Work Product. Where a Master Services Agreement or Statement of Work between the Parties also covers the Project, this Agreement controls ownership of the Project's Work Product, and those documents control all other matters."),
             CL("Amendment and assignment.", "Changes must be in writing and signed by both Parties. Provider may not assign this Agreement without Client's written consent. Client may assign this Agreement, with the Work Product, to a successor or acquirer of its business on written notice."),
-            CL("Severability, counterparts and electronic signature.", "If a court finds a term unenforceable, the court will limit it to the minimum extent needed and the rest stays in effect. This Agreement may be signed in counterparts and electronically. An electronic or scanned signature has the same effect as an original."),
-            CL("Independent advice.", "Each Party has had the opportunity to obtain independent legal advice before signing."),
+            SEVERABILITY_CLAUSE,
+            HEADINGS_CLAUSE,
         ]),
     ],
     parties=("Provider", "Client"),
@@ -621,6 +640,8 @@ ICA = Doc(
             C("Confidential Information does not include information that is or becomes public through no fault of Contractor, that Contractor already knew without a duty of confidence, or that Contractor lawfully receives from a third party without a duty of confidence. Contractor may disclose Confidential Information when the law requires, after prompt notice to Company where lawful."),
             C("On Company's request, or when a Work Order or this Agreement ends, Contractor will return or delete all Confidential Information and Work Product within 5 business days and confirm in writing that it has done so, except copies the law requires Contractor to keep."),
             C("These obligations last for 3 years after this Agreement ends. For trade secrets and credentials, they last as long as the information remains a trade secret or the credential remains active."),
+            CL("General knowledge.", GENERAL_KNOWLEDGE_CLAUSE.format(party="Contractor")),
+            CL("Whistleblower immunity.", DTSA_NOTICE),
         ]),
         Section("Client Access, Credentials and Security", [
             C("Contractor uses only the access Company or a Client grants, only for the Work Order that requires it, and never for any other purpose."),
@@ -661,12 +682,12 @@ ICA = Doc(
         ]),
         Section("General", [
             CL("Governing law and disputes.", f"The law of the State of {STATE} governs this Agreement. The Parties will first negotiate any dispute in good faith for 30 days, then mediate in {COUNTY} or by video conference with a mediator they agree on, sharing the mediator's fees equally. If mediation fails, either Party may bring the dispute in the state or federal courts located in {COUNTY}, and each Party submits to their jurisdiction. Either Party may seek an injunction in any court to protect its Confidential Information or intellectual property without first negotiating or mediating. The prevailing Party may recover its reasonable attorneys' fees and costs."),
-            CL("Notices.", "Notices must be in writing and sent by email to the address in the signature block. A notice of breach or termination must also be sent by courier or certified mail to the notice address in the signature block. Email notice is effective on the next business day after sending, unless the sender receives a delivery failure."),
+            NOTICES_CLAUSE,
             CL("Entire agreement.", "This Agreement, its Exhibits and each Work Order are the entire agreement between the Parties about their subject matter and replace all earlier proposals, discussions and agreements about it."),
             CL("Amendment and waiver.", "Changes must be in writing and signed by both Parties. A signature by email or through an e-signature platform counts. A Party's failure to enforce a term is not a waiver of it."),
             CL("Assignment.", "Contractor may not assign this Agreement or any Work Order. Company may assign this Agreement to a successor to substantially all of its business, on written notice."),
-            CL("Severability, counterparts and electronic signature.", "If a court finds a term unenforceable, the court will limit it to the minimum extent needed and the rest stays in effect. This Agreement and any Work Order may be signed in counterparts and electronically. An electronic or scanned signature has the same effect as an original."),
-            CL("Headings and independent advice.", "Headings are for convenience only. Each Party has had the opportunity to obtain independent legal advice before signing."),
+            SEVERABILITY_CLAUSE,
+            HEADINGS_CLAUSE,
         ]),
     ],
     parties=("Company", "Contractor"),
