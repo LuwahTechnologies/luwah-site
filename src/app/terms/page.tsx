@@ -17,7 +17,7 @@ export default function TermsPage() {
             Terms &amp; Conditions
           </h1>
           <p className="mb-10 text-sm" style={{ color: "var(--color-text-muted)" }}>
-            Last updated: March 2026
+            Last updated: September 2026
           </p>
 
           <div
@@ -36,22 +36,22 @@ export default function TermsPage() {
 
             <section>
               <h2 className="mb-3 text-lg font-semibold" style={{ color: "var(--color-text-primary)", fontFamily: "var(--font-display)" }}>3. Project Engagement</h2>
-              <p>All custom projects require a signed proposal before work begins. Projects follow a 50/50 payment structure: 50% deposit due before work begins, 50% balance due upon delivery. Payment is accepted via credit card, debit card, or ACH transfer.</p>
+              <p>Custom projects run under a signed Master Services Agreement and a Statement of Work, or a signed Work Made for Hire Agreement. Our standard forms are published on the <a href="/agreements" className="underline underline-offset-2" style={{ color: "var(--color-copper)" }}>Client Agreements</a> page. Unless the signed document says otherwise, a fixed-fee project takes a 50% deposit before work begins, and work starts when it clears. Invoices are due within 14 days. Payment is accepted via ACH transfer, credit card, or debit card.</p>
             </section>
 
             <section>
-              <h2 className="mb-3 text-lg font-semibold" style={{ color: "var(--color-text-primary)", fontFamily: "var(--font-display)" }}>4. Deliverables & Ownership</h2>
-              <p>Upon full payment, clients receive a perpetual, non-exclusive license to use all delivered work products. Luwah Technologies retains ownership of underlying workflow logic and methodologies. All access credentials and permissions are transferred to client ownership upon delivery.</p>
+              <h2 className="mb-3 text-lg font-semibold" style={{ color: "var(--color-text-primary)", fontFamily: "var(--font-display)" }}>4. Deliverables &amp; Ownership</h2>
+              <p>Once a project is paid in full, the client owns the work product created for it. Luwah Technologies keeps its pre-existing tools, templates, and methods, and licenses any of them built into a deliverable so the client can use, change, and distribute the deliverable freely. Open source components keep their own licenses. Access credentials and permissions are transferred to client ownership upon delivery. The signed agreement sets the exact terms.</p>
             </section>
 
             <section>
-              <h2 className="mb-3 text-lg font-semibold" style={{ color: "var(--color-text-primary)", fontFamily: "var(--font-display)" }}>5. Testing & Maintenance</h2>
-              <p>Each project includes a 7-day testing window following delivery, during which bugs and issues within the original scope are addressed at no additional charge. A 30-day maintenance window follows the testing period for issues arising from normal operation. Work outside the original project scope constitutes a new engagement.</p>
+              <h2 className="mb-3 text-lg font-semibold" style={{ color: "var(--color-text-primary)", fontFamily: "var(--font-display)" }}>5. Testing &amp; Warranty</h2>
+              <p>Each deliverable has a 7 business day review window following delivery, during which issues within the original scope are addressed at no additional charge. A 30-day warranty follows acceptance for defects against the Statement of Work. Work outside the original project scope is handled by a written change order.</p>
             </section>
 
             <section>
               <h2 className="mb-3 text-lg font-semibold" style={{ color: "var(--color-text-primary)", fontFamily: "var(--font-display)" }}>6. Limitation of Liability</h2>
-              <p>Luwah Technologies LLC liability is limited to the total fees paid for the specific project. We are not liable for indirect, incidental, or consequential damages. We carry Errors &amp; Omissions (E&amp;O) and Cyber liability insurance through NEXT Insurance.</p>
+              <p>Luwah Technologies LLC liability is limited to the fees paid under the applicable Statement of Work in the 12 months before the claim, with the exceptions the signed agreement states. We are not liable for indirect, incidental, or consequential damages. We carry Errors &amp; Omissions (E&amp;O) and Cyber liability insurance through NEXT Insurance.</p>
             </section>
 
             <section>

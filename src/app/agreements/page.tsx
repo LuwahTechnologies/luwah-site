@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import version from "./version.json";
 
 export const metadata: Metadata = {
   title: "Client Agreements",
@@ -6,8 +7,10 @@ export const metadata: Metadata = {
     "The standard agreements Luwah Technologies signs with clients and contractors: Master Services Agreement, Work Made for Hire Agreement, and Independent Contractor Agreement. PDF and Word downloads.",
 };
 
-const TEMPLATE_VERSION = "v1.0";
-const TEMPLATE_DATE = "September 2026";
+// Written by scripts/build-agreements.py on every build, so the page and the
+// documents cannot disagree about the version.
+const TEMPLATE_VERSION = version.version;
+const TEMPLATE_DATE = version.label;
 
 type Agreement = {
   slug: string;
@@ -27,7 +30,7 @@ const AGREEMENTS: Agreement[] = [
       "You own the work we build for you once it is paid for. We keep our reusable tools and license them to you as part of your deliverable.",
       "Least-privilege access, credentials in a password manager, access revoked when the project ends.",
       "7 business days to review each deliverable. 30-day warranty after acceptance.",
-      "Liability capped at the fees paid under the Statement of Work. Colorado law.",
+      "Liability capped at the fees paid under the Statement of Work in the 12 months before the claim. Colorado law.",
       "Includes the Statement of Work, Background IP schedule and Change Order forms as exhibits.",
     ],
   },
@@ -151,7 +154,8 @@ export default function AgreementsPage() {
                 >
                   Terms &amp; Conditions
                 </a>{" "}
-                cover use of this site. A signed agreement controls over them for project work.
+                summarise the same project terms and cover use of this site. Where they and a signed
+                agreement differ, the signed agreement controls.
               </p>
             </section>
 
