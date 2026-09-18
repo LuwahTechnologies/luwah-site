@@ -31,7 +31,7 @@ const AGREEMENTS: Agreement[] = [
       "Least-privilege access, credentials in a password manager, access revoked when the project ends.",
       "7 business days to review each deliverable. 30-day warranty after acceptance.",
       "Liability capped at the fees paid under the Statement of Work in the 12 months before the claim. Colorado law.",
-      "We build and manage with AI tools, including Anthropic Claude and Google Gemini, under terms that do not train on your content. Your credentials and regulated data never go into them.",
+      "We build and manage with AI tools, including Anthropic Claude and Google Gemini, under terms that do not train on your content. Your credentials never go into them. Your data goes in only where the signed Statement of Work provides for it.",
       "The Luwah Accessibility Toolkit and our other reusable tools stay ours. They are licensed to you as part of your deliverable and cannot be moved to another site or resold.",
       "Includes the Statement of Work, Background IP schedule and Change Order forms as exhibits.",
     ],

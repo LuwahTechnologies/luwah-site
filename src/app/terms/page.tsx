@@ -26,7 +26,7 @@ export default function TermsPage() {
           >
             <section>
               <h2 className="mb-3 text-lg font-semibold" style={{ color: "var(--color-text-primary)", fontFamily: "var(--font-display)" }}>1. Services</h2>
-              <p>Luwah Technologies LLC (&ldquo;we,&rdquo; &ldquo;us,&rdquo; &ldquo;our&rdquo;) provides automation consulting, workflow development, technology advisory, and education services. All services are subject to a formal project proposal and mutual agreement before work begins. We use AI tools, including Anthropic Claude and Google Gemini, to build and manage client work. We review everything before delivery, and client credentials and regulated data never go into those tools. The signed agreement sets the exact terms.</p>
+              <p>Luwah Technologies LLC (&ldquo;we,&rdquo; &ldquo;us,&rdquo; &ldquo;our&rdquo;) provides automation consulting, workflow development, technology advisory, and education services. All services are subject to a formal project proposal and mutual agreement before work begins. We use AI tools, including Anthropic Claude and Google Gemini, to build and manage client work. We review everything before delivery. Client credentials never go into those tools, and client data goes in only where the signed agreement provides for it, under terms that do not train on it. The signed agreement sets the exact terms.</p>
             </section>
 
             <section>

@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import shutil
 import sys
@@ -86,6 +87,7 @@ class Doc:
     left_signer: list[tuple[str, str]]
     right_signer: list[tuple[str, str]]
     doc_prefix: str = "LT-DOC"  # id family printed on the cover, e.g. [MSA-YYYY-NN]
+    cover_tag: str = "CLIENT AGREEMENT"  # family label on the cover, kept to one line
     cover_line: str = "[Client name]   |   [Client website or project]"
     cover_parties: tuple[str, ...] = (f"{COMPANY} (\"Provider\")", "[Client legal name] (\"Client\")")
 
@@ -347,6 +349,7 @@ MSA = Doc(
     left_signer=PROVIDER_SIGNER,
     right_signer=CLIENT_SIGNER,
     doc_prefix="MSA",
+    cover_tag="CLIENT AGREEMENT   ·   MASTER SERVICES",
     exhibits=[
         Section("Exhibit A: Statement of Work", [
             N("Use one SOW per project or recurring service. Every SOW incorporates the Master Services Agreement. Keep the fields below in this order so the contract tracker can read them."),
@@ -533,6 +536,7 @@ WFH = Doc(
     left_signer=PROVIDER_SIGNER,
     right_signer=CLIENT_SIGNER,
     doc_prefix="WFH",
+    cover_tag="CLIENT AGREEMENT   ·   WORK MADE FOR HIRE",
     exhibits=[
         Section("Exhibit A: Project Description", [
             N("Describe the Project in enough detail that a third party could tell what is and is not Work Product. Where a Statement of Work exists, reference it and attach it rather than repeating it."),
@@ -699,6 +703,7 @@ ICA = Doc(
     left_signer=COMPANY_SIGNER,
     right_signer=CONTRACTOR_SIGNER,
     doc_prefix="ICA",
+    cover_tag="CONTRACTOR AGREEMENT   ·   SUBCONTRACT TERMS",
     cover_line="[Contractor name]   |   [Client and project, or Internal]",
     cover_parties=(f"{COMPANY} (\"Company\")", "[Contractor legal name] (\"Contractor\")"),
     exhibits=[
@@ -1092,9 +1097,11 @@ def render_cover(doc, spec: Doc):
     tcpr.append(margins)
     row = table.rows[0]
     trpr = row._tr.get_or_add_trPr()
+    # "atLeast", never "exact": an exact row clips whatever wraps past it, and
+    # the two longer covers lost the closing tagline that way.
     height = OxmlElement("w:trHeight")
-    height.set(qn("w:val"), str(int(8.7 * 1440)))
-    height.set(qn("w:hRule"), "exact")
+    height.set(qn("w:val"), str(int(8.4 * 1440)))
+    height.set(qn("w:hRule"), "atLeast")
     trpr.append(height)
 
     white = RGBColor(0xFF, 0xFF, 0xFF)
@@ -1117,15 +1124,15 @@ def render_cover(doc, spec: Doc):
         return para
 
     cell.paragraphs[0].paragraph_format.space_after = Pt(0)
-    tag = line(f"CLIENT AGREEMENT   ·   {spec.title.upper()}", HEAD_FONT, 9, BLUE, spacing=60, after=6)
+    tag = line(spec.cover_tag, HEAD_FONT, 9, BLUE, spacing=50, after=6)
     bottom_border(tag, "B87333", 18)
     line("LUWAH", HEAD_FONT, 30, white, before=36, after=0, spacing=40)
     line("TECHNOLOGIES", HEAD_FONT, 30, COPPER, after=0, spacing=40)
-    line(spec.title, HEAD_FONT, 24, white, before=96, after=0)
+    line(spec.title, HEAD_FONT, 24, white, before=84, after=0)
     sub = line(spec.subtitle, HEAD_FONT, 13, COPPER, after=4)
     bottom_border(sub, "555555", 4)
     line(spec.cover_line, BODY_FONT, 10.5, soft, before=6, after=0)
-    line("BETWEEN", HEAD_FONT, 8.5, BLUE, before=110, after=2, spacing=40)
+    line("BETWEEN", HEAD_FONT, 8.5, BLUE, before=84, after=2, spacing=40)
     for party in spec.cover_parties:
         line(party, BODY_FONT, 10, soft, after=0)
     line("DOCUMENT", HEAD_FONT, 8.5, BLUE, before=12, after=2, spacing=40)
@@ -1201,11 +1208,13 @@ def export_pdf(docx_path: Path) -> Path:
     import subprocess
 
     pdf_path = docx_path.with_suffix(".pdf")
-    WORD_CONTAINER.mkdir(parents=True, exist_ok=True)
     # Open from inside the container too. Opening from any other path makes
     # Word raise a "Grant File Access" dialog that only a human can dismiss.
-    staged_docx = WORD_CONTAINER / docx_path.name
-    staged_pdf = WORD_CONTAINER / pdf_path.name
+    # A per-run subdirectory keeps two runs from unlinking each other's files.
+    staging = WORD_CONTAINER / f"build-{os.getpid()}"
+    staging.mkdir(parents=True, exist_ok=True)
+    staged_docx = staging / docx_path.name
+    staged_pdf = staging / pdf_path.name
     for stale in (staged_docx, staged_pdf):
         if stale.exists():
             stale.unlink()
@@ -1228,9 +1237,39 @@ end tell
             raise RuntimeError(f"PDF export failed for {docx_path.name}: {result.stderr.strip()}")
         shutil.move(str(staged_pdf), str(pdf_path))
     finally:
-        if staged_docx.exists():
-            staged_docx.unlink()
+        shutil.rmtree(staging, ignore_errors=True)
     return pdf_path
+
+
+class WordLock:
+    """One export run at a time on this Mac. Word serves "active document" to
+    whichever script asks, so two runs at once export each other's files. A
+    count of open documents is a check, not a lock; this is the lock."""
+
+    def __init__(self):
+        WORD_CONTAINER.mkdir(parents=True, exist_ok=True)
+        self.path = WORD_CONTAINER / "build-agreements.lock"
+        self.handle = None
+
+    def __enter__(self):
+        import fcntl
+
+        self.handle = open(self.path, "w")
+        try:
+            fcntl.flock(self.handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError as exc:
+            self.handle.close()
+            raise RuntimeError("another build-agreements export holds the Word lock; wait for it to finish") from exc
+        self.handle.write(str(os.getpid()))
+        self.handle.flush()
+        return self
+
+    def __exit__(self, *exc):
+        import fcntl
+
+        fcntl.flock(self.handle, fcntl.LOCK_UN)
+        self.handle.close()
+        return False
 
 
 def word_open_documents() -> int:
@@ -1271,27 +1310,32 @@ def main(argv: list[str]) -> int:
         print(f"logo missing: {LOGO}", file=sys.stderr)
         return 2
 
-    if not args.no_pdf:
-        open_docs = word_open_documents()
-        if open_docs:
-            print(f"Microsoft Word has {open_docs} document(s) open. Close them, then rerun. "
-                  "An open document with a template's name would export stale.", file=sys.stderr)
-            return 3
-
+    specs = [spec for spec in DOCS if not args.only or spec.stem == args.only]
     outputs: list[Path] = []
-    for spec in DOCS:
-        if args.only and spec.stem != args.only:
-            continue
-        docx_path = build_docx(spec, args.out)
-        outputs.append(docx_path)
-        print(f"wrote {docx_path.relative_to(ROOT) if docx_path.is_relative_to(ROOT) else docx_path}")
-        if not args.no_pdf:
-            pdf_path = export_pdf(docx_path)
-            outputs.append(pdf_path)
-            print(f"wrote {pdf_path.relative_to(ROOT) if pdf_path.is_relative_to(ROOT) else pdf_path}")
 
-    if not args.no_pdf and word_open_documents() == 0:
-        quit_word()
+    if args.no_pdf:
+        for spec in specs:
+            docx_path = build_docx(spec, args.out)
+            outputs.append(docx_path)
+            print(f"wrote {docx_path.relative_to(ROOT) if docx_path.is_relative_to(ROOT) else docx_path}")
+    else:
+        # Hold the lock for the whole run, and render nothing until it is held,
+        # so a refused run leaves no new DOCX beside an old PDF.
+        with WordLock():
+            open_docs = word_open_documents()
+            if open_docs:
+                print(f"Microsoft Word has {open_docs} document(s) open. Close them, then rerun. "
+                      "An open document with a template's name would export stale.", file=sys.stderr)
+                return 3
+            for spec in specs:
+                docx_path = build_docx(spec, args.out)
+                outputs.append(docx_path)
+                print(f"wrote {docx_path.relative_to(ROOT) if docx_path.is_relative_to(ROOT) else docx_path}")
+                pdf_path = export_pdf(docx_path)
+                outputs.append(pdf_path)
+                print(f"wrote {pdf_path.relative_to(ROOT) if pdf_path.is_relative_to(ROOT) else pdf_path}")
+            if word_open_documents() == 0:
+                quit_word()
 
     # The page reads this so the site and the documents state one version.
     version_file = ROOT / "src" / "app" / "agreements" / "version.json"
