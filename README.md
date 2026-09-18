@@ -96,7 +96,7 @@ See the full documentation package:
 
 ## Client agreements
 
-The three agreement templates on `/agreements` are generated, not hand-edited. Source is `scripts/build-agreements.py` (one content model, python-docx, PDF through Microsoft Word over AppleScript, so it runs on a Mac with Word installed). Outputs go to `public/agreements/` and `src/app/agreements/version.json`.
+The four agreement templates on `/agreements`, the mutual NDA, the Master Services Agreement, the Work Made for Hire Agreement and the Independent Contractor Agreement, are generated, not hand-edited. Source is `scripts/build-agreements.py` (one content model, python-docx, PDF through Microsoft Word over AppleScript, so it runs on a Mac with Word installed). Outputs go to `public/agreements/` and `src/app/agreements/version.json`.
 
 ```bash
 uv run scripts/build-agreements.py \

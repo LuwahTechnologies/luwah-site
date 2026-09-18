@@ -4,7 +4,7 @@
 # ///
 """Build the Luwah Technologies client agreement templates.
 
-One content model renders three documents as DOCX, then exports each to PDF
+One content model renders four documents as DOCX, then exports each to PDF
 through Microsoft Word over AppleScript on macOS.
 
     uv run scripts/build-agreements.py                 # writes public/agreements/
@@ -14,7 +14,7 @@ through Microsoft Word over AppleScript on macOS.
 Brand: Typography_Standards_2025-11-02 (OneDrive, 2026/Brand_Identity). Headings
 Tw Cen MT, body Open Sans, US Copper #B87333, Lake Blue #4A90A4.
 
-Vikunja #312. Not legal advice. Review with counsel before first client use.
+Vikunja #311 and #312. Not legal advice. Review with counsel before first client use.
 """
 from __future__ import annotations
 
@@ -742,7 +742,125 @@ ICA = Doc(
     ],
 )
 
-DOCS = [MSA, WFH, ICA]
+# --------------------------------------------------------------------------
+# Mutual Non-Disclosure Agreement (Vikunja #311)
+# --------------------------------------------------------------------------
+
+NDA = Doc(
+    stem="NDA_Mutual_LuwahTech_Template_v1",
+    title="Mutual Non-Disclosure Agreement",
+    subtitle=f"How {COMPANY_SHORT} and a client protect each other's confidential information",
+    summary=[
+        ("Agreement No.", "[NDA-YYYY-NN]"),
+        ("Client", "[Client legal name and entity type, or an individual doing business as Trade Name]"),
+        ("Client contact", "[Name, title, email]"),
+        ("Effective Date", "[Month DD, YYYY]"),
+        ("Purpose", "[One line, for example: evaluating an n8n automation build for candidate intake]"),
+        ("Term", "[2] years from the Effective Date. Section 6."),
+        ("Related documents", "[MSA-YYYY-NN, proposal dated Month DD, YYYY, or None]"),
+    ],
+    intro=[
+        P(
+            f"This Mutual Non-Disclosure Agreement (the \"Agreement\") is between {COMPANY}, a "
+            f"{STATE} limited liability company (\"Provider\"), and the client named in the "
+            "Agreement Summary above (\"Client\"). Provider and Client are each a \"Party\" and "
+            "together the \"Parties\". The Agreement takes effect on the Effective Date."
+        ),
+        P(
+            "The Parties expect to share confidential information with each other while they "
+            "discuss, evaluate and carry out the Purpose stated in the Agreement Summary. This "
+            "Agreement is mutual. The same obligations apply to both Parties, whichever one is "
+            "disclosing and whichever one is receiving. It also covers Confidential Information "
+            "the Parties made available to each other in connection with the Purpose before the "
+            "Effective Date."
+        ),
+    ],
+    sections=[
+        Section("Definitions", [
+            CL("\"Confidential Information\"", "means information that one Party (the \"Disclosing Party\") or its Representatives makes available to the other Party (the \"Receiving Party\"), in any form, that is marked or identified as confidential, or that a reasonable person would understand to be confidential from its nature or from the way it was disclosed. It includes business plans, pricing and rates, client, customer and candidate lists, financial information, technical information, source code, system configurations, credentials and access to systems, workflow and automation designs, data, and the existence and terms of any proposal or agreement between the Parties."),
+            CL("Oral and visual disclosure.", "Information disclosed orally, visually, in a meeting or on a shared screen is Confidential Information on the same test. Neither Party needs to confirm it in writing afterwards for the protection to apply."),
+            CL("\"Representatives\"", "means a Party's members, managers, officers, employees, subcontractors and professional advisers who need the Confidential Information for the Purpose."),
+            CL("\"Trade secret\"", "has the meaning given in the Colorado Uniform Trade Secrets Act and the federal Defend Trade Secrets Act."),
+            CL("\"Purpose\"", "means the purpose stated in the Agreement Summary."),
+        ]),
+        Section("What Is Not Confidential Information", [
+            C("Confidential Information does not include information that the Receiving Party can demonstrate:"),
+            B([
+                "is or becomes publicly available, other than through a breach of this Agreement by the Receiving Party or its Representatives;",
+                "was lawfully known to the Receiving Party before the Disclosing Party disclosed it, free of any duty of confidentiality;",
+                "is lawfully received from a third party who is not under a duty of confidentiality to the Disclosing Party; or",
+                "is independently developed by the Receiving Party without using the Disclosing Party's Confidential Information.",
+            ]),
+            C("A combination of details is not public just because each detail is separately public, unless the combination itself is public."),
+        ]),
+        Section("Obligations of the Receiving Party", [
+            C("The Receiving Party uses Confidential Information only for the Purpose."),
+            C("The Receiving Party protects Confidential Information with at least the care it uses for its own confidential information, and never less than reasonable care."),
+            C("The Receiving Party shares Confidential Information only with Representatives who need it for the Purpose and who are bound by written confidentiality obligations at least as protective as this Agreement, or by a professional duty of confidentiality. The Receiving Party is responsible for what its Representatives do with it."),
+            C("The Receiving Party shares Confidential Information with anyone else only with the Disclosing Party's prior written consent."),
+            C("The Receiving Party does not copy Confidential Information except as the Purpose requires. Every copy carries the same protection as the original."),
+            C("The Receiving Party does not reverse engineer, decompile or disassemble any software, prototype or device the Disclosing Party provides."),
+            C("The Receiving Party tells the Disclosing Party promptly on learning of any unauthorized use or disclosure, and cooperates to contain it."),
+            CL("Credentials and system access.", "Where Confidential Information includes login credentials, API keys or access to a system, the Receiving Party uses that access only for the Purpose, keeps the credentials in an encrypted password manager, does not share them outside its Representatives, and returns or stops using the access under Section 7. Access granted for the Purpose is not a license to the system."),
+        ]),
+        Section("Personal Data and Regulated Information", [
+            C("Confidential Information may include personal information about third parties, for example the Client's customers, patients, candidates or employees. Each Party handles that information in line with the laws that apply to it, and shares only what the Purpose requires."),
+            CL("Protected health information.", "Protected health information under HIPAA is not shared under this Agreement. If the Purpose requires it, the Parties sign a business associate agreement first. Where that agreement and this one conflict about protected health information, the business associate agreement governs. If protected health information reaches the Receiving Party despite this Section, the Receiving Party treats it as Confidential Information, does not use it, tells the Disclosing Party promptly, and returns or destroys it on request."),
+            C("Neither Party shares payment card numbers, government identification numbers or account passwords belonging to third parties under this Agreement unless the Purpose requires it and the Parties have agreed in writing how they will be protected."),
+        ]),
+        Section("Naming Each Other", [
+            C("Either Party may identify the other by name as a client or vendor, and describe the general nature of the work, in its portfolio and marketing only with the other Party's prior written consent, which may be given by email and withdrawn at any time by written notice. A name or description disclosed under that consent is not Confidential Information. The terms of any proposal or agreement between the Parties, and everything else the consent does not cover, stay Confidential Information."),
+        ]),
+        Section("Term and Survival", [
+            C("This Agreement starts on the Effective Date and runs for the Term stated in the Agreement Summary. Either Party may end it earlier with [30] days' written notice."),
+            C("Ending this Agreement does not release either Party from its obligations for Confidential Information disclosed before the end. Those obligations continue for [3] years after the Confidential Information was disclosed, or [3] years after this Agreement ends, whichever is later. Ending this Agreement early does not shorten them."),
+            C("For Confidential Information that is a trade secret, and for credentials, the obligations continue for as long as the information remains a trade secret or the credential remains active."),
+            C("If the Parties later sign a Master Services Agreement, Work Made for Hire Agreement or other agreement with its own confidentiality terms, the more protective confidentiality terms govern the work under that agreement. This Agreement continues to govern everything else the Parties share."),
+            C("Every Section of this Agreement survives its end for as long as any obligation under it continues."),
+        ]),
+        Section("Return, Deletion and Access", [
+            C("On the Disclosing Party's written request, or when this Agreement ends, the Receiving Party, within [15] days, returns or destroys the Disclosing Party's Confidential Information and every copy, at the Disclosing Party's choice."),
+            C("Within the same period the Receiving Party stops using any access it was granted, returns any credentials it holds, and confirms that it no longer has access."),
+            C("The Receiving Party confirms in writing that it has done so, if asked."),
+            C("The Receiving Party may keep copies held in routine backup systems that are not readily accessible, and copies it must keep to meet a legal, regulatory or professional record-keeping obligation. Retained copies stay confidential under this Agreement for as long as they are held, and are not used for any other purpose."),
+        ]),
+        Section("Disclosure Required by Law", [
+            C("The Receiving Party may disclose Confidential Information where a law, regulation, subpoena, court order or government request requires it. Where the law allows, the Receiving Party gives the Disclosing Party prompt written notice before disclosing, cooperates with the Disclosing Party's reasonable efforts to limit or protect the disclosure, at the Disclosing Party's expense, and discloses only the part that is legally required. Information disclosed this way remains Confidential Information for every other purpose."),
+        ]),
+        Section("Ownership, No License, No Warranty", [
+            C("Confidential Information remains the property of the Disclosing Party. This Agreement grants no license or other right in it, except the limited right to use it for the Purpose."),
+            C("Confidential Information is provided as is. The Disclosing Party gives no warranty about its accuracy, completeness or fitness for any purpose, except that each Party confirms it has the right to disclose what it discloses."),
+            C("Nothing in this Agreement obliges either Party to disclose any information, to enter into any further agreement, or to continue discussions. Either Party may end discussions at any time. Any further work between the Parties is covered by a separate written agreement."),
+        ]),
+        Section("General Knowledge and Skills", [
+            C("Each Party may continue to use the general knowledge, skills and experience it gains through the Purpose, including methods and techniques of general application, provided it does not use or disclose the other Party's Confidential Information in doing so. This Section grants no license under any patent, copyright, trade secret or other intellectual property right of the other Party."),
+        ]),
+        Section("Remedies", [
+            C("A breach of this Agreement may cause harm that money cannot fully repair. The Disclosing Party may seek an injunction or other equitable relief to prevent or stop a breach, without posting a bond where the court allows, in addition to any other remedy available to it."),
+        ]),
+        Section("Whistleblower Notice", [
+            C(DTSA_NOTICE),
+        ]),
+        Section("General", [
+            CL("Relationship.", "The Parties are independent. This Agreement creates no partnership, joint venture, agency or employment relationship, and neither Party may bind the other."),
+            CL("Assignment.", "Neither Party may assign this Agreement without the other Party's written consent, except to a successor to substantially all of its business, on written notice to the other Party."),
+            NOTICES_CLAUSE,
+            CL("Entire agreement.", "This Agreement is the entire agreement between the Parties about its subject matter and replaces any earlier discussion of confidentiality between them."),
+            CL("Amendment and waiver.", "Changes must be in writing and signed by both Parties. A signature by email or through an e-signature platform counts. A Party's failure to enforce a term, or delay in enforcing it, is not a waiver of it."),
+            CL("Governing law and disputes.", f"The law of the State of {STATE} governs this Agreement, without regard to its conflict of law rules. The Parties will first negotiate any dispute in good faith for 30 days, then mediate in {COUNTY} or by video conference with a mediator they agree on, sharing the mediator's fees equally. If mediation fails, either Party may bring the dispute in the state or federal courts located in {COUNTY}, and each Party submits to their jurisdiction. Either Party may seek an injunction in any court with jurisdiction to protect its Confidential Information without first negotiating or mediating. Where a Master Services Agreement between the Parties is in force, its dispute process applies to a confidentiality claim that also arises under it. The prevailing Party may recover its reasonable attorneys' fees and costs."),
+            SEVERABILITY_CLAUSE,
+            HEADINGS_CLAUSE,
+        ]),
+    ],
+    parties=("Provider", "Client"),
+    left_signer=PROVIDER_SIGNER,
+    right_signer=CLIENT_SIGNER,
+    exhibits=[],
+    doc_prefix="NDA",
+    cover_tag="CLIENT AGREEMENT   ·   MUTUAL NDA",
+)
+
+DOCS = [NDA, MSA, WFH, ICA]
 
 # --------------------------------------------------------------------------
 # DOCX rendering

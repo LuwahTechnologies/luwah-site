@@ -4,7 +4,7 @@ import version from "./version.json";
 export const metadata: Metadata = {
   title: "Client Agreements",
   description:
-    "The standard agreements Luwah Technologies signs with clients and contractors: Master Services Agreement, Work Made for Hire Agreement, and Independent Contractor Agreement. PDF and Word downloads.",
+    "The standard agreements Luwah Technologies signs with clients and contractors: Mutual Non-Disclosure Agreement, Master Services Agreement, Work Made for Hire Agreement, and Independent Contractor Agreement. PDF and Word downloads.",
 };
 
 // Written by scripts/build-agreements.py on every build, so the page and the
@@ -20,6 +20,20 @@ type Agreement = {
 };
 
 const AGREEMENTS: Agreement[] = [
+  {
+    slug: "NDA_Mutual_LuwahTech_Template_v1",
+    name: "Mutual Non-Disclosure Agreement",
+    whenUsed:
+      "Signed before a discovery conversation where either side will share business detail, data, pricing or system access. It is mutual: the same obligations protect your information and ours.",
+    terms: [
+      "Covers anything a reasonable person would treat as confidential, including what is said in a meeting or shown on a shared screen, with no written follow-up required.",
+      "Credentials and system access get their own rule: used only for the stated purpose, kept in a password manager, returned on request and in any case when the agreement ends.",
+      "Protected health information is not shared under it. A business associate agreement comes first if the work needs one.",
+      "Two-year term by default. Confidentiality lasts three years from each disclosure or from the end of the agreement, whichever is later, and for as long as a trade secret stays a trade secret.",
+      "Neither side names the other, or describes the work, publicly without written consent. Either side keeps the general skills and know-how it gains.",
+      "Colorado law. Negotiate, then mediate, then court, and either side can go straight to court for an injunction.",
+    ],
+  },
   {
     slug: "MSA_LuwahTech_Template_v1",
     name: "Master Services Agreement",
@@ -145,7 +159,8 @@ export default function AgreementsPage() {
                 How they fit together
               </h2>
               <p>
-                A first project starts with the Master Services Agreement and a Statement of Work.
+                A first conversation about your business starts with the Mutual Non-Disclosure
+                Agreement. A first project starts with the Master Services Agreement and a Statement of Work.
                 A second project only needs a new Statement of Work. A client who wants a separate,
                 signed record of ownership for one project adds the Work Made for Hire Agreement.
                 Any subcontractor on your project has signed the Independent Contractor Agreement
