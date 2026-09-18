@@ -17,7 +17,7 @@ export default function PrivacyPage() {
             Privacy Policy
           </h1>
           <p className="mb-10 text-sm" style={{ color: "var(--color-text-muted)" }}>
-            Last updated: March 2026
+            Last updated: September 2026
           </p>
 
           <div
@@ -47,6 +47,10 @@ export default function PrivacyPage() {
               <p className="mt-3"><strong style={{ color: "var(--color-text-primary)" }}>Email Delivery:</strong> Transactional emails are sent via Resend. Resend processes the email content for delivery but does not store or analyze message content beyond what is necessary for delivery.</p>
             </section>
 
+            <section id="artificial-intelligence">
+              <h2 className="mb-3 text-lg font-semibold" style={{ color: "var(--color-text-primary)", fontFamily: "var(--font-display)" }}>Artificial Intelligence</h2>
+              <p>We use AI tools, including Anthropic Claude and Google Gemini, to help draft content, write code, and operate our systems. A person reviews everything before it is published or deployed. Some text on this site was drafted with AI assistance and reviewed by us before publication. Information you submit through this site is not sent to an AI tool that trains on it.</p>
+            </section>
             <section>
               <h2 className="mb-3 text-lg font-semibold" style={{ color: "var(--color-text-primary)", fontFamily: "var(--font-display)" }}>Data Retention</h2>
               <p>Consultation records are retained for 2 years from the date of submission. After this period, records are archived or deleted. You may request deletion of your data at any time by contacting us at hello@luwahtechnologies.com.</p>

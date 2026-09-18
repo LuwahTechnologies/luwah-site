@@ -566,8 +566,11 @@ html.a11y-highlight-buttons a[role="button"] {
 /* ---- Orientation ---- */
 
 html.a11y-focus-strong :focus-visible {
-  outline: 4px double #000000 !important;
-  outline-offset: 3px !important;
+  /* Dual tone so the ring reads on light and dark grounds alike. A single
+     black ring measured 1.13:1 against this site's dark cards. */
+  outline: 3px solid #ffffff !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 6px #000000 !important;
 }
 
 /* Big cursor, black and white variants, inline SVG data URIs, no image

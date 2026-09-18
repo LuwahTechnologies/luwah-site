@@ -32,6 +32,7 @@ const AGREEMENTS: Agreement[] = [
       "Two-year term by default. Confidentiality lasts three years from each disclosure or from the end of the agreement, whichever is later, and for as long as a trade secret stays a trade secret.",
       "Neither side names the other, or describes the work, publicly without written consent. Either side keeps the general skills and know-how it gains.",
       "Colorado law. Negotiate, then mediate, then court, and either side can go straight to court for an injunction.",
+      "AI tools such as Anthropic Claude and Google Gemini may touch confidential information only where they do not train on it. Never credentials, and never health, card or other regulated data without a written agreement.",
     ],
   },
   {

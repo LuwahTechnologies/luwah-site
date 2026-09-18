@@ -41,7 +41,7 @@ export default function TermsPage() {
 
             <section>
               <h2 className="mb-3 text-lg font-semibold" style={{ color: "var(--color-text-primary)", fontFamily: "var(--font-display)" }}>4. Deliverables &amp; Ownership</h2>
-              <p>Once a project is paid in full, the client owns the work product created for it. Luwah Technologies keeps its pre-existing tools, templates, and methods, and licenses any of them built into a deliverable so the client can use, change, and distribute the deliverable freely. Open source components keep their own licenses. Access credentials and permissions are transferred to client ownership upon delivery. The signed agreement sets the exact terms.</p>
+              <p>Once a project is paid in full, the client owns the work product created for it. Luwah Technologies keeps its pre-existing tools, templates, and methods, and licenses any of them built into a deliverable so the client can use, change, and distribute the deliverable. The Luwah Accessibility Toolkit is licensed to the site it is delivered on and cannot be moved to another site or resold. Open source components keep their own licenses. Access credentials and permissions are transferred to client ownership upon delivery. The signed agreement sets the exact terms.</p>
             </section>
 
             <section>
