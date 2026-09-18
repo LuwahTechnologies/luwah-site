@@ -20,6 +20,7 @@ const FOOTER_LINKS = {
     { href: "/terms", label: "Terms & Conditions" },
     { href: "/privacy", label: "Privacy Policy" },
     { href: "/accessibility-statement", label: "Accessibility" },
+    { href: "/agreements", label: "Client Agreements" },
     { href: "/#faq", label: "FAQ" },
   ],
 };
