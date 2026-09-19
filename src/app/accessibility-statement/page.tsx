@@ -23,7 +23,7 @@ export default function AccessibilityStatementPage() {
             Accessibility Statement
           </h1>
           <p className="mb-10 text-sm" style={{ color: "var(--color-text-muted)" }}>
-            Last reviewed: August 2026
+            Last reviewed: September 2026
           </p>
 
           <div className="flex flex-col gap-8 text-sm leading-relaxed" style={{ color: "var(--color-text-secondary)" }}>
@@ -185,7 +185,7 @@ export default function AccessibilityStatementPage() {
 
             <section>
               <p style={{ color: "var(--color-text-muted)" }}>
-                This statement was last reviewed in August 2026. We review it whenever the site changes in a significant
+                This statement was last reviewed in September 2026. We review it whenever the site changes in a significant
                 way.
               </p>
             </section>

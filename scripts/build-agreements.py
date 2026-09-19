@@ -24,6 +24,7 @@ import os
 import re
 import shutil
 import sys
+import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -203,9 +204,10 @@ HEADINGS_CLAUSE = CL("Headings and independent advice.", "Headings are for conve
 ACCESSIBILITY_TOOLKIT_CLAUSE = (
     "The Luwah Accessibility Toolkit, meaning the Accessibility Center launcher and drawer, the "
     "disability profiles and individual adjustments, the page-structure navigator, the reading "
-    "overlays, the image description layer, the issue report form, the accessibility statement "
-    "content, the keyboard shortcut handling and the CSS hooks, together with the code, styles and "
-    "documentation that support them, is Background IP that Provider designed, built and owns. Where "
+    "overlays, the image description layer, the text magnifier, the read mode, the embed focus ring, "
+    "the sound muting and hidden image text layers, the issue report form, the accessibility statement "
+    "content, the keyboard shortcut handling and the CSS hooks, together with every other component, "
+    "style, hook and document shipped as part of it, is Background IP that Provider designed, built and owns. Where "
     "the Toolkit is delivered with a website, Client receives the license in {section} as part of the "
     "Deliverable, on {scope} only. Client may configure and modify the Toolkit on that website. Client "
     "may not copy the Toolkit to another website, application, product or system, remove it for "
@@ -325,7 +327,7 @@ MSA = Doc(
         Section("Intellectual Property", [
             CL("Client Materials.", "Client keeps all rights in Client Materials. Client grants Provider a non-exclusive license to use Client Materials only to perform the Services."),
             CL("Work Product.", "When Client has paid in full all fees due under the applicable SOW, the Work Product is a \"work made for hire\" for Client to the extent the law allows. To the extent any Work Product is not a work made for hire, Provider assigns to Client, on that payment, all right, title and interest in it worldwide, including copyright. Until payment in full, Provider owns the Work Product and Client may use it only to review it."),
-            CL("Background IP.", "Provider keeps all rights in Background IP. Where Background IP is incorporated into a Deliverable, Provider grants Client a perpetual, worldwide, non-exclusive, royalty-free license to use, copy, modify and distribute that Background IP as part of the Deliverable for Client's business purposes, except as Section 7.7 provides. Client may not sell or license the Background IP on its own or separate it from the Deliverable for that purpose."),
+            CL("Background IP.", "Provider keeps all rights in Background IP. Where Background IP is incorporated into a Deliverable, Provider grants Client a perpetual, worldwide, non-exclusive, royalty-free license to use, copy, modify and distribute that Background IP as part of the Deliverable for Client's business purposes, except as Section 7.7 provides. The license becomes irrevocable when Client has paid in full for the Deliverable that contains the Background IP. Until then Provider may suspend it while Client is in default of payment under this Agreement. Client may not sell or license the Background IP on its own or separate it from the Deliverable for that purpose."),
             CL("Third-party and open source components.", "Deliverables may include third-party or open source components. Those components remain subject to their own licenses, which Provider will identify on request. Provider will not include a component whose license would require Client to publish Client's own source code without Client's written approval."),
             CL("General knowledge.", "Nothing in this Agreement stops Provider from using the general skills, knowledge, experience and techniques it gains while performing the Services, provided Provider does not use or disclose Client Confidential Information."),
             CL("Portfolio.", "Provider may name Client and describe the general nature of the Services in Provider's portfolio and marketing only with Client's prior written consent, which may be given by email, and without disclosing Confidential Information. Client may withdraw consent at any time by written notice."),
@@ -687,7 +689,7 @@ ICA = Doc(
             CL("Open source and third-party components.", "Contractor will not incorporate open source or third-party components into Work Product without Company's prior written approval, and will identify each component and its license."),
             CL("Flow-down to Clients.", "Company may assign or license Work Product to its Clients. Contractor's assignments, waivers and licenses in this Section extend to those Clients and their successors."),
             CL("Originality.", "Contractor warrants that the Work Product is Contractor's original work, except for approved Pre-Existing IP and approved third-party components, and does not infringe or misappropriate any third party's rights. Contractor will not use any confidential information or trade secret of a former client or employer in the Services."),
-            CL("AI tools.", "Contractor may use AI-assisted tools only where the Work Order permits them, and only tools operated under terms that do not permit the vendor to train on submitted content. Contractor never submits Company or Client Confidential Information to a consumer tier of any AI service, never submits credentials to any AI tool, and submits protected health information, payment card data or other regulated data to an AI tool only where the Work Order expressly provides for it and states the written agreement that covers it. Contractor tells the participants before an AI tool records or transcribes a meeting. Contractor reviews all AI-assisted output and remains responsible for the Work Product."),
+            CL("AI tools.", "Contractor may use AI-assisted tools only where the Work Order permits them, and only tools operated under terms that do not permit the vendor to train on submitted content or to use it for any purpose other than providing the service and its safety review. Contractor never submits Company or Client Confidential Information to a consumer tier of any AI service, never submits credentials to any AI tool, and submits protected health information, payment card data or other regulated data to an AI tool only where the Work Order expressly provides for it and states the written agreement that covers it. Contractor tells the participants before an AI tool records or transcribes a meeting. A submission on those terms is a permitted disclosure under Section 6. Contractor reviews all AI-assisted output and remains responsible for the Work Product."),
             CL("Company tools.", "Company's own tools and libraries, including the Luwah Accessibility Toolkit, the n8n workflow library, the web starter and the operations scripts, are Company property. Their source code, build configuration, design and documentation are Confidential Information even where a compiled or served copy is public. Contractor uses them only for the Work Order that requires them, does not copy them to any other system or client, keeps no copy after the Work Order ends, and does not build a similar product from their source, design or documentation during the term or for 12 months after it. This clause protects Company's trade secrets and Confidential Information. It is not a covenant not to compete and does not restrict Contractor from using general skills, knowledge and experience or publicly available information."),
         ]),
         Section("Confidentiality", [
@@ -1492,13 +1494,21 @@ def main(argv: list[str]) -> int:
                 print(f"Microsoft Word has {open_docs} document(s) open. Close them, then rerun. "
                       "An open document with a template's name would export stale.", file=sys.stderr)
                 return 3
-            for spec in specs:
-                docx_path = build_docx(spec, args.out)
-                outputs.append(docx_path)
-                print(f"wrote {docx_path.relative_to(ROOT) if docx_path.is_relative_to(ROOT) else docx_path}")
-                pdf_path = export_pdf(docx_path)
-                outputs.append(pdf_path)
-                print(f"wrote {pdf_path.relative_to(ROOT) if pdf_path.is_relative_to(ROOT) else pdf_path}")
+            with tempfile.TemporaryDirectory() as tmp:
+                for spec in specs:
+                    # Render both files into scratch and move them into place
+                    # together, so a failed export never leaves a new DOCX beside
+                    # a stale PDF on the public site.
+                    docx_tmp = build_docx(spec, Path(tmp))
+                    pdf_tmp = export_pdf(docx_tmp)
+                    args.out.mkdir(parents=True, exist_ok=True)
+                    docx_path = args.out / docx_tmp.name
+                    pdf_path = args.out / pdf_tmp.name
+                    shutil.move(str(docx_tmp), docx_path)
+                    shutil.move(str(pdf_tmp), pdf_path)
+                    outputs += [docx_path, pdf_path]
+                    for path in (docx_path, pdf_path):
+                        print(f"wrote {path.relative_to(ROOT) if path.is_relative_to(ROOT) else path}")
             if word_open_documents() == 0:
                 quit_word()
 
