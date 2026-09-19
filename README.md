@@ -93,3 +93,14 @@ See the full documentation package:
 3. Production Architecture Spec v2
 4. Final Website Content
 5. Blog Launch Articles
+
+## Client agreements
+
+The three agreement templates on `/agreements` are generated, not hand-edited. Source is `scripts/build-agreements.py` (one content model, python-docx, PDF through Microsoft Word over AppleScript, so it runs on a Mac with Word installed). Outputs go to `public/agreements/` and `src/app/agreements/version.json`.
+
+```bash
+uv run scripts/build-agreements.py \
+  --copy-to ~/Library/CloudStorage/OneDrive-LuwahTechnologies/2026/Legal/Templates/Client_Contracts/Ready_to_Use
+```
+
+Bump `VERSION`, `VERSION_DATE` and `VERSION_LABEL` in the script, rebuild, and commit the outputs together with the script.

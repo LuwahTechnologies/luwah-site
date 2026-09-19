@@ -146,7 +146,10 @@ export default function AccessibilityStatementPage() {
                 accessibility scanners may report issues inside those embedded frames. Those elements belong to the
                 provider&apos;s code and cannot be corrected from this site. Mute sounds cannot silence embedded
                 players, so use their own controls. The dark and light contrast settings replace decorative background
-                images with a solid color. If any of that is a barrier for you, contact us and we will provide the same
+                images with a solid color. The agreement PDFs on the Client Agreements page are print exports. They are not
+                tagged for screen readers and open without a document title or language. The Word version of each
+                agreement is on the same page and carries headings, marked table header rows and image text that a
+                screen reader can use. If any of that is a barrier for you, contact us and we will provide the same
                 information another way.
               </p>
             </section>
