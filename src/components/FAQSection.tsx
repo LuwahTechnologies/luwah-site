@@ -18,7 +18,7 @@ const FAQS = [
   {
     question: "Is my business data secure with AI automation?",
     answer:
-      "Yes. Unlike many agencies that rely entirely on shared public-cloud tools, Luwah Technologies operates its own private, self-hosted infrastructure. Your core automation logic and sensitive data triggers are processed on our dedicated Proxmox servers located in Aurora, CO, secured via Cloudflare zero-trust tunnels. When AI is involved, your data is processed but never stored by AI providers.",
+      "Yes. Unlike many agencies that rely entirely on shared public-cloud tools, Luwah Technologies operates its own private, self-hosted infrastructure. Your core automation logic and sensitive data triggers are processed on our dedicated Proxmox servers located in Aurora, CO, secured via Cloudflare zero-trust tunnels. When AI is involved, your data goes only to tools that do not train on it, never your credentials, and never regulated data without a written agreement.",
   },
   {
     question: "What AI and automation tools do you work with?",
