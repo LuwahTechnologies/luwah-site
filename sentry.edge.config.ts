@@ -1,6 +1,8 @@
 import * as Sentry from "@sentry/nextjs";
+import { SENTRY_DSN, SENTRY_TAGS } from "./sentry.shared";
 
 Sentry.init({
-  dsn: "https://712ae04cf13ec145d037ad08d546012a@o4511171159785472.ingest.us.sentry.io/4511177271803904",
+  dsn: SENTRY_DSN,
+  initialScope: { tags: SENTRY_TAGS },
   tracesSampleRate: 1.0,
 });

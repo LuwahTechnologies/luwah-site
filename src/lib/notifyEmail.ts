@@ -1,4 +1,5 @@
 import "server-only";
+import { reportError } from "@/lib/report";
 
 function esc(s: string): string {
   return s
@@ -122,9 +123,9 @@ export async function notifyEmail(o: NotifyOptions): Promise<void> {
       signal: AbortSignal.timeout(10000),
     });
     if (!res.ok) {
-      console.error("Resend notification failed:", res.status, await res.text().catch(() => ""));
+      reportError("notify.resend", new Error(`Resend responded with ${res.status}`));
     }
   } catch (err) {
-    console.error("Resend notification error:", err);
+    reportError("notify.resend", err);
   }
 }

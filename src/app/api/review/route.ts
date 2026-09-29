@@ -6,6 +6,7 @@ import { signPayload } from "@/lib/signPayload";
 import { rateLimit, clientKey } from "@/lib/rateLimit";
 import { notifyEmail } from "@/lib/notifyEmail";
 import { RATING_CATEGORIES, computeOverall, type Ratings } from "@/lib/reviews";
+import { reportError } from "@/lib/report";
 
 /**
  * POST /api/review
@@ -75,7 +76,7 @@ export async function POST(request: Request) {
         });
         stored = true;
       } catch (err) {
-        console.error("Failed to store review:", err);
+        reportError("api.review.store", err);
       }
     }
 
@@ -121,7 +122,7 @@ export async function POST(request: Request) {
           signal: AbortSignal.timeout(10000),
         });
       } catch (err) {
-        console.error("n8n review forward failed:", err);
+        reportError("api.review.n8n", err);
       }
     }
 
@@ -134,7 +135,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Review API error:", error);
+    reportError("api.review", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

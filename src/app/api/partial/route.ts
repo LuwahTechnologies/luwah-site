@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { writeClient } from "@/lib/sanityWrite";
 import { rateLimit, clientKey } from "@/lib/rateLimit";
+import { reportError } from "@/lib/report";
 
 /**
  * POST /api/partial
@@ -53,7 +54,7 @@ export async function POST(request: Request) {
           source: `intake-step-${step}`,
         });
       } catch (err) {
-        console.error("Failed to store partial lead:", err);
+        reportError("api.partial.store", err);
       }
     }
 
@@ -69,13 +70,13 @@ export async function POST(request: Request) {
           signal: AbortSignal.timeout(8000),
         });
       } catch (err) {
-        console.error("Partial n8n forward failed:", err);
+        reportError("api.partial.n8n", err);
       }
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Partial API error:", error);
+    reportError("api.partial", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
