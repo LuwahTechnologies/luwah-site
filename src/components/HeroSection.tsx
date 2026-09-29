@@ -1,7 +1,5 @@
-"use client";
-
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { DeferredVideo } from "@/components/DeferredVideo";
 
 interface HeroContent {
   eyebrow?: string;
@@ -38,17 +36,12 @@ export function HeroSection({ content }: { content?: HeroContent }) {
   const c = { ...DEFAULTS, ...stripEmpty(content) };
   return (
     <section className="relative flex min-h-[60vh] items-center overflow-hidden">
-      {/* Video background */}
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
+      {/* Video background. Loaded after first paint, see DeferredVideo. */}
+      <DeferredVideo
+        src="/videos/2792370-hd_1920_1080_30fps.mp4"
         className="pointer-events-none absolute inset-0 h-full w-full object-cover"
         style={{ opacity: 0.12 }}
-      >
-        <source src="/videos/2792370-hd_1920_1080_30fps.mp4" type="video/mp4" />
-      </video>
+      />
 
       {/* Radial gradient overlay */}
       <div
@@ -60,11 +53,9 @@ export function HeroSection({ content }: { content?: HeroContent }) {
       />
 
       <div className="relative z-10 mx-auto max-w-[var(--container-max)] px-6 py-20 text-center md:py-28">
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
+        {/* No opacity animation here. This block holds the LCP element, and an
+            opacity: 0 start in the server HTML hides it until hydration. */}
+        <div className="anim-rise">
           {/* Eyebrow pill */}
           <div
             className="mx-auto mb-8 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-medium"
@@ -103,7 +94,7 @@ export function HeroSection({ content }: { content?: HeroContent }) {
               {c.secondaryCtaLabel}
             </Link>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
