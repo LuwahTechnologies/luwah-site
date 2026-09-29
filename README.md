@@ -22,6 +22,11 @@ page and a Sanity-driven route, and that a Sanity outage never fails the build
 or replaces a good page. It needs no secrets. It replaces `.next`, so stop
 `next dev` first. Details are at the top of `tests/smoke/smoke.test.mjs`.
 
+## Hosting
+
+Render is the live host. `k3s/` holds a container image and manifests for
+running the site on the k3s cluster instead. See `k3s/README.md`.
+
 ## Pages Built
 
 | Route | Page | Status |

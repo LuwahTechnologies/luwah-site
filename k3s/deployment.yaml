@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: luwah-site
+  namespace: luwah-site
+  labels:
+    app.kubernetes.io/name: luwah-site
+    app.kubernetes.io/part-of: luwah
+spec:
+  # One replica on purpose. Next keeps its ISR page cache in each pod's memory
+  # and disk, and the Sanity webhook reaches whichever pod the Service picks.
+  # With two replicas an edit would show on one and not the other until the 60
+  # second backstop. Moving past one needs a shared cache handler first. See
+  # README.md.
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: luwah-site
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: luwah-site
+        app.kubernetes.io/part-of: luwah
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000 # the "node" user in the official image
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: site
+          # The registry and tag are placeholders. kustomization.yaml sets the
+          # real ones, so nothing pulls an image by accident.
+          image: luwah-site
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 3000
+          env:
+            # Kubernetes sets HOSTNAME to the pod name, and the standalone
+            # server binds to it. Pin it so the server listens on every
+            # interface, as the probes and the Service expect.
+            - name: HOSTNAME
+              value: "0.0.0.0"
+            - name: PORT
+              value: "3000"
+            # Heap ceiling, as in the Render start command. Node's memory use is
+            # the heap plus native memory and buffers, so the limit below sits
+            # well above it.
+            - name: NODE_OPTIONS
+              value: "--max-old-space-size=384"
+            # Read by the Sentry SDK on the server. Keeps server events from
+            # this copy apart from the ones Render sends. The browser has no
+            # such variable at runtime, so its environment is the build
+            # argument NEXT_PUBLIC_SENTRY_ENVIRONMENT (see the Dockerfile).
+            - name: SENTRY_ENVIRONMENT
+              value: "k3s"
+          envFrom:
+            # Runtime secrets. Created from a SealedSecret, see README.md. The
+            # list of names is in .env.example.
+            - secretRef:
+                name: luwah-site-env
+          # /api/health does not call Sanity or n8n, so an outage there never
+          # takes the pod out of rotation. The site serves its last good pages.
+          startupProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            periodSeconds: 3
+            failureThreshold: 20
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              memory: 768Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            # ISR writes regenerated pages here. Lost on restart, which is
+            # fine: the pages built into the image serve until they refresh.
+            - name: next-cache
+              mountPath: /app/.next/cache
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: next-cache
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
