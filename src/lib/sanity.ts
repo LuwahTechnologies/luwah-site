@@ -80,7 +80,8 @@ const postSummaryFields = `
 `;
 
 const postFields = `${postSummaryFields},
-  content
+  content,
+  "updatedAt": _updatedAt
 `;
 
 const projectSummaryFields = `
@@ -100,7 +101,8 @@ const projectFields = `${projectSummaryFields},
   overview,
   challenge,
   solution,
-  technologies
+  technologies,
+  "updatedAt": _updatedAt
 `;
 
 export type PostSummary = Omit<BlogPost, "content">;

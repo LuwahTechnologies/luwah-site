@@ -6,6 +6,8 @@ import { TestimonialsSection } from "@/components/TestimonialsSection";
 import { ImageDivider } from "@/components/ImageDivider";
 import { getSiteSettings } from "@/lib/sanity";
 import { getApprovedReviews } from "@/lib/reviews";
+import { JsonLd } from "@/components/JsonLd";
+import { webSiteSchema } from "@/lib/structuredData";
 
 export const revalidate = 60;
 
@@ -20,6 +22,7 @@ export default async function HomePage() {
   }));
   return (
     <>
+      <JsonLd data={webSiteSchema} />
       <HeroSection
         content={
           settings ? {

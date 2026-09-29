@@ -50,6 +50,9 @@ export const metadata: Metadata = {
   description:
     "Custom automation, data insights, and workflow solutions for small businesses. n8n, Python, and AI-powered. Free consultation. Aurora, CO.",
   metadataBase: new URL("https://luwahtechnologies.com"),
+  // Relative, so each page gets a canonical pointing at itself. Detail pages
+  // set an absolute one through pageMetadata().
+  alternates: { canonical: "./" },
   openGraph: {
     type: "website",
     locale: "en_US",

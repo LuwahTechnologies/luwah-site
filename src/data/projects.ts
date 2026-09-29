@@ -13,6 +13,8 @@ export interface Project {
   challenge?: string[];
   solution?: string[];
   technologies?: string[];
+  /** Sanity _updatedAt. Absent on the bundled projects. */
+  updatedAt?: string;
 }
 
 export const PROJECTS: Project[] = [

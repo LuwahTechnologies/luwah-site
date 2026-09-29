@@ -2,6 +2,9 @@ import { notFound } from "next/navigation";
 import { getProjectBySlug, getAllSlugs } from "@/data/projects";
 import { getSanityProjectBySlug, getSanityProjectSlugs } from "@/lib/sanity";
 import { CaseStudyContent } from "./CaseStudyContent";
+import { JsonLd } from "@/components/JsonLd";
+import { pageMetadata, toIsoDate } from "@/lib/seo";
+import { breadcrumbSchema, caseStudySchema } from "@/lib/structuredData";
 import type { Metadata } from "next";
 
 interface PageProps {
@@ -21,10 +24,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const project = (await getSanityProjectBySlug(slug)) ?? getProjectBySlug(slug);
   if (!project) return {};
 
-  return {
+  return pageMetadata({
     title: project.title,
     description: project.description,
-  };
+    path: `/work/${slug}`,
+    image: project.image,
+    type: "article",
+    modifiedTime: toIsoDate(project.updatedAt),
+  });
 }
 
 export default async function CaseStudyPage({ params }: PageProps) {
@@ -35,5 +42,17 @@ export default async function CaseStudyPage({ params }: PageProps) {
     notFound();
   }
 
-  return <CaseStudyContent project={project} />;
+  return (
+    <>
+      <JsonLd data={caseStudySchema({ ...project, slug })} />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Our Work", path: "/work" },
+          { name: project.title, path: `/work/${slug}` },
+        ])}
+      />
+      <CaseStudyContent project={project} />
+    </>
+  );
 }

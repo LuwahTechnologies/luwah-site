@@ -7,6 +7,8 @@ export interface BlogPost {
   image: string;
   excerpt: string;
   content: string[];
+  /** Sanity _updatedAt. Absent on the bundled posts. */
+  updatedAt?: string;
 }
 
 export const POSTS: BlogPost[] = [

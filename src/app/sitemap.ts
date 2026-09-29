@@ -7,6 +7,7 @@ import {
   getGuideIndex,
   type IndexEntry,
 } from "@/lib/sanity";
+import { toIsoDate } from "@/lib/seo";
 
 const BASE = "https://luwahtechnologies.com";
 
@@ -15,17 +16,11 @@ const BASE = "https://luwahtechnologies.com";
 // frozen at build time and new content stayed out of it until the next deploy.
 export const revalidate = 3600;
 
-// The bundled posts carry a display date like "Nov 20, 2025".
-function fromDisplayDate(date: string): string | undefined {
-  const t = Date.parse(date);
-  return Number.isNaN(t) ? undefined : new Date(t).toISOString();
-}
-
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Prefer live Sanity slugs, fall back to the bundled static content.
   const posts: IndexEntry[] =
     (await getSanityPostIndex()) ??
-    POSTS.map((p) => ({ slug: p.slug, updatedAt: fromDisplayDate(p.date) }));
+    POSTS.map((p) => ({ slug: p.slug, updatedAt: toIsoDate(p.date) }));
   const projects: IndexEntry[] =
     (await getSanityProjectIndex()) ?? PROJECTS.map((p) => ({ slug: p.slug }));
   const guides: IndexEntry[] = (await getGuideIndex()) ?? [];
