@@ -11,15 +11,19 @@ export function absoluteUrl(pathOrUrl: string): string {
 }
 
 /**
- * Normalise a date to YYYY-MM-DD for structured data and sitemaps. Sanity
- * gives ISO dates. The bundled posts use a display date like "Nov 20, 2025",
- * which is not valid schema.org input. Returns undefined when it cannot be
- * read, so a bad date is left out rather than published.
+ * Normalise a date to YYYY-MM-DD for structured data and sitemaps. Accepts an
+ * ISO date, or the display form the "date" field is meant to hold ("Nov 20,
+ * 2025"), which is not valid schema.org input. The Sanity field is free text,
+ * so anything else, including a date with no year, returns undefined: the
+ * Date constructor would guess (a missing year becomes 2001), and a wrong date
+ * is worse than none.
  */
 export function toIsoDate(value?: string): string | undefined {
   if (!value) return undefined;
   const iso = value.match(/^\d{4}-\d{2}-\d{2}/);
   if (iso) return iso[0];
+  // "2025-11" is read as UTC and lands on the wrong day in some time zones.
+  if (!/\b(19|20)\d{2}\b/.test(value) || /^\s*\d{4}(-\d{2})?\s*$/.test(value)) return undefined;
   const t = new Date(value);
   if (Number.isNaN(t.getTime())) return undefined;
   // A display date parses as local midnight, so read it back with local getters.

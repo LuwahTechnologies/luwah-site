@@ -14,9 +14,9 @@ interface PageProps {
 export const revalidate = 60;
 
 export async function generateStaticParams() {
-  const sanitySlugs = await getSanityPostSlugs();
-  const slugs = sanitySlugs ?? getAllPostSlugs();
-  return slugs.map((slug) => ({ slug }));
+  // Sanity slugs plus the bundled ones, for the same reason as /work/[slug].
+  const slugs = new Set([...((await getSanityPostSlugs()) ?? []), ...getAllPostSlugs()]);
+  return [...slugs].map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

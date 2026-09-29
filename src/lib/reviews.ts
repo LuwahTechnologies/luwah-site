@@ -70,7 +70,10 @@ const reviewFields = `
  * shows a handful (the homepage marquee takes 5), so it does not pull every
  * review to throw most of them away.
  */
-export async function getApprovedReviews(limit?: number): Promise<Review[]> {
+export async function getApprovedReviews(
+  limit?: number,
+  opts: { failOpen?: boolean } = {}
+): Promise<Review[]> {
   const slice = limit && limit > 0 ? ` [0...${Math.floor(limit)}]` : "";
   // Bypass the Sanity CDN cache so a freshly approved review shows within
   // seconds rather than waiting on the CDN's ~60s cache window.
@@ -80,7 +83,7 @@ export async function getApprovedReviews(limit?: number): Promise<Review[]> {
     "review",
     `*[_type == "review" && approved == true] | order(coalesce(featured, false) desc, date desc)${slice} { ${reviewFields} }`,
     {},
-    { client }
+    { client, failOpen: opts.failOpen }
   );
   return reviews ?? [];
 }

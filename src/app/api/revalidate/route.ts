@@ -52,7 +52,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ revalidated: true, tags, now: Date.now() });
   }
 
-  // Explicit path form. Only accept an in-app absolute path.
+  // Explicit path form, for a person or a tool that wants one page fresh now.
+  // revalidatePath expires the page outright, so unlike the tag form above it
+  // has no stale copy to fall back on if Sanity is down at that moment. Only
+  // accept an in-app absolute path.
   const path =
     typeof body.path === "string" && body.path.startsWith("/") ? body.path : "/work";
   revalidatePath(path);

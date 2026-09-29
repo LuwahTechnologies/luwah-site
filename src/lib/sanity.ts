@@ -24,6 +24,23 @@ if (projectId) {
 
 export { sanityClient };
 
+// A Sanity that accepts the connection and never answers would otherwise hold a
+// build worker for Next's 60 second page limit and fail the build, or hold a
+// first render for minutes. This caps one read, retries included.
+const READ_TIMEOUT_MS = 5000;
+
+// While Sanity is down, every request to a stale page retries the read. One
+// Sentry event per scope every five minutes is plenty.
+const REPORT_THROTTLE_MS = 5 * 60 * 1000;
+
+let warnedAboutConfig = false;
+
+/** 4xx other than "slow down" or "timed out" means the request is wrong, not the service. */
+function isConfigurationError(err: unknown): boolean {
+  const status = (err as { statusCode?: number } | null)?.statusCode;
+  return typeof status === "number" && status >= 400 && status < 500 && status !== 408 && status !== 429;
+}
+
 export interface SanityQueryOptions {
   /** Read through a different client, for example one with the CDN off. */
   client?: SanityClient | null;
@@ -42,7 +59,8 @@ export interface SanityQueryOptions {
  *   page that read it.
  * - Returns null when Sanity is not configured, so callers fall back to the
  *   bundled content.
- * - On a failed read it reports to Sentry, then either returns null (build and
+ * - On a failed read, or one that takes longer than READ_TIMEOUT_MS, it
+ *   reports to Sentry, then either returns null (build and
  *   `next dev`, where the static fallbacks must render) or throws (a running
  *   production server). Throwing is what lets ISR keep serving the last good
  *   page. Returning null there would replace it with the bundled fallback, or
@@ -59,9 +77,21 @@ export async function sanityQuery<T>(
   try {
     return await client.fetch<T>(query, params, {
       next: { tags: [sanityTag(type)] },
+      signal: AbortSignal.timeout(READ_TIMEOUT_MS),
     });
   } catch (err) {
-    reportError(`sanity.${scope}`, err);
+    reportError(`sanity.${scope}`, err, { throttleMs: REPORT_THROTTLE_MS });
+    // Treating a rotated token or a wrong dataset like an outage would ship a
+    // green build made entirely of fallback content. The build still succeeds,
+    // as it must, but say plainly why the content is not from Sanity.
+    if (isConfigurationError(err) && !warnedAboutConfig) {
+      warnedAboutConfig = true;
+      console.error(
+        "[sanity] Sanity rejected the request, so this is a configuration problem and not an outage. " +
+          "Check SANITY_API_TOKEN, NEXT_PUBLIC_SANITY_PROJECT_ID and NEXT_PUBLIC_SANITY_DATASET. " +
+          "The pages are using the bundled content."
+      );
+    }
     if (!failOpen && failClosedOnContentError()) throw err;
     return null;
   }

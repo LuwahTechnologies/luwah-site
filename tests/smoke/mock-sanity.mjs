@@ -6,7 +6,10 @@ import http from "node:http";
 
 export function createMockSanity() {
   const state = {
-    /** "up" answers normally. "error" answers 503, like an API incident. */
+    /**
+     * "up" answers normally. "error" answers 503, like an API incident.
+     * "stall" accepts the request and never answers, like a hung upstream.
+     */
     mode: "up",
     /** Documents by type. Each needs a `slug` string. */
     docs: { project: [], post: [], guide: [], review: [] },
@@ -20,6 +23,8 @@ export function createMockSanity() {
     const rawSlug = url.searchParams.get("$slug");
     const slug = rawSlug ? JSON.parse(rawSlug) : undefined;
     state.hits.push(query.replace(/\s+/g, " ").trim());
+
+    if (state.mode === "stall") return;
 
     if (state.mode === "error") {
       res.writeHead(503, { "content-type": "application/json" });

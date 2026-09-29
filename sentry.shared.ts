@@ -15,3 +15,25 @@ export const SENTRY_DSN =
 export const SENTRY_TAGS = {
   build_id: process.env.NEXT_PUBLIC_BUILD_ID || "unknown",
 };
+
+/**
+ * The browser's environment tag, set at build time. The server reads the
+ * runtime SENTRY_ENVIRONMENT on its own. Unset, browser events say
+ * "production", so a copy hosted elsewhere sets this to tell them apart.
+ */
+export const SENTRY_BROWSER_ENVIRONMENT =
+  process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT || undefined;
+
+/**
+ * Traces every request except the health check. Uptime monitors and container
+ * probes call it all day, and a trace for each one is noise that uses quota.
+ */
+export function tracesSampler({
+  name,
+  inheritOrSampleWith,
+}: {
+  name: string;
+  inheritOrSampleWith: (fallbackSampleRate: number) => number;
+}): number {
+  return name.includes("/api/health") ? 0 : inheritOrSampleWith(1.0);
+}

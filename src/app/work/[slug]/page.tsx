@@ -14,9 +14,12 @@ interface PageProps {
 export const revalidate = 60;
 
 export async function generateStaticParams() {
-  const sanitySlugs = await getSanityProjectSlugs();
-  const slugs = sanitySlugs ?? getAllSlugs();
-  return slugs.map((slug) => ({ slug }));
+  // Sanity slugs plus the bundled ones. A bundled case study that is not in
+  // Sanity has to be prerendered too. Left to render on demand, it would fail
+  // on a cold cache while Sanity is down, and the cache is empty after every
+  // restart.
+  const slugs = new Set([...((await getSanityProjectSlugs()) ?? []), ...getAllSlugs()]);
+  return [...slugs].map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

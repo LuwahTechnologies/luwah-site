@@ -34,15 +34,23 @@ const SANITY_ONLY = "smoke-only-project"; // a slug that exists only in Sanity
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-const freePort = () =>
-  new Promise((resolve, reject) => {
-    const s = net.createServer();
-    s.on("error", reject);
-    s.listen(0, "127.0.0.1", () => {
-      const { port } = s.address();
-      s.close(() => resolve(port));
-    });
-  });
+// Every listener stays open until all ports are chosen, so no two match.
+async function freePorts(count) {
+  const servers = await Promise.all(
+    Array.from(
+      { length: count },
+      () =>
+        new Promise((resolve, reject) => {
+          const s = net.createServer();
+          s.on("error", reject);
+          s.listen(0, "127.0.0.1", () => resolve(s));
+        })
+    )
+  );
+  const ports = servers.map((s) => s.address().port);
+  await Promise.all(servers.map((s) => new Promise((resolve) => s.close(resolve))));
+  return ports;
+}
 
 const project = (slug, title) => ({
   slug,
@@ -129,8 +137,8 @@ function stopServer() {
 
 describe("smoke", { timeout: 15 * 60 * 1000 }, () => {
   before(async () => {
-    mockPort = await freePort();
-    const appPort = await freePort();
+    let appPort;
+    [mockPort, appPort] = await freePorts(2);
     base = `http://127.0.0.1:${appPort}`;
     const env = smokeEnv();
 
@@ -142,9 +150,17 @@ describe("smoke", { timeout: 15 * 60 * 1000 }, () => {
         env,
         encoding: "utf8",
         maxBuffer: 64 * 1024 * 1024,
+        timeout: 10 * 60 * 1000,
       });
       buildStatus = built.status;
       buildLog = `${built.stdout}\n${built.stderr}`;
+      // Stop here with the build output. Carrying on would start a server that
+      // exits at once and fail a minute later with an unrelated fetch error.
+      if (buildStatus !== 0) {
+        throw new Error(
+          `next build failed (exit ${buildStatus}, signal ${built.signal})\n${buildLog.slice(-4000)}`
+        );
+      }
     }
 
     server = spawn(
@@ -204,7 +220,12 @@ describe("smoke", { timeout: 15 * 60 * 1000 }, () => {
       const sitemap = await get("/sitemap.xml");
       assert.equal(sitemap.status, 200);
       assert.match(sitemap.text, new RegExp(`/work/${BUNDLED.slug}<`));
-      assert.equal((await get("/robots.txt")).status, 200);
+      const robots = await get("/robots.txt");
+      assert.equal(robots.status, 200);
+      // "Disallow: /review" alone is a prefix rule and would also block the
+      // public /reviews page that the sitemap lists.
+      assert.match(robots.text, /Disallow: \/review\$/);
+      assert.doesNotMatch(robots.text, /Disallow: \/review\s/);
     });
 
     it("exposes the build id", async () => {
@@ -307,6 +328,18 @@ describe("smoke", { timeout: 15 * 60 * 1000 }, () => {
       const sitemap = await get("/sitemap.xml");
       assert.equal(sitemap.status, 200);
       assert.match(sitemap.text, new RegExp(`/work/${SANITY_ONLY}<`));
+    });
+
+    it("a stalled Sanity fails a first render fast instead of hanging it", async () => {
+      mock.state.mode = "stall";
+      // Never rendered before, so there is no stale copy: it has to ask Sanity.
+      const start = Date.now();
+      const res = await get("/work/smoke-never-rendered");
+      const took = Date.now() - start;
+      assert.ok(res.status >= 500, `expected 5xx, got ${res.status}`);
+      // The read is capped at 5 seconds. Without the cap this waits for Next's
+      // 60 second limit or longer.
+      assert.ok(took < 15000, `took ${took} ms`);
     });
 
     it("recovers without a restart", async () => {

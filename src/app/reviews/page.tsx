@@ -8,13 +8,17 @@ export const metadata: Metadata = {
     "See how clients rate Luwah Technologies on communication, expertise, timeliness, value, and overall experience.",
 };
 
-// Cached, not per-request. Approving a review in Studio fires the webhook, which
-// expires the "sanity:review" tag and refreshes this page and the homepage
-// marquee. The 60s revalidate is the backstop if a webhook is ever missed.
-export const revalidate = 60;
+// Per-request on purpose: an approval in Studio shows on the next page load. The
+// webhook filter documented in automation/n8n-ai-blog.md covers siteSettings,
+// webCatalog, post and project but not review, so no tag would be expired when
+// a review is approved and a cached page would lag by up to a minute. To cache
+// this page, add "review" to the webhook filter first and use revalidate = 60.
+export const dynamic = "force-dynamic";
 
 export default async function ReviewsPage() {
-  const reviews = await getApprovedReviews();
+  // There is no cached page to fall back on here, so a Sanity failure shows an
+  // empty list, as it always did, instead of a 500.
+  const reviews = await getApprovedReviews(undefined, { failOpen: true });
   return (
     <div className="pt-24">
       <div className="mx-auto max-w-[var(--container-max)] px-6 pt-12 text-center">
