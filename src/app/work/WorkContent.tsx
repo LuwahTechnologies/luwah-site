@@ -4,9 +4,9 @@ import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import type { Project } from "@/data/projects";
+import type { ProjectSummary } from "@/lib/sanity";
 
-export function WorkContent({ projects }: { projects: Project[] }) {
+export function WorkContent({ projects }: { projects: ProjectSummary[] }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
 

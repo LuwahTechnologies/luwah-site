@@ -8,9 +8,10 @@ export const metadata: Metadata = {
     "See how clients rate Luwah Technologies on communication, expertise, timeliness, value, and overall experience.",
 };
 
-// Always fresh: an approval in Studio shows on the next page load, no caching
-// delay. The reviews page is low-traffic, so per-request fetching is fine.
-export const dynamic = "force-dynamic";
+// Cached, not per-request. Approving a review in Studio fires the webhook, which
+// expires the "sanity:review" tag and refreshes this page and the homepage
+// marquee. The 60s revalidate is the backstop if a webhook is ever missed.
+export const revalidate = 60;
 
 export default async function ReviewsPage() {
   const reviews = await getApprovedReviews();

@@ -42,7 +42,7 @@ export async function POST(request: Request) {
     }
 
     // Recompute the total from the catalog. The client value is never trusted.
-    const catalog = await getWebCatalog();
+    const catalog = await getWebCatalog({ failOpen: true });
     const addonKeys: string[] = Array.isArray(body.addonKeys) ? body.addonKeys : [];
     const extraPages = Number.isInteger(body.extraPages) ? body.extraPages : 0;
     const totals = computeOrderTotal(catalog, {

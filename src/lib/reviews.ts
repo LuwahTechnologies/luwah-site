@@ -1,4 +1,4 @@
-import { sanityClient } from "@/lib/sanity";
+import { sanityClient, sanityQuery } from "@/lib/sanity";
 
 /**
  * The five categories clients grade us on, 1 to 5 each. Defined once here so
@@ -65,17 +65,22 @@ const reviewFields = `
   date
 `;
 
-/** Only approved reviews ever reach the public site. */
-export async function getApprovedReviews(): Promise<Review[]> {
-  if (!sanityClient) return [];
-  try {
-    // Bypass the Sanity CDN cache so a freshly approved review shows within
-    // seconds rather than waiting on the CDN's ~60s cache window.
-    return await sanityClient.withConfig({ useCdn: false }).fetch<Review[]>(
-      `*[_type == "review" && approved == true] | order(coalesce(featured, false) desc, date desc) { ${reviewFields} }`
-    );
-  } catch (err) {
-    console.error("Sanity fetch (reviews) failed:", err);
-    return [];
-  }
+/**
+ * Only approved reviews ever reach the public site. Pass `limit` when a page
+ * shows a handful (the homepage marquee takes 5), so it does not pull every
+ * review to throw most of them away.
+ */
+export async function getApprovedReviews(limit?: number): Promise<Review[]> {
+  const slice = limit && limit > 0 ? ` [0...${Math.floor(limit)}]` : "";
+  // Bypass the Sanity CDN cache so a freshly approved review shows within
+  // seconds rather than waiting on the CDN's ~60s cache window.
+  const client = sanityClient?.withConfig({ useCdn: false }) ?? null;
+  const reviews = await sanityQuery<Review[]>(
+    "reviews",
+    "review",
+    `*[_type == "review" && approved == true] | order(coalesce(featured, false) desc, date desc)${slice} { ${reviewFields} }`,
+    {},
+    { client }
+  );
+  return reviews ?? [];
 }

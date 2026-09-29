@@ -10,10 +10,10 @@ import { getApprovedReviews } from "@/lib/reviews";
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const [settings, reviews] = await Promise.all([getSiteSettings(), getApprovedReviews()]);
+  const [settings, reviews] = await Promise.all([getSiteSettings(), getApprovedReviews(5)]);
 
-  // Top 5 approved reviews drive the "What our clients say" marquee.
-  const testimonials = reviews.slice(0, 5).map((r) => ({
+  // The top 5 approved reviews drive the "What our clients say" marquee.
+  const testimonials = reviews.map((r) => ({
     quote: r.quote,
     name: r.reviewerName,
     title: [r.role, r.company].filter(Boolean).join(", "),
