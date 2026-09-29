@@ -10,7 +10,8 @@
     "dev": "next dev",
     "build": "NEXT_PUBLIC_BUILD_ID=${NEXT_PUBLIC_BUILD_ID:-$(git rev-parse --short HEAD 2>/dev/null || echo unknown)} NEXT_PUBLIC_BUILD_TIME=${NEXT_PUBLIC_BUILD_TIME:-$(date -u +%Y-%m-%dT%H:%M:%SZ)} next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:smoke": "node --test tests/smoke/smoke.test.mjs"
   },
   "keywords": [],
   "author": "",

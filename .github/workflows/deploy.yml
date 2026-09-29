@@ -33,6 +33,12 @@ jobs:
         env:
           NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
 
+      # Builds a second time against a mock Sanity, so it needs no secrets and
+      # proves a Sanity outage never fails the build. About 2 minutes. It
+      # replaces .next, which nothing after this step uses.
+      - name: Smoke tests
+        run: npm run test:smoke
+
       # Render auto-deploys from GitHub, so this step is informational.
       # If using manual deploy, add Render deploy hook here.
 

@@ -11,6 +11,17 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Tests
+
+```bash
+npm run test:smoke
+```
+
+Builds the site against a mock Sanity, then checks the homepage, the contact
+page and a Sanity-driven route, and that a Sanity outage never fails the build
+or replaces a good page. It needs no secrets. It replaces `.next`, so stop
+`next dev` first. Details are at the top of `tests/smoke/smoke.test.mjs`.
+
 ## Pages Built
 
 | Route | Page | Status |
