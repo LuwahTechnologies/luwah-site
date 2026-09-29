@@ -23,6 +23,9 @@ const nextConfig = {
           },
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+          // Which build served this response. Handy behind Cloudflare, where a
+          // stale edge copy and a failed deploy look the same from the browser.
+          { key: "X-Build-Id", value: process.env.NEXT_PUBLIC_BUILD_ID || "unknown" },
         ],
       },
     ];
