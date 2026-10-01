@@ -1,14 +1,17 @@
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
+import { isSanityDocType, sanityTag } from "@/lib/sanityTags";
 
 /**
  * POST /api/revalidate
  *
  * Busts the Next.js cache so edits appear on the live site without a rebuild.
  * Two callers:
- *  1. A Sanity webhook on publish, sending a `{ _type, slug }` projection.
- *     The handler maps the document type to the pages that render it.
+ *  1. A Sanity webhook on publish, sending a `{ _type }` projection (a `slug`
+ *     is accepted and ignored). Every Sanity read is tagged with its document
+ *     type, so this expires the tag and every page or route that read that
+ *     type refreshes on its next request. No hand-kept type-to-path map.
  *  2. n8n or any tool sending an explicit `{ path }`.
  *
  * Security: requires x-revalidation-secret header matching REVALIDATION_SECRET.
@@ -22,30 +25,6 @@ function safeEqual(a: string, b: string): boolean {
   return crypto.timingSafeEqual(ab, bb);
 }
 
-// Maps a changed document type to every route that renders it.
-function pathsForType(type: string, slug?: string): string[] {
-  switch (type) {
-    case "siteSettings":
-      return ["/", "/contact", "/services", "/pricing"];
-    case "webCatalog":
-      // The catalog drives the web-design page, the order form, and the
-      // intake tier list. Refresh all when prices change.
-      return ["/web-design", "/order", "/intake"];
-    case "post":
-      return slug ? ["/blog", `/blog/${slug}`] : ["/blog"];
-    case "project":
-      return slug ? ["/work", `/work/${slug}`] : ["/work"];
-    case "review":
-      // Approving or editing a review changes the reviews page and the
-      // homepage testimonials marquee.
-      return ["/reviews", "/"];
-    case "guide":
-      return slug ? ["/learn", `/learn/${slug}`] : ["/learn"];
-    default:
-      return [];
-  }
-}
-
 export async function POST(request: Request) {
   const secret = request.headers.get("x-revalidation-secret") || "";
   const expected = process.env.REVALIDATION_SECRET;
@@ -57,15 +36,26 @@ export async function POST(request: Request) {
 
   const body = await request.json().catch(() => ({}));
 
-  // Sanity webhook form: derive paths from the document type.
+  // Sanity webhook form: expire the tag for the document type.
   if (typeof body._type === "string") {
-    const slug = typeof body.slug === "string" ? body.slug : undefined;
-    const paths = pathsForType(body._type, slug);
-    paths.forEach((p) => revalidatePath(p));
-    return NextResponse.json({ revalidated: true, paths, now: Date.now() });
+    // Other document types (form submissions, orders) also fire the webhook.
+    // They render nowhere public, so answer 200 with nothing to do and the
+    // webhook does not retry.
+    const tags = isSanityDocType(body._type) ? [sanityTag(body._type)] : [];
+    // "max" marks the entries stale rather than deleting them. The next visit
+    // gets the old page while the new one renders in the background, and if
+    // that render fails (Sanity down) the old page keeps being served. The
+    // alternative, { expire: 0 }, deletes the entries, so the first visit
+    // after a publish would return a 500 during an outage. The price is that
+    // an editor sees the old page once, and the new one on the next refresh.
+    tags.forEach((t) => revalidateTag(t, "max"));
+    return NextResponse.json({ revalidated: true, tags, now: Date.now() });
   }
 
-  // Explicit path form. Only accept an in-app absolute path.
+  // Explicit path form, for a person or a tool that wants one page fresh now.
+  // revalidatePath expires the page outright, so unlike the tag form above it
+  // has no stale copy to fall back on if Sanity is down at that moment. Only
+  // accept an in-app absolute path.
   const path =
     typeof body.path === "string" && body.path.startsWith("/") ? body.path : "/work";
   revalidatePath(path);

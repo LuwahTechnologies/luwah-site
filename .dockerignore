@@ -1,0 +1,32 @@
+# Keeps the build context small and stops local state leaking into the image.
+
+node_modules
+.next
+out
+.git
+.github
+.claude
+.vscode
+.idea
+
+# Secrets and local config. Runtime values arrive as a Kubernetes Secret.
+.env
+.env.*
+!.env.example
+
+# Not needed to build the site.
+k3s
+automation
+docs
+infra
+scripts
+tests
+*.md
+Dockerfile*
+.dockerignore
+npm-debug.log*
+*.tsbuildinfo
+next-env.d.ts
+
+# Internal offering source, already excluded from git.
+LT Website Offering

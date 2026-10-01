@@ -5,6 +5,7 @@ import { verifyTurnstile } from "@/lib/verifyTurnstile";
 import { signPayload } from "@/lib/signPayload";
 import { notifyEmail } from "@/lib/notifyEmail";
 import { rateLimit, clientKey } from "@/lib/rateLimit";
+import { reportError } from "@/lib/report";
 
 export async function POST(request: Request) {
   try {
@@ -130,7 +131,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Contact API error:", error);
+    reportError("api.contact", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

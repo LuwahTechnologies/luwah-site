@@ -7,6 +7,7 @@ import { rateLimit, clientKey } from "@/lib/rateLimit";
 import { getWebCatalog } from "@/lib/getWebCatalog";
 import { computeOrderTotal } from "@/lib/webCatalog";
 import { notifyEmail } from "@/lib/notifyEmail";
+import { reportError } from "@/lib/report";
 
 /**
  * POST /api/web-order
@@ -42,7 +43,7 @@ export async function POST(request: Request) {
     }
 
     // Recompute the total from the catalog. The client value is never trusted.
-    const catalog = await getWebCatalog();
+    const catalog = await getWebCatalog({ failOpen: true });
     const addonKeys: string[] = Array.isArray(body.addonKeys) ? body.addonKeys : [];
     const extraPages = Number.isInteger(body.extraPages) ? body.extraPages : 0;
     const totals = computeOrderTotal(catalog, {
@@ -86,7 +87,7 @@ export async function POST(request: Request) {
         });
         stored = true;
       } catch (err) {
-        console.error("Failed to store web order:", err);
+        reportError("api.web-order.store", err);
       }
     }
 
@@ -145,7 +146,7 @@ export async function POST(request: Request) {
         });
         delivered = res.ok;
       } catch (err) {
-        console.error("n8n web-order forward failed:", err);
+        reportError("api.web-order.n8n", err);
       }
     }
 
@@ -162,7 +163,7 @@ export async function POST(request: Request) {
       estimatedTotal: totals.total,
     });
   } catch (error) {
-    console.error("Web order API error:", error);
+    reportError("api.web-order", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

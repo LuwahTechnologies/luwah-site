@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { POSTS } from "@/data/posts";
-import { getSanityPosts } from "@/lib/sanity";
+import { getSanityPosts, type PostSummary } from "@/lib/sanity";
 
 export const metadata: Metadata = {
   title: "The Automation Lab | Blog",
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function BlogPage() {
-  const posts = (await getSanityPosts()) ?? POSTS;
+  const posts: PostSummary[] = (await getSanityPosts()) ?? POSTS;
 
   return (
     <div className="pt-24">

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: luwah-site
+  namespace: luwah-site
+  labels:
+    app.kubernetes.io/name: luwah-site
+    app.kubernetes.io/part-of: luwah
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: luwah-site
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

@@ -5,8 +5,10 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      // Keep the admin, the private review link, and API routes out of search.
-      disallow: ["/studio", "/review", "/api/"],
+      // Keep the admin, the private review link, the status page and API routes
+      // out of search. "$" anchors /review to that exact path. Without it the
+      // rule is a prefix and also blocks the public /reviews page.
+      disallow: ["/studio", "/review$", "/status", "/api/"],
     },
     sitemap: "https://luwahtechnologies.com/sitemap.xml",
   };

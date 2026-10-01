@@ -1,8 +1,5 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import type { Project } from "@/data/projects";
 
@@ -22,11 +19,9 @@ export function CaseStudyContent({ project }: { project: Project }) {
           </Link>
 
           {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-          >
+          {/* Title and image are the LCP candidates. No opacity: 0 start here,
+              it would hide them until the JS bundle hydrates. */}
+          <div className="anim-rise">
             <span
               className="mb-4 block text-xs font-semibold uppercase tracking-widest"
               style={{ color: "var(--color-copper)" }}
@@ -92,13 +87,10 @@ export function CaseStudyContent({ project }: { project: Project }) {
                 )}
               </div>
             )}
-          </motion.div>
+          </div>
 
           {/* Hero image */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
+          <div
             className="relative mb-16 h-64 overflow-hidden md:h-96"
             style={{ borderRadius: "var(--radius-card)" }}
           >
@@ -110,14 +102,12 @@ export function CaseStudyContent({ project }: { project: Project }) {
               sizes="(max-width: 768px) 100vw, 1100px"
               priority
             />
-          </motion.div>
+          </div>
 
           {/* Metrics bar */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-            className="card mb-16 flex flex-wrap justify-center gap-10 p-8 md:gap-16"
+          <div
+            className="card anim-fade mb-16 flex flex-wrap justify-center gap-10 p-8 md:gap-16"
+            style={{ "--anim-delay": "0.2s" } as React.CSSProperties}
           >
             {project.metrics.map((metric) => (
               <div key={metric.label} className="text-center">
@@ -135,16 +125,14 @@ export function CaseStudyContent({ project }: { project: Project }) {
                 </div>
               </div>
             ))}
-          </motion.div>
+          </div>
 
           {/* Content sections */}
           <div className="mx-auto max-w-3xl">
             {project.overview && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.3 }}
-                className="mb-12"
+              <div
+                className="anim-fade mb-12"
+                style={{ "--anim-delay": "0.3s" } as React.CSSProperties}
               >
                 <h2
                   className="mb-4 text-2xl font-bold"
@@ -158,15 +146,13 @@ export function CaseStudyContent({ project }: { project: Project }) {
                 >
                   {project.overview}
                 </p>
-              </motion.div>
+              </div>
             )}
 
             {project.challenge && project.challenge.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.35 }}
-                className="mb-12"
+              <div
+                className="anim-fade mb-12"
+                style={{ "--anim-delay": "0.35s" } as React.CSSProperties}
               >
                 <h2
                   className="mb-4 text-2xl font-bold"
@@ -189,15 +175,13 @@ export function CaseStudyContent({ project }: { project: Project }) {
                     </li>
                   ))}
                 </ul>
-              </motion.div>
+              </div>
             )}
 
             {project.solution && project.solution.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.4 }}
-                className="mb-12"
+              <div
+                className="anim-fade mb-12"
+                style={{ "--anim-delay": "0.4s" } as React.CSSProperties}
               >
                 <h2
                   className="mb-4 text-2xl font-bold"
@@ -220,15 +204,13 @@ export function CaseStudyContent({ project }: { project: Project }) {
                     </li>
                   ))}
                 </ul>
-              </motion.div>
+              </div>
             )}
 
             {project.technologies && project.technologies.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.45 }}
-                className="mb-12"
+              <div
+                className="anim-fade mb-12"
+                style={{ "--anim-delay": "0.45s" } as React.CSSProperties}
               >
                 <h2
                   className="mb-4 text-2xl font-bold"
@@ -251,7 +233,7 @@ export function CaseStudyContent({ project }: { project: Project }) {
                     </span>
                   ))}
                 </div>
-              </motion.div>
+              </div>
             )}
           </div>
 

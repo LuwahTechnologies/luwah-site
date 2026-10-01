@@ -1,5 +1,6 @@
 import "server-only";
 import { createClient, type SanityClient } from "@sanity/client";
+import { reportError } from "@/lib/report";
 
 /**
  * Server-only Sanity client used to PERSIST data (form submissions).
@@ -64,7 +65,7 @@ export async function saveSubmission(doc: SubmissionDoc): Promise<boolean> {
     });
     return true;
   } catch (err) {
-    console.error("Failed to store submission in Sanity:", err);
+    reportError("sanity.write.submission", err);
     return false;
   }
 }

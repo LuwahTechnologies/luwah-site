@@ -1,15 +1,29 @@
 import type { MetadataRoute } from "next";
 import { POSTS } from "@/data/posts";
 import { PROJECTS } from "@/data/projects";
-import { getSanityPostSlugs, getSanityProjectSlugs, getGuideSlugs } from "@/lib/sanity";
+import {
+  getSanityPostIndex,
+  getSanityProjectIndex,
+  getGuideIndex,
+  type IndexEntry,
+} from "@/lib/sanity";
+import { toIsoDate } from "@/lib/seo";
 
 const BASE = "https://luwahtechnologies.com";
 
+// Rebuilt hourly, and on demand when a post, project or guide changes (the
+// reads inside are tagged, see lib/sanityTags.ts). Without this the sitemap was
+// frozen at build time and new content stayed out of it until the next deploy.
+export const revalidate = 3600;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Prefer live Sanity slugs, fall back to the bundled static content.
-  const postSlugs = (await getSanityPostSlugs()) ?? POSTS.map((p) => p.slug);
-  const projectSlugs = (await getSanityProjectSlugs()) ?? PROJECTS.map((p) => p.slug);
-  const guideSlugs = (await getGuideSlugs()) ?? [];
+  const posts: IndexEntry[] =
+    (await getSanityPostIndex()) ??
+    POSTS.map((p) => ({ slug: p.slug, updatedAt: toIsoDate(p.date) }));
+  const projects: IndexEntry[] =
+    (await getSanityProjectIndex()) ?? PROJECTS.map((p) => ({ slug: p.slug }));
+  const guides: IndexEntry[] = (await getGuideIndex()) ?? [];
 
   const staticRoutes: { path: string; priority: number }[] = [
     { path: "/", priority: 1.0 },
@@ -33,16 +47,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/agreements", priority: 0.3 },
   ];
 
-  const now = new Date();
+  // No lastModified for the fixed pages. Stamping them with "now" claims every
+  // page changed on every regeneration, and search engines learn to ignore it.
   const entries: MetadataRoute.Sitemap = staticRoutes.map((r) => ({
     url: `${BASE}${r.path}`,
-    lastModified: now,
     priority: r.priority,
   }));
 
-  for (const slug of postSlugs) entries.push({ url: `${BASE}/blog/${slug}`, lastModified: now, priority: 0.6 });
-  for (const slug of projectSlugs) entries.push({ url: `${BASE}/work/${slug}`, lastModified: now, priority: 0.6 });
-  for (const slug of guideSlugs) entries.push({ url: `${BASE}/learn/${slug}`, lastModified: now, priority: 0.5 });
+  const add = (prefix: string, rows: IndexEntry[], priority: number) => {
+    for (const row of rows) {
+      entries.push({
+        url: `${BASE}/${prefix}/${row.slug}`,
+        lastModified: row.updatedAt,
+        priority,
+      });
+    }
+  };
+  add("blog", posts, 0.6);
+  add("work", projects, 0.6);
+  add("learn", guides, 0.5);
 
   return entries;
 }

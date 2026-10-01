@@ -5,6 +5,7 @@ import { verifyTurnstile } from "@/lib/verifyTurnstile";
 import { signPayload } from "@/lib/signPayload";
 import { rateLimit, clientKey } from "@/lib/rateLimit";
 import { notifyEmail } from "@/lib/notifyEmail";
+import { reportError } from "@/lib/report";
 
 // Whitelist of accepted string fields, mapped straight onto the buildIntake doc.
 const STRING_FIELDS = [
@@ -84,7 +85,7 @@ export async function POST(request: Request) {
         await writeClient.create(doc as never);
         stored = true;
       } catch (err) {
-        console.error("Failed to store build intake:", err);
+        reportError("api.build-intake.store", err);
       }
     }
 
@@ -125,7 +126,7 @@ export async function POST(request: Request) {
         });
         delivered = res.ok;
       } catch (err) {
-        console.error("n8n build-intake forward failed:", err);
+        reportError("api.build-intake.n8n", err);
       }
     }
 
@@ -138,7 +139,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, submission_id: submissionId });
   } catch (error) {
-    console.error("Build intake API error:", error);
+    reportError("api.build-intake", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

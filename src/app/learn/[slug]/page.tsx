@@ -3,6 +3,9 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
 import { getGuides, getGuideBySlug, getGuideSlugs } from "@/lib/sanity";
+import { JsonLd } from "@/components/JsonLd";
+import { pageMetadata } from "@/lib/seo";
+import { breadcrumbSchema } from "@/lib/structuredData";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -19,7 +22,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const guide = await getGuideBySlug(slug);
   if (!guide) return {};
-  return { title: `${guide.title} | Learn`, description: guide.summary };
+  return pageMetadata({
+    title: `${guide.title} | Learn`,
+    description: guide.summary,
+    path: `/learn/${slug}`,
+  });
 }
 
 // Renders a body item: markdown heading or paragraph.
@@ -50,6 +57,13 @@ export default async function GuidePage({ params }: PageProps) {
 
   return (
     <div className="pt-28 pb-24">
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Learn", path: "/learn" },
+          { name: guide.title, path: `/learn/${slug}` },
+        ])}
+      />
       <div className="mx-auto max-w-3xl px-6">
         <Link href="/learn" className="mb-8 inline-flex items-center gap-2 text-sm no-underline" style={{ color: "var(--color-text-secondary)" }}>
           <ArrowLeft size={16} /> Back to Learn

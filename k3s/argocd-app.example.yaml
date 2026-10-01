@@ -1,0 +1,24 @@
+# EXAMPLE ONLY. Not part of kustomization.yaml and never applied by it.
+#
+# How this could be onboarded into Argo CD under the luwah-k3s project. The
+# repo URL and path assume Argo reads this repository directly. If the cluster
+# uses a separate GitOps repository, copy the k3s/ folder there instead and
+# point path at it.
+#
+# Sync is manual on purpose. Turn on automated sync only after the
+# placeholders in kustomization.yaml and ingress.yaml are real and the sealed
+# secret exists.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: luwah-site
+  namespace: argocd
+spec:
+  project: luwah-k3s
+  source:
+    repoURL: https://github.com/LuwahTechnologies/luwah-site.git
+    targetRevision: main
+    path: k3s
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: luwah-site

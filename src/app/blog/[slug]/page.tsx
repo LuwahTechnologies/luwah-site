@@ -3,7 +3,8 @@ import { getPostBySlug, getAllPostSlugs } from "@/data/posts";
 import { getSanityPostBySlug, getSanityPostSlugs } from "@/lib/sanity";
 import { BlogPostContent } from "./BlogPostContent";
 import { JsonLd } from "@/components/JsonLd";
-import { blogPostingSchema } from "@/lib/structuredData";
+import { blogPostingSchema, breadcrumbSchema } from "@/lib/structuredData";
+import { pageMetadata, toIsoDate } from "@/lib/seo";
 import type { Metadata } from "next";
 
 interface PageProps {
@@ -13,9 +14,9 @@ interface PageProps {
 export const revalidate = 60;
 
 export async function generateStaticParams() {
-  const sanitySlugs = await getSanityPostSlugs();
-  const slugs = sanitySlugs ?? getAllPostSlugs();
-  return slugs.map((slug) => ({ slug }));
+  // Sanity slugs plus the bundled ones, for the same reason as /work/[slug].
+  const slugs = new Set([...((await getSanityPostSlugs()) ?? []), ...getAllPostSlugs()]);
+  return [...slugs].map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -23,10 +24,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const post = (await getSanityPostBySlug(slug)) ?? getPostBySlug(slug);
   if (!post) return {};
 
-  return {
+  return pageMetadata({
     title: post.title,
     description: post.excerpt,
-  };
+    path: `/blog/${slug}`,
+    image: post.image,
+    type: "article",
+    publishedTime: toIsoDate(post.date),
+    modifiedTime: toIsoDate(post.updatedAt),
+  });
 }
 
 export default async function BlogPostPage({ params }: PageProps) {
@@ -40,6 +46,13 @@ export default async function BlogPostPage({ params }: PageProps) {
   return (
     <>
       <JsonLd data={blogPostingSchema(post)} />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Blog", path: "/blog" },
+          { name: post.title, path: `/blog/${post.slug}` },
+        ])}
+      />
       <BlogPostContent post={post} />
     </>
   );

@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: luwah-site
+  namespace: luwah-site
+  labels:
+    app.kubernetes.io/name: luwah-site
+    app.kubernetes.io/part-of: luwah
+spec:
+  # k3s ships Traefik as its default ingress controller.
+  ingressClassName: traefik
+  rules:
+    # Placeholder. Set the real hostname before deploying, and only point DNS
+    # at it when you are ready to serve traffic. This change does not touch
+    # DNS, and luwahtechnologies.com stays on Render.
+    - host: luwah-site.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: luwah-site
+                port:
+                  name: http
+  # TLS is left out because it depends on how the cluster gets certificates
+  # (cert-manager, or Cloudflare terminating it in front of Traefik). With
+  # cert-manager, add its annotation above and:
+  #
+  # tls:
+  #   - hosts: [luwah-site.example.com]
+  #     secretName: luwah-site-tls

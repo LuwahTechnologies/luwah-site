@@ -5,6 +5,7 @@ import { verifyTurnstile } from "@/lib/verifyTurnstile";
 import { signPayload } from "@/lib/signPayload";
 import { rateLimit, clientKey } from "@/lib/rateLimit";
 import { notifyEmail } from "@/lib/notifyEmail";
+import { reportError } from "@/lib/report";
 
 /**
  * POST /api/consultation
@@ -146,7 +147,7 @@ export async function POST(request: Request) {
         });
         delivered = res.ok;
       } catch (webhookError) {
-        console.error("n8n webhook failed:", webhookError);
+        reportError("api.consultation.n8n", webhookError);
       }
     }
 
@@ -164,7 +165,7 @@ export async function POST(request: Request) {
       submission_id: submissionId,
     });
   } catch (error) {
-    console.error("Consultation API error:", error);
+    reportError("api.consultation", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
