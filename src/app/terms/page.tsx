@@ -1,4 +1,6 @@
 import { pageMetadata } from "@/lib/seo";
+import { getWebCatalog } from "@/lib/getWebCatalog";
+import { DEFAULT_CATALOG } from "@/lib/webCatalog";
 
 export const metadata = pageMetadata({
   title: "Terms & Conditions",
@@ -7,7 +9,15 @@ export const metadata = pageMetadata({
   path: "/terms",
 });
 
-export default function TermsPage() {
+export const revalidate = 60;
+
+export default async function TermsPage() {
+  const catalog = await getWebCatalog();
+  // Same rate as the Pay as you go plan, so one Studio edit moves both. A label
+  // that is not a single "$N/hr" falls back to the default instead of rendering oddly.
+  const rateOf = (c: typeof catalog) => c.supportPlans.find((p) => p.key === "payg")?.priceLabel ?? "";
+  const label = /^\$\d+\/hr$/.test(rateOf(catalog)) ? rateOf(catalog) : rateOf(DEFAULT_CATALOG);
+  const hourlyRate = label.replace("/hr", "/hour");
   return (
     <div className="pt-24">
       <section className="py-24 md:py-32">
@@ -33,7 +43,7 @@ export default function TermsPage() {
 
             <section>
               <h2 className="mb-3 text-lg font-semibold" style={{ color: "var(--color-text-primary)", fontFamily: "var(--font-display)" }}>2. Free Consultation</h2>
-              <p>The initial 30-minute discovery consultation is provided at no charge and carries no obligation. Additional consultation time beyond the initial session is billed at $110/hour.</p>
+              <p>The initial 30-minute discovery consultation is provided at no charge and carries no obligation. Additional consultation time beyond the initial session is billed at {hourlyRate}.</p>
             </section>
 
             <section>
