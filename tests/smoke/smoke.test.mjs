@@ -204,6 +204,36 @@ describe("smoke", { timeout: 15 * 60 * 1000 }, () => {
       assert.match(h1(res.text), /Get in touch/);
     });
 
+    it("renders the intake fork with both paths", async () => {
+      const res = await get("/intake");
+      assert.equal(res.status, 200);
+      assert.match(h1(res.text), /Start your intake/);
+      assert.match(res.text, /href="\/intake\/website"/);
+      assert.match(res.text, /href="\/intake\/automation"/);
+    });
+
+    it("renders the website intake", async () => {
+      const res = await get("/intake/website");
+      assert.equal(res.status, 200);
+      assert.match(h1(res.text), /Website build intake/);
+    });
+
+    it("renders the automation intake", async () => {
+      const res = await get("/intake/automation");
+      assert.equal(res.status, 200);
+      assert.match(h1(res.text), /Automation and operations intake/);
+    });
+
+    it("rejects an automation intake with an unexpected field", async () => {
+      const res = await fetch(`${base}/api/automation-intake`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ unexpected: "x" }),
+      });
+      assert.equal(res.status, 400);
+      assert.match((await res.json()).error, /Unexpected field/);
+    });
+
     it("renders a Sanity-driven route from the bundled content", async () => {
       const res = await get(`/work/${BUNDLED.slug}`);
       assert.equal(res.status, 200);
@@ -220,6 +250,8 @@ describe("smoke", { timeout: 15 * 60 * 1000 }, () => {
       const sitemap = await get("/sitemap.xml");
       assert.equal(sitemap.status, 200);
       assert.match(sitemap.text, new RegExp(`/work/${BUNDLED.slug}<`));
+      assert.match(sitemap.text, /\/intake\/website</);
+      assert.match(sitemap.text, /\/intake\/automation</);
       const robots = await get("/robots.txt");
       assert.equal(robots.status, 200);
       // "Disallow: /review" alone is a prefix rule and would also block the
