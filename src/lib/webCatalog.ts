@@ -174,7 +174,7 @@ export const DEFAULT_CATALOG: WebCatalog = {
     { key: "payg", name: "Pay as you go", priceLabel: "$110/hr", includes: "No subscription. Help on specific issues, 1 hour minimum." },
   ],
   legal:
-    "Standard rates shown. Custom quotes may differ based on scope and timeline. Colorado professional services are exempt from sales tax per §39-26-104, C.R.S. Pricing effective 2026-10-03, subject to change.",
+    "Standard rates shown. Custom quotes may differ based on scope and timeline. Colorado professional services are exempt from sales tax per §39-26-104, C.R.S. Provider costs for services such as Stripe, Twilio, Sanity, Sentry, Resend and Slack are billed to you by the provider and are not part of any Website Care plan. Pricing effective 2026-10-03, subject to change.",
 };
 
 export interface OrderSelection {
