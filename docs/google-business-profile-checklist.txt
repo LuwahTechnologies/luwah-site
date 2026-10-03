@@ -12,7 +12,7 @@ Summary
 
 Before You Start
 
-- [ ] Confirm you meet Denver-metro clients in person for at least some of the work. Google does not allow online-only businesses to use a service-area profile. If all work is remote, stop here and use Bing Places, Apple Business Connect, Clutch and G2 instead.
+- [ ] Eligibility: confirmed. Most clients are remote, but you meet Denver-metro clients in person on request. Google requires an in-person element and does not allow online-only businesses. The contact page now says so (PR #61: "In the Denver metro area we can meet you at your business"). Keep this true. Only list areas where you will actually travel to meet a client. If that changes to remote only, stop and use Bing Places, Apple Business Connect, Clutch and G2 instead.
 - [ ] Sign in with a Google account the business owns, not a personal one. Use hello@luwahtechnologies.com if it can be a Google account.
 - [ ] Confirm the exact business name: Luwah Technologies. Do not add keywords or city names to it.
 - [ ] Confirm the phone number: +1 (720) 421-7184. It must match the site.
