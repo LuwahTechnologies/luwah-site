@@ -18,9 +18,15 @@ export const A11Y_LINKS = {
   privacyLabel: "Privacy Policy",
 };
 
+// The mailto needs no JavaScript and no captcha, so a visitor the challenge
+// blocks can still report a barrier.
 export const A11Y_CONTACT_FALLBACK = (
   <>
-    You can also reach us through the{" "}
+    You can also email{" "}
+    <a href="mailto:hello@luwahtechnologies.com" className="text-a11ybrand-700 underline underline-offset-2">
+      hello@luwahtechnologies.com
+    </a>{" "}
+    or use the{" "}
     <a href="/contact" className="text-a11ybrand-700 underline underline-offset-2">
       contact page
     </a>
