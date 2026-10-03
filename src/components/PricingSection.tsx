@@ -1,7 +1,5 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
 import Link from "next/link";
 import { Check } from "lucide-react";
 
@@ -94,11 +92,8 @@ export function PricingSection({
   const introText = intro && intro.trim() ? intro : DEFAULT_INTRO;
   const tierList = tiers && tiers.length > 0 ? tiers : TIERS;
 
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
-
   return (
-    <section id="pricing" className="py-24 md:py-32" ref={ref}>
+    <section id="pricing" className="py-24 md:py-32">
       <div className="mx-auto max-w-[var(--container-max)] px-6">
         <div className="mb-14 text-center">
           <h2
@@ -117,16 +112,14 @@ export function PricingSection({
 
         <div className="grid gap-4 md:grid-cols-4">
           {tierList.map((tier, i) => (
-            <motion.div
+            <div
               key={tier.title}
-              initial={{ opacity: 0 }}
-              animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.4, delay: i * 0.1 }}
-              className="card flex flex-col p-7"
+              className="anim-fade card flex flex-col p-7"
               style={
-                tier.highlight
-                  ? { borderColor: "var(--color-copper-border)" }
-                  : {}
+                {
+                  "--anim-delay": `${i * 0.1}s`,
+                  ...(tier.highlight && { borderColor: "var(--color-copper-border)" }),
+                } as React.CSSProperties
               }
             >
               <h3
@@ -179,7 +172,7 @@ export function PricingSection({
                   </li>
                 ))}
               </ul>
-            </motion.div>
+            </div>
           ))}
         </div>
 

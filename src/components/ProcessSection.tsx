@@ -1,7 +1,5 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
 
 const STEPS = [
   {
@@ -25,15 +23,12 @@ const STEPS = [
 ];
 
 export function ProcessSection() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
     <section
       id="how-it-works"
       className="py-24 md:py-32"
       style={{ backgroundColor: "var(--color-bg-secondary)" }}
-      ref={ref}
     >
       <div className="mx-auto max-w-[var(--container-max)] px-6">
         <div className="mb-16 text-center">
@@ -53,12 +48,10 @@ export function ProcessSection() {
 
         <div className="grid gap-5 md:grid-cols-3">
           {STEPS.map((step, i) => (
-            <motion.div
+            <div
               key={step.number}
-              initial={{ opacity: 0, y: 12 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.4, delay: i * 0.1 }}
-              className="card p-8"
+              className="anim-fade card p-8"
+              style={{ "--anim-delay": `${i * 0.1}s` } as React.CSSProperties}
             >
               <span
                 className="mb-5 inline-block text-sm font-bold"
@@ -78,7 +71,7 @@ export function ProcessSection() {
               >
                 {step.description}
               </p>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
