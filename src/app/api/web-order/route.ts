@@ -44,7 +44,11 @@ export async function POST(request: Request) {
 
     // Recompute the total from the catalog. The client value is never trusted.
     const catalog = await getWebCatalog({ failOpen: true });
-    const addonKeys: string[] = Array.isArray(body.addonKeys) ? body.addonKeys : [];
+    // Keep only add-ons a client may order. Hosting tiers are set by Luwah, and
+    // an old tab or a hand-built request could still send them.
+    const addonKeys: string[] = (Array.isArray(body.addonKeys) ? body.addonKeys : []).filter(
+      (k: unknown) => catalog.addons.some((a) => a.key === k && a.orderable !== false)
+    );
     const extraPages = Number.isInteger(body.extraPages) ? body.extraPages : 0;
     const totals = computeOrderTotal(catalog, {
       tierKey: body.tierKey,

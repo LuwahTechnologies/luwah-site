@@ -213,7 +213,7 @@ export function computeOrderTotal(
 
   for (const key of sel.addonKeys) {
     const addon = catalog.addons.find((a) => a.key === key);
-    if (!addon || included.has(key)) continue; // bundled add-ons are free
+    if (!addon || addon.orderable === false || included.has(key)) continue; // bundled add-ons are free
     if (addon.variable) {
       hasVariable = true; // quoted separately, not added to the fixed total
       continue;
