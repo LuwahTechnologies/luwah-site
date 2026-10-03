@@ -84,6 +84,7 @@ export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<FormState>(EMPTY);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [resetSignal, setResetSignal] = useState(0);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
   const handleToken = useCallback((t: string) => setTurnstileToken(t), []);
@@ -120,6 +121,8 @@ export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons
       setStatus("sent");
     } catch {
       setStatus("error");
+      setTurnstileToken(null);
+      setResetSignal((n) => n + 1);
     }
   };
 
@@ -245,7 +248,7 @@ export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons
                 this website project. *
               </span>
             </label>
-            <Turnstile onToken={handleToken} onExpire={handleExpire} />
+            <Turnstile onToken={handleToken} onExpire={handleExpire} resetSignal={resetSignal} />
           </>
         )}
       </div>
