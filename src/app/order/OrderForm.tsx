@@ -89,7 +89,7 @@ export function OrderForm({ catalog }: { catalog: WebCatalog }) {
           Thanks. We will send a quote within 24 to 48 hours. To speed up the build, complete the
           intake form next so we have your brand, pages, and content.
         </p>
-        <Link href="/intake" className="btn-primary">Continue to build intake</Link>
+        <Link href="/intake/website" className="btn-primary">Continue to build intake</Link>
       </div>
     );
   }
