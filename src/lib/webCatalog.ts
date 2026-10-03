@@ -105,11 +105,11 @@ export const DEFAULT_CATALOG: WebCatalog = {
       price: 2750,
       priceLabel: "$2,750",
       pages: "Premium Web Service",
-      summary: "Custom booking with a content dashboard.",
+      summary: "Custom booking with a management dashboard.",
       highlight: true,
       features: [
         "React app with Express and Supabase",
-        "Basic content dashboard (the Admin account add-on adds roles and extra logins)",
+        "Basic dashboard to view and manage bookings (the Admin account add-on adds roles and extra logins)",
         "Real time calendar sync",
         "Email automation, with SMS alerts available as an add-on",
         "Google Analytics",
