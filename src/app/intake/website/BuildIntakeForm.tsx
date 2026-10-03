@@ -150,7 +150,7 @@ export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons
             className="rounded-full px-3 py-1 text-xs"
             style={{
               backgroundColor: i === step ? "var(--color-copper)" : "var(--color-bg-input)",
-              color: i === step ? "#fff" : "var(--color-text-muted)",
+              color: i === step ? "var(--color-bg-primary)" : "var(--color-text-muted)",
               border: "1px solid var(--color-border)",
             }}
           >

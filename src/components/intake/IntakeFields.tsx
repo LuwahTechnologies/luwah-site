@@ -83,7 +83,7 @@ export function Radio({ label, options, value, onChange }: {
             style={{
               border: "1px solid var(--color-border)",
               backgroundColor: value === o ? "var(--color-copper)" : "var(--color-bg-input)",
-              color: value === o ? "#fff" : "var(--color-text-secondary)",
+              color: value === o ? "var(--color-bg-primary)" : "var(--color-text-secondary)",
             }}>
             {o}
           </button>
@@ -112,7 +112,7 @@ export function CheckGroup({ label, options, selected, onToggle }: {
               }}>
               <span className="flex h-4 w-4 items-center justify-center rounded"
                 style={{ border: "1px solid var(--color-border)", backgroundColor: on ? "var(--color-copper)" : "transparent" }}>
-                {on && <Check size={11} color="#fff" />}
+                {on && <Check size={11} color="var(--color-bg-primary)" />}
               </span>
               {o}
             </button>
