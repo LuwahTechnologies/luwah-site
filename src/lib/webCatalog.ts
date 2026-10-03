@@ -153,7 +153,7 @@ export const DEFAULT_CATALOG: WebCatalog = {
       description: "Reliable automated emails like confirmations and receipts, sent from your own domain." },
     { key: "slack", name: "Slack notifications", oneTime: 150, oneTimeLabel: "+$150",
       description: "Get a Slack message the moment a lead, order, or form submission comes in." },
-    { key: "twilio", name: "Twilio SMS", oneTime: 300, oneTimeLabel: "+$300",
+    { key: "twilio", name: "Twilio SMS", oneTime: 500, oneTimeLabel: "+$500",
       description: "Send and receive text messages, such as appointment reminders or SMS alerts to customers." },
     { key: "admin-account", name: "Admin account", oneTime: 800, oneTimeLabel: "From $800", variable: true,
       description: "A secure login to manage your site's content and data from one dashboard. Scoped and priced by the number of pages and any integrations, such as Microsoft." },
