@@ -133,7 +133,7 @@ export function OrderForm({ catalog }: { catalog: WebCatalog }) {
           </div>
           {quoteTier?.cta && (
             <p className="mt-4 text-sm" style={{ color: "var(--color-text-secondary)" }}>
-              Need something custom? {quoteTier.name} starts at {fmt(quoteTier.price)} and is quoted after a discovery call.{" "}
+              Need something custom? {quoteTier.name}{typeof quoteTier.price === "number" ? ` starts at ${fmt(quoteTier.price)}` : ""} and is quoted after a discovery call.{" "}
               <Link href={quoteTier.cta.href} className="underline" style={{ color: "var(--color-copper)" }}>{quoteTier.cta.label}</Link>
             </p>
           )}
