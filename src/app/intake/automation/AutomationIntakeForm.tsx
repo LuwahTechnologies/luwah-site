@@ -184,7 +184,7 @@ export function AutomationIntakeForm() {
             Next <ArrowRight size={16} />
           </button>
         ) : (
-          <button onClick={handleSubmit} disabled={!canAdvance() || !turnstileToken || status === "sending"}
+          <button onClick={handleSubmit} aria-disabled={!canAdvance() || !turnstileToken || status === "sending"}
             className="btn-primary flex items-center gap-2" type="button"
             style={{ opacity: canAdvance() && turnstileToken ? 1 : 0.5 }}>
             {status === "sending" ? "Submitting..." : "Submit intake"} {status !== "sending" && <Check size={16} />}
