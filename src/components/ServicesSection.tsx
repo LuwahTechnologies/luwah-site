@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { Mail, BarChart3, Bot, Workflow, Link2, Globe } from "lucide-react";
 
