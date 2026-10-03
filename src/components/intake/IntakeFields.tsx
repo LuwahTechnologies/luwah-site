@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import { Check } from "lucide-react";
 
 // ── Field primitives ──────────────────────────────────────────────
@@ -10,11 +11,16 @@ export const inputStyle: React.CSSProperties = {
   fontFamily: "var(--font-body)",
 };
 
-export function Label({ text, hint }: { text: string; hint?: string }) {
+export function Label({ text, hint, htmlFor, hintId, groupId }: {
+  text: string; hint?: string; htmlFor?: string; hintId?: string; groupId?: string;
+}) {
+  const style = { color: "var(--color-text-primary)" };
   return (
     <div className="mb-1.5">
-      <label className="block text-sm font-medium" style={{ color: "var(--color-text-primary)" }}>{text}</label>
-      {hint && <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>{hint}</p>}
+      {groupId
+        ? <div id={groupId} className="block text-sm font-medium" style={style}>{text}</div>
+        : <label htmlFor={htmlFor} className="block text-sm font-medium" style={style}>{text}</label>}
+      {hint && <p id={hintId} className="text-xs" style={{ color: "var(--color-text-muted)" }}>{hint}</p>}
     </div>
   );
 }
@@ -22,11 +28,13 @@ export function Label({ text, hint }: { text: string; hint?: string }) {
 export function Field({ label, hint, value, onChange, type = "text" }: {
   label: string; hint?: string; value: string; onChange: (v: string) => void; type?: string;
 }) {
+  const id = useId();
+  const hintId = `${id}-hint`;
   return (
     <div>
-      <Label text={label} hint={hint} />
-      <input type={type} value={value} onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg px-4 py-3 text-sm outline-none" style={inputStyle} />
+      <Label text={label} hint={hint} htmlFor={id} hintId={hintId} />
+      <input id={id} aria-describedby={hint ? hintId : undefined} type={type} value={value} onChange={(e) => onChange(e.target.value)}
+        className="intake-focus w-full rounded-lg px-4 py-3 text-sm" style={inputStyle} />
     </div>
   );
 }
@@ -34,11 +42,13 @@ export function Field({ label, hint, value, onChange, type = "text" }: {
 export function Area({ label, hint, value, onChange }: {
   label: string; hint?: string; value: string; onChange: (v: string) => void;
 }) {
+  const id = useId();
+  const hintId = `${id}-hint`;
   return (
     <div>
-      <Label text={label} hint={hint} />
-      <textarea rows={3} value={value} onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg px-4 py-3 text-sm outline-none" style={inputStyle} />
+      <Label text={label} hint={hint} htmlFor={id} hintId={hintId} />
+      <textarea id={id} aria-describedby={hint ? hintId : undefined} rows={3} value={value} onChange={(e) => onChange(e.target.value)}
+        className="intake-focus w-full rounded-lg px-4 py-3 text-sm" style={inputStyle} />
     </div>
   );
 }
@@ -46,11 +56,12 @@ export function Area({ label, hint, value, onChange }: {
 export function Select({ label, options, value, onChange }: {
   label: string; options: string[]; value: string; onChange: (v: string) => void;
 }) {
+  const id = useId();
   return (
     <div>
-      <Label text={label} />
-      <select value={value} onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg px-4 py-3 text-sm outline-none" style={inputStyle}>
+      <Label text={label} htmlFor={id} />
+      <select id={id} value={value} onChange={(e) => onChange(e.target.value)}
+        className="intake-focus w-full rounded-lg px-4 py-3 text-sm" style={inputStyle}>
         <option value="">Select…</option>
         {options.map((o) => <option key={o} value={o}>{o}</option>)}
       </select>
@@ -61,13 +72,14 @@ export function Select({ label, options, value, onChange }: {
 export function Radio({ label, options, value, onChange }: {
   label: string; options: string[]; value: string; onChange: (v: string) => void;
 }) {
+  const labelId = useId();
   return (
-    <div>
-      <Label text={label} />
+    <div role="group" aria-labelledby={labelId}>
+      <Label text={label} groupId={labelId} />
       <div className="flex flex-wrap gap-2">
         {options.map((o) => (
           <button key={o} type="button" onClick={() => onChange(o)}
-            className="rounded-md px-3 py-2 text-sm transition-all"
+            className="intake-focus rounded-md px-3 py-2 text-sm transition-all"
             style={{
               border: "1px solid var(--color-border)",
               backgroundColor: value === o ? "var(--color-copper)" : "var(--color-bg-input)",
@@ -84,15 +96,16 @@ export function Radio({ label, options, value, onChange }: {
 export function CheckGroup({ label, options, selected, onToggle }: {
   label: string; options: string[]; selected: string[]; onToggle: (v: string) => void;
 }) {
+  const labelId = useId();
   return (
-    <div>
-      <Label text={label} />
+    <div role="group" aria-labelledby={labelId}>
+      <Label text={label} groupId={labelId} />
       <div className="grid gap-2 sm:grid-cols-2">
         {options.map((o) => {
           const on = selected.includes(o);
           return (
             <button key={o} type="button" onClick={() => onToggle(o)}
-              className="flex items-center gap-2.5 rounded-md px-3 py-2 text-left text-sm transition-all"
+              className="intake-focus flex min-h-11 items-center gap-2.5 rounded-md px-3 py-2 text-left text-sm transition-all"
               style={{
                 border: `1px solid ${on ? "var(--color-copper-border)" : "var(--color-border)"}`,
                 backgroundColor: "var(--color-bg-input)",
