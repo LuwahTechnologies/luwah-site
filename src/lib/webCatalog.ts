@@ -54,8 +54,8 @@ export const DEFAULT_CATALOG: WebCatalog = {
     {
       key: "realtor-landing",
       name: "Realtor Landing",
-      price: 300,
-      priceLabel: "$300",
+      price: 450,
+      priceLabel: "$450",
       pages: "Single Page",
       summary: "Conversion landing page for realtors.",
       features: [

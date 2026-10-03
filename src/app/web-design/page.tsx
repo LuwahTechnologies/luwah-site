@@ -5,7 +5,7 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata = pageMetadata({
   title: "Website Design & Build",
   description:
-    "Fixed-price websites from $300. Realtor landing pages, marketing sites, and booking systems, plus custom builds from $4,000. Build, deploy, and 30 days of support included.",
+    "Fixed-price websites from $450. Realtor landing pages, marketing sites, and booking systems, plus custom builds from $4,000. Build, deploy, and 30 days of support included.",
   path: "/web-design",
 });
 
