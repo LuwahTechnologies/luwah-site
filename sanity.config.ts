@@ -61,7 +61,7 @@ export default defineConfig({
                   ])
               ),
             S.divider(),
-            // Web-build offering: orders and intakes from the /order and /intake forms.
+            // Web-build and automation offerings: orders and intakes from /order and /intake/*.
             S.listItem()
               .id("webOrders")
               .title("Web Orders")

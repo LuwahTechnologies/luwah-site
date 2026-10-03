@@ -31,7 +31,7 @@ function cleanArray(v: unknown): string[] {
 
 /**
  * POST /api/build-intake
- * Receives the 9-section build intake from the /intake wizard. Verifies
+ * Receives the 9-section build intake from the /intake/website wizard. Verifies
  * Turnstile, stores it as a `buildIntake` document for the admin Studio, and
  * optionally forwards to n8n.
  */
