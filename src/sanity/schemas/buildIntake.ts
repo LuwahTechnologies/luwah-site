@@ -8,7 +8,7 @@ const roArr = (name: string, title: string, group: string) =>
   defineField({ name, title, type: "array", of: [{ type: "string" }], readOnly: true, group });
 
 /**
- * A submitted build intake from the /intake wizard. Mirrors the 9 sections of
+ * A submitted build intake from the /intake/website wizard. Mirrors the 9 sections of
  * the PDF intake form. Captured fields are read-only; status and notes editable.
  */
 export default defineType({

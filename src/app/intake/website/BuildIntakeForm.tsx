@@ -1,21 +1,16 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import { Turnstile } from "@/components/Turnstile";
+import { Field, Area, Select, Radio, CheckGroup } from "@/components/intake/IntakeFields";
+import { EMAIL_RE, TIMELINE_OPTIONS } from "@/lib/intakeOptions";
 
 interface TierOption {
   key: string;
   name: string;
   priceLabel: string;
 }
-
-const inputStyle: React.CSSProperties = {
-  backgroundColor: "var(--color-bg-input)",
-  border: "1px solid var(--color-border)",
-  color: "var(--color-text-primary)",
-  fontFamily: "var(--font-body)",
-};
 
 const PRIMARY_GOALS = [
   "Capture leads / contact requests",
@@ -50,7 +45,6 @@ const MEDIA_OPTIONS = [
 ];
 const DOMAIN_OPTIONS = ["Yes, I own it already", "No, I need help purchasing one", "Not sure what a domain is"];
 const HOSTING_OPTIONS = ["Managed hosting via Luwah", "I'll host it myself", "Not sure, please advise"];
-const TIMELINE_OPTIONS = ["As soon as possible", "Within 2 weeks", "Within a month", "Flexible: quality over speed"];
 
 const CONTENT_OWNER_OPTIONS = ["I will write it", "Write it for me", "A mix of both"];
 const SUPPORT_EMAIL = "info@luwahtechnologies.com";
@@ -90,7 +84,12 @@ export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<FormState>(EMPTY);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [resetSignal, setResetSignal] = useState(0);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [showErrors, setShowErrors] = useState(false);
+  const [verifyPrompt, setVerifyPrompt] = useState(false);
+  const [focusSignal, setFocusSignal] = useState(0);
+  const fieldsRef = useRef<HTMLDivElement>(null);
 
   const handleToken = useCallback((t: string) => setTurnstileToken(t), []);
   const handleExpire = useCallback(() => setTurnstileToken(null), []);
@@ -103,18 +102,53 @@ export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons
 
   const tierOptions = [...tiers.map((t) => `${t.name} (${t.priceLabel})`), "Not sure, please advise"];
 
-  // Per-step gate on the required fields for that step.
-  const canAdvance = () => {
-    if (step === 0) return form.businessName.trim() && form.contactName.trim() && form.email.trim();
-    if (step === 1) return form.primaryGoal && form.targetAudience.trim() && form.mainCta.trim();
-    if (step === 3) return form.pages.length > 0 && form.homeSections.trim() && form.services.trim();
-    if (step === 4) return form.forms.length > 0;
-    if (step === 5) return form.hasDomain && form.timeline && form.printedName.trim() && form.agreed;
-    return true;
+  // Same required fields as before. Messages show only after a blocked Next or Submit.
+  const stepErrors = (): Record<string, string> => {
+    const e: Record<string, string> = {};
+    if (step === 0) {
+      if (!form.businessName.trim()) e.businessName = "Enter your business or brand name.";
+      if (!form.contactName.trim()) e.contactName = "Enter your name.";
+      if (!form.email.trim()) e.email = "Enter your email address.";
+      else if (!EMAIL_RE.test(form.email.trim())) e.email = "Enter an email address like name@example.com.";
+    }
+    if (step === 1) {
+      if (!form.primaryGoal) e.primaryGoal = "Choose a primary goal.";
+      if (!form.targetAudience.trim()) e.targetAudience = "Describe your target audience.";
+      if (!form.mainCta.trim()) e.mainCta = "Enter your main call to action.";
+    }
+    if (step === 3) {
+      if (form.pages.length === 0) e.pages = "Choose at least one page.";
+      if (!form.homeSections.trim()) e.homeSections = "Describe your home page sections.";
+      if (!form.services.trim()) e.services = "List your services.";
+    }
+    if (step === 4 && form.forms.length === 0) e.forms = "Choose at least one form.";
+    if (step === 5) {
+      if (!form.hasDomain) e.hasDomain = "Choose an option.";
+      if (!form.timeline) e.timeline = "Choose when you need the site live.";
+      if (!form.printedName.trim()) e.printedName = "Enter your printed name.";
+      if (!form.agreed) e.agreed = "Check the box to confirm.";
+    }
+    return e;
   };
+  const errors = stepErrors();
+
+  const canAdvance = () => Object.keys(errors).length === 0;
+  const err = (k: string) => (showErrors ? errors[k] : undefined);
+
+  // Move focus to the first invalid control after a blocked Next or Submit.
+  useEffect(() => {
+    if (focusSignal === 0) return;
+    fieldsRef.current?.querySelector<HTMLElement>('[aria-invalid="true"], [data-invalid="true"] button')?.focus();
+  }, [focusSignal]);
+
+  const blocked = () => { setShowErrors(true); setFocusSignal((n) => n + 1); };
+  const goNext = () => { if (!canAdvance()) return blocked(); setShowErrors(false); setStep(step + 1); };
+  const goBack = () => { setShowErrors(false); setStep(step - 1); };
 
   const handleSubmit = async () => {
-    if (!canAdvance() || !turnstileToken || status === "sending") return;
+    if (status === "sending") return;
+    if (!canAdvance()) return blocked();
+    if (!turnstileToken) return setVerifyPrompt(true);
     setStatus("sending");
     try {
       const res = await fetch("/api/build-intake", {
@@ -126,8 +160,17 @@ export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons
       setStatus("sent");
     } catch {
       setStatus("error");
+      setTurnstileToken(null);
+      setResetSignal((n) => n + 1);
     }
   };
+
+  const notice =
+    verifyPrompt && !turnstileToken
+      ? "Complete the verification check above, then submit again."
+      : status === "error"
+        ? "Something went wrong. Please try again or email hello@luwahtechnologies.com"
+        : "";
 
   if (status === "sent") {
     return (
@@ -153,7 +196,7 @@ export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons
             className="rounded-full px-3 py-1 text-xs"
             style={{
               backgroundColor: i === step ? "var(--color-copper)" : "var(--color-bg-input)",
-              color: i === step ? "#fff" : "var(--color-text-muted)",
+              color: i === step ? "var(--color-bg-primary)" : "var(--color-text-muted)",
               border: "1px solid var(--color-border)",
             }}
           >
@@ -162,13 +205,13 @@ export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons
         ))}
       </div>
 
-      <div className="flex flex-col gap-5">
+      <div ref={fieldsRef} className="flex flex-col gap-5">
         {step === 0 && (
           <>
-            <Field label="Business / brand name *" value={form.businessName} onChange={(v) => update({ businessName: v })} />
-            <Field label="Your name (owner / contact) *" value={form.contactName} onChange={(v) => update({ contactName: v })} />
-            <Field label="Email *" value={form.email} onChange={(v) => update({ email: v })} type="email" />
-            <Field label="Phone" value={form.phone} onChange={(v) => update({ phone: v })} />
+            <Field label="Business / brand name *" error={err("businessName")} value={form.businessName} onChange={(v) => update({ businessName: v })} autoComplete="organization" />
+            <Field label="Your name (owner / contact) *" error={err("contactName")} value={form.contactName} onChange={(v) => update({ contactName: v })} autoComplete="name" />
+            <Field label="Email *" error={err("email")} value={form.email} onChange={(v) => update({ email: v })} type="email" autoComplete="email" />
+            <Field label="Phone" value={form.phone} onChange={(v) => update({ phone: v })} autoComplete="tel" />
             <Field label="Industry / niche" value={form.industry} onChange={(v) => update({ industry: v })} />
             <Field label="City / location" value={form.location} onChange={(v) => update({ location: v })} />
             <Field label="Current website address" hint="Leave blank if you do not have one. Choose the site migration add-on if we are moving it." value={form.currentSite} onChange={(v) => update({ currentSite: v })} />
@@ -183,9 +226,9 @@ export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons
 
         {step === 1 && (
           <>
-            <Radio label="Primary goal of this website *" options={PRIMARY_GOALS} value={form.primaryGoal} onChange={(v) => update({ primaryGoal: v })} />
-            <Area label="Target audience *" hint="Age, profession, pain points, location. Be specific." value={form.targetAudience} onChange={(v) => update({ targetAudience: v })} />
-            <Field label="Main call to action *" hint='e.g. "Book a free consultation"' value={form.mainCta} onChange={(v) => update({ mainCta: v })} />
+            <Radio label="Primary goal of this website *" error={err("primaryGoal")} options={PRIMARY_GOALS} value={form.primaryGoal} onChange={(v) => update({ primaryGoal: v })} />
+            <Area label="Target audience *" error={err("targetAudience")} hint="Age, profession, pain points, location. Be specific." value={form.targetAudience} onChange={(v) => update({ targetAudience: v })} />
+            <Field label="Main call to action *" error={err("mainCta")} hint='e.g. "Book a free consultation"' value={form.mainCta} onChange={(v) => update({ mainCta: v })} />
             <Area label="What problem does your site solve?" value={form.problemSolved} onChange={(v) => update({ problemSolved: v })} />
             <Select label="Which tier are you considering?" options={tierOptions} value={form.tier} onChange={(v) => update({ tier: v })} />
             <CheckGroup label="Add-ons you want included" options={addons} selected={form.addons} onToggle={(v) => toggle("addons", v)} />
@@ -205,11 +248,11 @@ export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons
 
         {step === 3 && (
           <>
-            <CheckGroup label="Which pages do you need? *" options={PAGE_OPTIONS} selected={form.pages} onToggle={(v) => toggle("pages", v)} />
+            <CheckGroup label="Which pages do you need? *" error={err("pages")} options={PAGE_OPTIONS} selected={form.pages} onToggle={(v) => toggle("pages", v)} />
             <Field label="Other pages not listed" value={form.otherPages} onChange={(v) => update({ otherPages: v })} />
-            <Area label="Home page sections *" hint="List each section and describe it." value={form.homeSections} onChange={(v) => update({ homeSections: v })} />
+            <Area label="Home page sections *" error={err("homeSections")} hint="List each section and describe it." value={form.homeSections} onChange={(v) => update({ homeSections: v })} />
             <Area label="About page content" value={form.aboutContent} onChange={(v) => update({ aboutContent: v })} />
-            <Area label="Services (name, description, price) *" value={form.services} onChange={(v) => update({ services: v })} />
+            <Area label="Services (name, description, price) *" error={err("services")} value={form.services} onChange={(v) => update({ services: v })} />
             <Select label="Do you have testimonials?" options={TESTIMONIAL_OPTIONS} value={form.hasTestimonials} onChange={(v) => update({ hasTestimonials: v })} />
             <Area label="Testimonials, awards, certifications" value={form.testimonials} onChange={(v) => update({ testimonials: v })} />
             <Select label="Who writes the page copy?" options={CONTENT_OWNER_OPTIONS} value={form.contentOwner} onChange={(v) => update({ contentOwner: v })} />
@@ -220,7 +263,7 @@ export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons
 
         {step === 4 && (
           <>
-            <CheckGroup label="Which forms do you need? *" options={FORM_OPTIONS} selected={form.forms} onToggle={(v) => toggle("forms", v)} />
+            <CheckGroup label="Which forms do you need? *" error={err("forms")} options={FORM_OPTIONS} selected={form.forms} onToggle={(v) => toggle("forms", v)} />
             <Area label="Custom form details" value={form.customForm} onChange={(v) => update({ customForm: v })} />
             <Select label="Booking / scheduling tool" options={BOOKING_OPTIONS} value={form.bookingTool} onChange={(v) => update({ bookingTool: v })} />
             <Select label="Do you need to collect payments?" options={PAYMENT_OPTIONS} value={form.needsPayments} onChange={(v) => update({ needsPayments: v })} />
@@ -234,24 +277,25 @@ export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons
 
         {step === 5 && (
           <>
-            <Select label="Do you have a domain name? *" options={DOMAIN_OPTIONS} value={form.hasDomain} onChange={(v) => update({ hasDomain: v })} />
+            <Select label="Do you have a domain name? *" error={err("hasDomain")} options={DOMAIN_OPTIONS} value={form.hasDomain} onChange={(v) => update({ hasDomain: v })} />
             <Field label="Domain name (if you own one)" value={form.domainName} onChange={(v) => update({ domainName: v })} />
             <Field label="Where is it registered?" value={form.registrar} onChange={(v) => update({ registrar: v })} />
             <Select label="Hosting preference" options={HOSTING_OPTIONS} value={form.hostingPreference} onChange={(v) => update({ hostingPreference: v })} />
-            <Select label="When do you need the site live? *" options={TIMELINE_OPTIONS} value={form.timeline} onChange={(v) => update({ timeline: v })} />
+            <Select label="When do you need the site live? *" error={err("timeline")} options={TIMELINE_OPTIONS} value={form.timeline} onChange={(v) => update({ timeline: v })} />
             <Select label="Budget range" options={tierOptions} value={form.budget} onChange={(v) => update({ budget: v })} />
             <Field label="Who approves the final site?" hint="Name and email if it is not you." value={form.decisionMaker} onChange={(v) => update({ decisionMaker: v })} />
             <Area label="Anything else we should know?" value={form.anythingElse} onChange={(v) => update({ anythingElse: v })} />
-            <Field label="Printed name *" hint="Confirms the information is accurate." value={form.printedName} onChange={(v) => update({ printedName: v })} />
+            <Field label="Printed name *" error={err("printedName")} hint="Confirms the information is accurate." value={form.printedName} onChange={(v) => update({ printedName: v })} />
             <label className="flex items-start gap-3" style={{ cursor: "pointer" }}>
-              <input type="checkbox" checked={form.agreed} onChange={(e) => update({ agreed: e.target.checked })}
+              <input type="checkbox" checked={form.agreed} aria-invalid={err("agreed") ? true : undefined} aria-describedby={err("agreed") ? "agreed-err" : undefined} onChange={(e) => update({ agreed: e.target.checked })}
                 className="mt-1 h-4 w-4" style={{ accentColor: "var(--color-copper)" }} />
               <span className="text-xs leading-relaxed" style={{ color: "var(--color-text-secondary)" }}>
                 I confirm the information provided is accurate and that I am authorized to commission
                 this website project. *
               </span>
             </label>
-            <Turnstile onToken={handleToken} onExpire={handleExpire} />
+            {err("agreed") && <p id="agreed-err" className="-mt-3 text-xs" style={{ color: "#ef4444" }}>{err("agreed")}</p>}
+            <Turnstile onToken={handleToken} onExpire={handleExpire} resetSignal={resetSignal} />
           </>
         )}
       </div>
@@ -259,18 +303,18 @@ export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons
       {/* Navigation */}
       <div className="mt-8 flex items-center justify-between">
         {step > 0 ? (
-          <button onClick={() => setStep(step - 1)} className="btn-secondary flex items-center gap-2" type="button">
+          <button onClick={goBack} className="btn-secondary flex items-center gap-2" type="button">
             <ArrowLeft size={16} /> Back
           </button>
         ) : <div />}
 
         {step < STEPS.length - 1 ? (
-          <button onClick={() => canAdvance() && setStep(step + 1)} disabled={!canAdvance()}
+          <button onClick={goNext} aria-disabled={!canAdvance()}
             className="btn-primary flex items-center gap-2" type="button" style={{ opacity: canAdvance() ? 1 : 0.5 }}>
             Next <ArrowRight size={16} />
           </button>
         ) : (
-          <button onClick={handleSubmit} disabled={!canAdvance() || !turnstileToken || status === "sending"}
+          <button onClick={handleSubmit} aria-disabled={!canAdvance() || !turnstileToken || status === "sending"}
             className="btn-primary flex items-center gap-2" type="button"
             style={{ opacity: canAdvance() && turnstileToken ? 1 : 0.5 }}>
             {status === "sending" ? "Submitting..." : "Submit intake"} {status !== "sending" && <Check size={16} />}
@@ -278,112 +322,10 @@ export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons
         )}
       </div>
 
-      {status === "error" && (
-        <p className="mt-4 text-center text-sm" style={{ color: "#ef4444" }}>
-          Something went wrong. Please try again or email hello@luwahtechnologies.com
-        </p>
-      )}
-    </div>
-  );
-}
-
-// ── Field primitives ──────────────────────────────────────────────
-function Label({ text, hint }: { text: string; hint?: string }) {
-  return (
-    <div className="mb-1.5">
-      <label className="block text-sm font-medium" style={{ color: "var(--color-text-primary)" }}>{text}</label>
-      {hint && <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>{hint}</p>}
-    </div>
-  );
-}
-
-function Field({ label, hint, value, onChange, type = "text" }: {
-  label: string; hint?: string; value: string; onChange: (v: string) => void; type?: string;
-}) {
-  return (
-    <div>
-      <Label text={label} hint={hint} />
-      <input type={type} value={value} onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg px-4 py-3 text-sm outline-none" style={inputStyle} />
-    </div>
-  );
-}
-
-function Area({ label, hint, value, onChange }: {
-  label: string; hint?: string; value: string; onChange: (v: string) => void;
-}) {
-  return (
-    <div>
-      <Label text={label} hint={hint} />
-      <textarea rows={3} value={value} onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg px-4 py-3 text-sm outline-none" style={inputStyle} />
-    </div>
-  );
-}
-
-function Select({ label, options, value, onChange }: {
-  label: string; options: string[]; value: string; onChange: (v: string) => void;
-}) {
-  return (
-    <div>
-      <Label text={label} />
-      <select value={value} onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg px-4 py-3 text-sm outline-none" style={inputStyle}>
-        <option value="">Select…</option>
-        {options.map((o) => <option key={o} value={o}>{o}</option>)}
-      </select>
-    </div>
-  );
-}
-
-function Radio({ label, options, value, onChange }: {
-  label: string; options: string[]; value: string; onChange: (v: string) => void;
-}) {
-  return (
-    <div>
-      <Label text={label} />
-      <div className="flex flex-wrap gap-2">
-        {options.map((o) => (
-          <button key={o} type="button" onClick={() => onChange(o)}
-            className="rounded-md px-3 py-2 text-sm transition-all"
-            style={{
-              border: "1px solid var(--color-border)",
-              backgroundColor: value === o ? "var(--color-copper)" : "var(--color-bg-input)",
-              color: value === o ? "#fff" : "var(--color-text-secondary)",
-            }}>
-            {o}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function CheckGroup({ label, options, selected, onToggle }: {
-  label: string; options: string[]; selected: string[]; onToggle: (v: string) => void;
-}) {
-  return (
-    <div>
-      <Label text={label} />
-      <div className="grid gap-2 sm:grid-cols-2">
-        {options.map((o) => {
-          const on = selected.includes(o);
-          return (
-            <button key={o} type="button" onClick={() => onToggle(o)}
-              className="flex items-center gap-2.5 rounded-md px-3 py-2 text-left text-sm transition-all"
-              style={{
-                border: `1px solid ${on ? "var(--color-copper-border)" : "var(--color-border)"}`,
-                backgroundColor: "var(--color-bg-input)",
-              }}>
-              <span className="flex h-4 w-4 items-center justify-center rounded"
-                style={{ border: "1px solid var(--color-border)", backgroundColor: on ? "var(--color-copper)" : "transparent" }}>
-                {on && <Check size={11} color="#fff" />}
-              </span>
-              {o}
-            </button>
-          );
-        })}
-      </div>
+      {/* Always mounted so screen readers announce the text when it appears. */}
+      <p role="alert" className={`text-center text-sm${notice ? " mt-4" : ""}`} style={{ color: "#ef4444" }}>
+        {notice}
+      </p>
     </div>
   );
 }
