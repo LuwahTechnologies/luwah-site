@@ -95,7 +95,7 @@ export function Radio({ label, options, value, onChange, error }: {
   const labelId = useId();
   const errId = `${labelId}-err`;
   return (
-    <div role="group" aria-labelledby={labelId} aria-describedby={describedBy(error && errId)} data-invalid={error ? true : undefined}>
+    <div role="group" aria-labelledby={labelId} data-invalid={error ? true : undefined}>
       <Label text={label} groupId={labelId} />
       <div className="flex flex-wrap gap-2">
         {options.map((o) => (
@@ -121,7 +121,7 @@ export function CheckGroup({ label, options, selected, onToggle, error }: {
   const labelId = useId();
   const errId = `${labelId}-err`;
   return (
-    <div role="group" aria-labelledby={labelId} aria-describedby={describedBy(error && errId)} data-invalid={error ? true : undefined}>
+    <div role="group" aria-labelledby={labelId} data-invalid={error ? true : undefined}>
       <Label text={label} groupId={labelId} />
       <div className="grid gap-2 sm:grid-cols-2">
         {options.map((o) => {

@@ -116,10 +116,10 @@ export function AutomationIntakeForm() {
   };
 
   const notice =
-    status === "error"
-      ? "Something went wrong. Please try again or email hello@luwahtechnologies.com"
-      : verifyPrompt && !turnstileToken
-        ? "Complete the verification check above, then submit again."
+    verifyPrompt && !turnstileToken
+      ? "Complete the verification check above, then submit again."
+      : status === "error"
+        ? "Something went wrong. Please try again or email hello@luwahtechnologies.com"
         : "";
 
   if (status === "sent") {
