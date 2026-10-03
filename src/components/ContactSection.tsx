@@ -147,7 +147,7 @@ export function ContactSection({ contact }: { contact?: ContactInfo }) {
                 className="mt-2 text-sm"
                 style={{ color: "var(--color-text-secondary)" }}
               >
-                Most of our work is remote. In the Denver metro area we can meet in person.
+                Most of our work is remote. In the Denver metro area we can meet you at your business.
               </p>
             </div>
           </div>
