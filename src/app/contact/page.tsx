@@ -1,11 +1,13 @@
-import type { Metadata } from "next";
 import { ContactSection } from "@/components/ContactSection";
 import { getSiteSettings } from "@/lib/sanity";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Contact",
-  description: "Get in touch with Luwah Technologies. We respond within 24 hours. Free consultation available. Aurora, Colorado.",
-};
+  description:
+    "Get in touch with Luwah Technologies. We respond within 24 hours. Free consultation available. Aurora, Colorado.",
+  path: "/contact",
+});
 
 export const revalidate = 60;
 

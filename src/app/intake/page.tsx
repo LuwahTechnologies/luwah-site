@@ -1,12 +1,13 @@
-import type { Metadata } from "next";
 import { BuildIntakeForm } from "./BuildIntakeForm";
 import { getWebCatalog } from "@/lib/getWebCatalog";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Website Build Intake",
   description:
     "Tell us about your business, brand, pages, and content so we can build your website. Luwah Technologies intake form.",
-};
+  path: "/intake",
+});
 
 export const revalidate = 60;
 

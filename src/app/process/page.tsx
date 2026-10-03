@@ -1,11 +1,13 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { ProcessSection } from "@/components/ProcessSection";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Our Process",
-  description: "How Luwah Technologies takes your project from first call to live: discovery, build, review, and launch.",
-};
+  description:
+    "How Luwah Technologies takes your project from first call to live: discovery, build, review, and launch.",
+  path: "/process",
+});
 
 export default function ProcessPage() {
   return (

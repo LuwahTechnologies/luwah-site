@@ -18,7 +18,9 @@ const inputStyle: React.CSSProperties = {
 const STEPS = ["Option", "Add-ons", "Support", "Your details"];
 
 export function OrderForm({ catalog }: { catalog: WebCatalog }) {
-  const firstTier = catalog.tiers.find((t) => t.highlight) || catalog.tiers[0];
+  // Quote-only tiers (Custom Build) go through a consultation, not this form.
+  const orderableTiers = catalog.tiers.filter((t) => !t.cta);
+  const firstTier = orderableTiers.find((t) => t.highlight) || orderableTiers[0];
   const [step, setStep] = useState(0);
   const [tierKey, setTierKey] = useState(firstTier?.key || "");
   const [addonKeys, setAddonKeys] = useState<string[]>([]);
@@ -112,7 +114,7 @@ export function OrderForm({ catalog }: { catalog: WebCatalog }) {
         <>
           <h2 className="mb-4 text-xl font-semibold" style={{ fontFamily: "var(--font-display)" }}>Choose your option</h2>
           <div className="grid gap-3 sm:grid-cols-2">
-            {catalog.tiers.map((t) => {
+            {orderableTiers.map((t) => {
               const active = t.key === tierKey;
               return (
                 <button key={t.key} type="button" onClick={() => setTierKey(t.key)}
@@ -131,7 +133,7 @@ export function OrderForm({ catalog }: { catalog: WebCatalog }) {
           {tier?.perPage && (
             <div className="mt-6">
               <label className="mb-1.5 block text-sm font-medium">
-                Extra pages (beyond the 4 included) — {fmt(catalog.perPagePrice)} each
+                Extra pages (beyond the 4 included): {fmt(catalog.perPagePrice)} each
               </label>
               <input type="number" min={0} max={50} value={extraPages}
                 onChange={(e) => setExtraPages(Math.max(0, parseInt(e.target.value) || 0))}
@@ -149,7 +151,7 @@ export function OrderForm({ catalog }: { catalog: WebCatalog }) {
             Tap the i for a quick explanation of any add-on.
           </p>
           <div className="flex flex-col gap-2">
-            {catalog.addons.map((a) => {
+            {catalog.addons.filter((a) => a.orderable !== false).map((a) => {
               const isIncluded = included.has(a.key);
               const checked = isIncluded || addonKeys.includes(a.key);
               const open = expanded.includes(a.key);

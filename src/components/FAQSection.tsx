@@ -8,12 +8,12 @@ const FAQS = [
   {
     question: "What industries do you provide automation services for?",
     answer:
-      "We work with small businesses across industries — salons, staffing firms, breweries, liquor stores, restaurants, healthcare practices, nonprofits, and professional services. If your business has repetitive processes that follow a pattern, automation can help regardless of industry.",
+      "We work with small businesses across industries, salons, staffing firms, breweries, liquor stores, restaurants, healthcare practices, nonprofits, and professional services. If your business has repetitive processes that follow a pattern, automation can help regardless of industry.",
   },
   {
     question: "How long does it take to automate business processes?",
     answer:
-      "It depends on complexity. Quick wins like email setup or basic reporting take 1–3 days. Core projects like reminder systems or dashboards typically take 1–2 weeks. Premium integrations involving multiple systems can take 2–4 weeks. Every project includes a clear timeline in the proposal.",
+      "It depends on complexity. Quick wins like email setup or basic reporting take 1 to 3 days. Core projects like reminder systems or dashboards typically take 1 to 2 weeks. Premium integrations involving multiple systems can take 2 to 4 weeks. Every project includes a clear timeline in the proposal.",
   },
   {
     question: "Is my business data secure with AI automation?",
@@ -23,7 +23,7 @@ const FAQS = [
   {
     question: "What AI and automation tools do you work with?",
     answer:
-      "Our primary platform is n8n — an open-source workflow engine that connects to hundreds of services. We also work with Python, Apple Shortcuts, the Claude AI API, and integrations with Snowflake, Salesforce, and Microsoft 365. Tool selection depends on what fits your business best.",
+      "Our primary platform is n8n, an open-source workflow engine that connects to hundreds of services. We also work with Python, Apple Shortcuts, the Claude AI API, and integrations with Snowflake, Salesforce, and Microsoft 365. Tool selection depends on what fits your business best.",
   },
   {
     question: "Can I see a demo before committing?",
@@ -33,12 +33,12 @@ const FAQS = [
   {
     question: "How much does workflow automation cost?",
     answer:
-      "Quick wins start at $150, core projects at $300, and premium integrations at $750+. Ongoing retainers start at $50/month. Every project gets a fixed-price quote — no surprises, no hourly billing that spirals. The consultation is free.",
+      "Quick wins start at $150, core projects at $300, and premium integrations at $750+. Automation Care plans run $85 to $175 per month. Every project gets a fixed-price quote. No surprises, no hourly billing that spirals. The consultation is free.",
   },
   {
     question: "Do I need to pay monthly fees for automation?",
     answer:
-      "Not necessarily. Most projects are one-time builds you own outright. Some solutions benefit from ongoing hosting or maintenance ($50–$200/month), but that's optional. We'll always tell you upfront if a solution has recurring costs.",
+      "Not necessarily. Most projects are one-time builds you own outright. Some solutions benefit from ongoing hosting or care ($85 to $175 per month), but that's optional. We'll always tell you upfront if a solution has recurring costs.",
   },
 ];
 

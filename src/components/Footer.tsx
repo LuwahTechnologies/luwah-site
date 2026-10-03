@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 const FOOTER_LINKS = {
   services: [
     { href: "/services", label: "Services" },
     { href: "/work", label: "Work" },
-    { href: "/services#pricing", label: "Pricing" },
+    { href: "/pricing", label: "Pricing" },
     { href: "/consultation", label: "Free Consultation" },
   ],
   company: [
@@ -26,6 +27,7 @@ const FOOTER_LINKS = {
 };
 
 export function Footer() {
+  const pathname = usePathname();
   return (
     <footer
       style={{
@@ -33,25 +35,27 @@ export function Footer() {
         borderTop: "1px solid var(--color-border)",
       }}
     >
-      {/* CTA Block */}
-      <section className="py-20 text-center">
-        <h2
-          className="mb-4 text-3xl font-bold md:text-4xl"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          Ready to automate?
-        </h2>
-        <p
-          className="mx-auto mb-8 max-w-2xl text-base"
-          style={{ color: "var(--color-text-secondary)" }}
-        >
-          Book a free consultation and we&apos;ll map out what to automate
-          first.
-        </p>
-        <Link href="/consultation" className="btn-primary">
-          Book a Free Consultation
-        </Link>
-      </section>
+      {/* CTA Block. The home page ends with its own closing call to action. */}
+      {pathname !== "/" && (
+        <section className="py-20 text-center">
+          <h2
+            className="mb-4 text-3xl font-bold md:text-4xl"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            Ready to automate?
+          </h2>
+          <p
+            className="mx-auto mb-8 max-w-2xl text-base"
+            style={{ color: "var(--color-text-secondary)" }}
+          >
+            Book a free consultation and we&apos;ll map out what to automate
+            first.
+          </p>
+          <Link href="/consultation" className="btn-primary">
+            Book a Free Consultation
+          </Link>
+        </section>
+      )}
 
       {/* Footer Grid */}
       <section

@@ -32,7 +32,7 @@ const VALUES = [
     icon: TrendingUp,
     title: "Drive",
     description:
-      "Full commitment accompanies every project — from initial consultation through testing and final sign-off.",
+      "Full commitment accompanies every project, from initial consultation through testing and final sign-off.",
   },
 ];
 
@@ -84,23 +84,23 @@ export function AboutContent() {
                   My path into data and automation didn&apos;t start in a standard
                   corporate tech hub. It started in Liberia, where I learned
                   early on that resourceful problem-solving isn&apos;t just a
-                  skill&mdash;it&apos;s a necessity.
+                  skill. It&apos;s a necessity.
                 </p>
                 <p>
                   For nearly a decade, I worked as a Senior Data Engineer,
-                  building massive data pipelines for Fortune 500 companies and
+                  building very large data pipelines for Fortune 500 companies and
                   healthcare organizations like UnitedHealthcare. I saw firsthand
                   how enterprise automation saved millions of dollars and
                   thousands of hours.
                 </p>
                 <p>
-                  But I also noticed a massive gap. The small and medium-sized
+                  But I also noticed a huge gap. The small and medium-sized
                   businesses that actually run our local communities were
                   drowning in the exact same manual tasks I was automating away
                   for the giants.
                 </p>
                 <p>
-                  I founded Luwah Technologies to bridge that gap. By leveraging
+                  I founded Luwah Technologies to bridge that gap. By using
                   open-source tools like n8n and self-hosted infrastructure, I
                   build enterprise-grade automation that actually makes sense for
                   a small business budget.
@@ -119,7 +119,7 @@ export function AboutContent() {
                 >
                   <Image
                     src="/images/daniel-about-img.jpg"
-                    alt="Daniel Cooke — Founder of Luwah Technologies"
+                    alt="Daniel Cooke, Founder of Luwah Technologies"
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 320px, 380px"

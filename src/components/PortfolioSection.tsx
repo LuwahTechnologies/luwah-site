@@ -11,7 +11,7 @@ const PROJECTS = [
     category: "Web Design & Infrastructure",
     title: "Full Digital Presence for a Premium Waxing & Skincare Studio",
     description:
-      "Custom Next.js website, business email, self-hosted link hub, and Cloudflare infrastructure — delivered end-to-end for a beauty brand launching from scratch.",
+      "Custom Next.js website, business email, self-hosted link hub, and Cloudflare infrastructure, delivered end-to-end for a beauty brand launching from scratch.",
     image: "/images/pexels-sejio402-6704970.jpg",
     metrics: [
       { value: "Sub-second", label: "Load time" },
@@ -23,7 +23,7 @@ const PROJECTS = [
     category: "Operations",
     title: "Gmail to Google Sheets: A Racquet Club's Contact Forms on Autopilot",
     description:
-      "A native Google Apps Script pipeline that monitors Gmail for Wix form submissions, parses contact fields, flags profanity, and analyzes sentiment — twice daily, zero dependencies.",
+      "A native Google Apps Script pipeline that monitors Gmail for Wix form submissions, parses contact fields, flags profanity, and analyzes sentiment, twice daily, zero dependencies.",
     image: "/images/pexels-brett-sayles-4520560.jpg",
     metrics: [
       { value: "2x/day", label: "Auto-runs" },
@@ -35,7 +35,7 @@ const PROJECTS = [
     category: "Sales & Marketing",
     title: "How I Turned Google Maps Into a Statewide Sales Machine",
     description:
-      "An automated pipeline scrapes emails, pulls owner names from public records, and exports ready-to-contact leads — 90% faster.",
+      "An automated pipeline scrapes emails, pulls owner names from public records, and exports ready-to-contact leads, 90% faster.",
     image: "/images/geralt-ai-10171006_1920.jpg",
     metrics: [
       { value: "60%", label: "Hours saved" },
@@ -59,7 +59,7 @@ export function PortfolioSection() {
           className="mb-14 max-w-lg text-base"
           style={{ color: "var(--color-text-secondary)" }}
         >
-          Real results from businesses that scaled smarter with automation.
+          Real results from businesses that grew with automation.
         </p>
 
         <div className="flex flex-col gap-4">

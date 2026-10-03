@@ -20,7 +20,7 @@ const SERVICES = [
     icon: BarChart3,
     title: "Data Processing & Insight",
     description:
-      "Sync data across platforms and generate reports automatically — no more spreadsheet wrangling.",
+      "Sync data across platforms and generate reports automatically, no more spreadsheet wrangling.",
     showOnMobile: true,
   },
   {
@@ -41,7 +41,7 @@ const SERVICES = [
     icon: Globe,
     title: "Website Design & Development",
     description:
-      "Custom-built, fast-loading websites tailored to your brand — no templates, no monthly fees, full ownership.",
+      "Custom-built, fast-loading websites tailored to your brand, no templates, no lock-in, full ownership.",
     showOnMobile: true,
   },
 ];

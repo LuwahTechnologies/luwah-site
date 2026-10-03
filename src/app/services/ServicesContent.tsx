@@ -25,7 +25,7 @@ const SERVICE_CATEGORIES = [
   {
     title: "Data Analytics & Business Intelligence",
     services: [
-      { name: "True Profitability Dashboard", description: "Custom reporting showing actual profit by product, service, or client\u2014factoring in labor, costs, overhead, and processing fees." },
+      { name: "True Profitability Dashboard", description: "Custom reporting showing actual profit by product, service, or client, factoring in labor, costs, overhead, and processing fees." },
       { name: "Client Lifetime Value Tracking", description: "Calculate what each client is worth over time, identify valuable segments, and focus retention where it matters." },
       { name: "Cash Flow Forecasting", description: "Automated projections based on recurring revenue, seasonal trends, and upcoming expenses delivered to your inbox." },
       { name: "Service & Product Performance Scorecard", description: "Weekly or monthly automated reports showing what\u2019s selling, trends, and actionable recommendations." },
@@ -81,7 +81,7 @@ export function ServicesContent() {
                 Most small business software handles the basics. But when you
                 need systems to talk to each other, reports that show actual
                 profit, or customers that keep coming back
-                automatically&mdash;that&apos;s where standard tools fall short.
+                automatically. That&apos;s where standard tools fall short.
               </p>
             </div>
             <div

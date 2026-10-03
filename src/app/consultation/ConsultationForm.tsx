@@ -201,7 +201,7 @@ export function ConsultationForm() {
             className="mb-3 text-2xl font-bold"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            Got it &mdash; we&apos;ll be in touch!
+            Got it. We&apos;ll be in touch!
           </h2>
           <p className="text-sm" style={{ color: "var(--color-text-secondary)" }}>
             Daniel will review your submission and reach out within 24 hours to
