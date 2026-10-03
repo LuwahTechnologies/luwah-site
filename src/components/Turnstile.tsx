@@ -23,9 +23,10 @@ declare global {
 interface TurnstileProps {
   onToken: (token: string) => void;
   onExpire?: () => void;
+  resetSignal?: number;
 }
 
-export function Turnstile({ onToken, onExpire }: TurnstileProps) {
+export function Turnstile({ onToken, onExpire, resetSignal }: TurnstileProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
   const scriptLoaded = useRef(false);
@@ -62,6 +63,16 @@ export function Turnstile({ onToken, onExpire }: TurnstileProps) {
       }
     };
   }, [onToken, onExpire]);
+
+  // Skip the first run so mount does not reset a widget that just rendered.
+  const lastResetSignal = useRef(resetSignal);
+  useEffect(() => {
+    if (resetSignal === lastResetSignal.current) return;
+    lastResetSignal.current = resetSignal;
+    if (widgetIdRef.current && window.turnstile) {
+      window.turnstile.reset(widgetIdRef.current);
+    }
+  }, [resetSignal]);
 
   return <div ref={containerRef} className="mt-2" />;
 }

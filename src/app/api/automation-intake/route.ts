@@ -125,8 +125,10 @@ export async function POST(request: Request) {
       const contactName = cleanString(body.contactName);
       const otherTools = cleanString(body.otherTools);
       const toolsLabel = `${tools.join(", ")}${otherTools ? `${tools.length ? ", " : ""}Other: ${otherTools}` : ""}`;
+      // Header safety: strip line breaks and cap length for the subject only.
+      const subjectName = contactName.replace(/[\r\n]+/g, " ").slice(0, 100);
       await notifyEmail({
-        subject: `New Luwah Technologies Automation Intake from ${contactName}`,
+        subject: `New Luwah Technologies Automation Intake from ${subjectName}`,
         heading: `New automation intake from ${contactName}`,
         badge: "New Lead",
         rows: [
