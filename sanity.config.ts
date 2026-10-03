@@ -80,6 +80,15 @@ export default defineConfig({
                   .filter('_type == "buildIntake"')
                   .defaultOrdering([{ field: "submittedAt", direction: "desc" }])
               ),
+            S.listItem()
+              .id("automationIntakes")
+              .title("Automation Intakes")
+              .child(
+                S.documentList()
+                  .title("Automation Intakes")
+                  .filter('_type == "automationIntake"')
+                  .defaultOrdering([{ field: "submittedAt", direction: "desc" }])
+              ),
             S.divider(),
             // Reviews: pending need approval before they show on the site.
             S.listItem()
