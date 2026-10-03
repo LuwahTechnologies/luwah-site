@@ -134,7 +134,11 @@ export async function POST(request: Request) {
       }
     } catch (webhookError) {
       if (!saved) throw webhookError;
-      reportError("api.contact.webhook", webhookError, { throttleMs: 60_000 });
+      reportError("api.contact.webhook", webhookError, {
+        // Lets you find the lead in Studio and replay it to n8n.
+        extra: { submission_id: payload.submission_id },
+        throttleMs: 60_000,
+      });
     }
 
     return NextResponse.json({ success: true });
