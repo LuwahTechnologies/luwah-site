@@ -49,9 +49,6 @@ const HOSTING_OPTIONS = ["Managed hosting via Luwah", "I'll host it myself", "No
 const CONTENT_OWNER_OPTIONS = ["I will write it", "Write it for me", "A mix of both"];
 const SUPPORT_EMAIL = "info@luwahtechnologies.com";
 
-const CONTENT_OWNER_OPTIONS = ["I will write it", "Write it for me", "A mix of both"];
-const SUPPORT_EMAIL = "info@luwahtechnologies.com";
-
 const STEPS = ["Business", "Goals & Tier", "Brand", "Pages & Content", "Forms & Media", "Logistics"];
 
 type FormState = {
