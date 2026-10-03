@@ -26,6 +26,7 @@ export interface WebAddon {
   monthlyLabel?: string;
   includedIn?: string[]; // tier keys that bundle this addon
   variable?: boolean; // priced per project/unit, excluded from the fixed total
+  orderable?: boolean; // false keeps it off the order form, for items Luwah decides (hosting tier)
   description?: string; // 1-3 sentences shown behind an info toggle
 }
 
@@ -134,10 +135,10 @@ export const DEFAULT_CATALOG: WebCatalog = {
     },
   ],
   addons: [
-    { key: "hosting-basic", name: "Website hosting, Basic", oneTime: 0, oneTimeLabel: "No setup fee", monthlyLabel: "$15/mo",
-      description: "I host, monitor, and update your site so you do not have to. Includes uptime monitoring and security updates." },
-    { key: "hosting-established", name: "Website hosting, Established", oneTime: 0, oneTimeLabel: "No setup fee", monthlyLabel: "$30/mo",
-      description: "For larger sites that need more Render resources: more cron jobs, more custom domains, and more bandwidth. Includes everything in Basic." },
+    { key: "hosting-basic", name: "Website hosting, Basic", oneTime: 0, oneTimeLabel: "No setup fee", monthlyLabel: "$15/mo", orderable: false,
+      description: "For most small sites. I host, monitor, and update your site so you do not have to. Includes uptime monitoring and security updates. I choose the tier once I know your pages and what the site needs." },
+    { key: "hosting-established", name: "Website hosting, Established", oneTime: 0, oneTimeLabel: "No setup fee", monthlyLabel: "$30/mo", orderable: false,
+      description: "For larger sites that need more Render resources: more cron jobs, more custom domains, and more bandwidth. Includes everything in Basic. I choose the tier once I know your pages and what the site needs." },
     { key: "spreadsheet-leads", name: "Spreadsheet lead capture", oneTime: 100, oneTimeLabel: "+$100 per sheet", variable: true,
       description: "Form submissions flow automatically into a Google Sheet you can sort, filter, and share. Priced per sheet." },
     { key: "local-seo", name: "Local SEO setup", oneTime: 0, oneTimeLabel: "Priced per project", variable: true,

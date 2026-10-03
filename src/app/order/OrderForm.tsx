@@ -151,7 +151,7 @@ export function OrderForm({ catalog }: { catalog: WebCatalog }) {
             Tap the i for a quick explanation of any add-on.
           </p>
           <div className="flex flex-col gap-2">
-            {catalog.addons.map((a) => {
+            {catalog.addons.filter((a) => a.orderable !== false).map((a) => {
               const isIncluded = included.has(a.key);
               const checked = isIncluded || addonKeys.includes(a.key);
               const open = expanded.includes(a.key);

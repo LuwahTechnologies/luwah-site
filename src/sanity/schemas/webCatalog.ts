@@ -75,6 +75,7 @@ export default defineType({
             { name: "monthlyLabel", title: "Monthly label", type: "string" },
             { name: "includedIn", title: "Included in tier keys", type: "array", of: [{ type: "string" }] },
             { name: "variable", title: "Variable / quoted (excluded from total)", type: "boolean" },
+            { name: "orderable", title: "Hide from the order form when set to false", type: "boolean" },
           ],
           preview: { select: { title: "name", subtitle: "oneTimeLabel" } },
         },
