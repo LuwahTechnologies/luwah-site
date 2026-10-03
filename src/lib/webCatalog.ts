@@ -147,7 +147,7 @@ export const DEFAULT_CATALOG: WebCatalog = {
       description: "Accept card payments on your site through Stripe. The setup fee covers the integration; Stripe charges 2.9% plus $0.30 per transaction." },
     { key: "sanity-cms", name: "Sanity CMS / blog module", oneTime: 450, oneTimeLabel: "+$450",
       description: "A simple dashboard to edit your site's text, images, and blog yourself, with no code." },
-    { key: "sentry", name: "Sentry error tracking", oneTime: 150, oneTimeLabel: "+$150",
+    { key: "sentry", name: "Sentry error tracking", oneTime: 300, oneTimeLabel: "+$300",
       description: "Automatic error tracking so we catch and fix problems before they affect your customers." },
     { key: "resend", name: "Resend transactional email", oneTime: 250, oneTimeLabel: "+$250",
       description: "Reliable automated emails like confirmations and receipts, sent from your own domain." },
