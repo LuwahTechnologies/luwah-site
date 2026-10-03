@@ -43,6 +43,9 @@ export function TestimonialsSection({ testimonials }: { testimonials: Testimonia
             <div
               key={`${t.name}-${i}`}
               className="card w-[340px] flex-shrink-0 p-6"
+              // Every pass after the first is a repeat for the loop. Hide it
+              // from screen readers so each quote is read once.
+              aria-hidden={i >= testimonials.length ? true : undefined}
             >
               <p
                 className="mb-6 text-sm leading-relaxed"

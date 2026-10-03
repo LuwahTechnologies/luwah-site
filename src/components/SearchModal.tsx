@@ -19,7 +19,7 @@ const PAGES: SearchItem[] = [
   { title: "Home", description: "Automation consulting for small businesses", href: "/", type: "page" },
   { title: "Services", description: "Custom automation solutions scoped to your business", href: "/services", type: "page" },
   { title: "Work", description: "Real results from real businesses", href: "/work", type: "page" },
-  { title: "Pricing", description: "Transparent per-project pricing", href: "/services#pricing", type: "page" },
+  { title: "Pricing", description: "Transparent per-project pricing", href: "/pricing", type: "page" },
   { title: "Blog", description: "Practical articles on automation and AI", href: "/blog", type: "page" },
   { title: "About", description: "Meet the team behind Luwah Technologies", href: "/about", type: "page" },
   { title: "Contact", description: "Get in touch with us", href: "/contact", type: "page" },
