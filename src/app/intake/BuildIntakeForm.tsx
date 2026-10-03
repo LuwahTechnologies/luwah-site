@@ -53,7 +53,6 @@ const HOSTING_OPTIONS = ["Managed hosting via Luwah", "I'll host it myself", "No
 const TIMELINE_OPTIONS = ["As soon as possible", "Within 2 weeks", "Within a month", "Flexible: quality over speed"];
 
 const CONTENT_OWNER_OPTIONS = ["I will write it", "Write it for me", "A mix of both"];
-const MIGRATION_OPTIONS = ["No, this is a new site", "Yes, move my existing site", "Not sure"];
 const SUPPORT_EMAIL = "info@luwahtechnologies.com";
 
 const STEPS = ["Business", "Goals & Tier", "Brand", "Pages & Content", "Forms & Media", "Logistics"];
@@ -69,7 +68,7 @@ type FormState = {
   automationPreference: string; otherTools: string; media: string[]; mediaNotes: string;
   hasDomain: string; domainName: string; registrar: string; hostingPreference: string;
   timeline: string; budget: string; anythingElse: string; printedName: string; agreed: boolean;
-  addons: string[]; currentSite: string; migration: string; businessHours: string; address: string;
+  addons: string[]; currentSite: string; businessHours: string; address: string;
   socialLinks: string; keywords: string;
   contentOwner: string; assetsLink: string; decisionMaker: string;
 };
@@ -83,7 +82,7 @@ const EMPTY: FormState = {
   needsPayments: "", automationPreference: "", otherTools: "", media: [], mediaNotes: "",
   hasDomain: "", domainName: "", registrar: "", hostingPreference: "", timeline: "", budget: "",
   anythingElse: "", printedName: "", agreed: false,
-  addons: [], currentSite: "", migration: "", businessHours: "", address: "",
+  addons: [], currentSite: "", businessHours: "", address: "",
   socialLinks: "", keywords: "", contentOwner: "", assetsLink: "", decisionMaker: "",
 };
 
@@ -172,8 +171,7 @@ export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons
             <Field label="Phone" value={form.phone} onChange={(v) => update({ phone: v })} />
             <Field label="Industry / niche" value={form.industry} onChange={(v) => update({ industry: v })} />
             <Field label="City / location" value={form.location} onChange={(v) => update({ location: v })} />
-            <Field label="Current website address" hint="Leave blank if you do not have one." value={form.currentSite} onChange={(v) => update({ currentSite: v })} />
-            <Select label="Is this a move from an existing site?" options={MIGRATION_OPTIONS} value={form.migration} onChange={(v) => update({ migration: v })} />
+            <Field label="Current website address" hint="Leave blank if you do not have one. Choose the site migration add-on if we are moving it." value={form.currentSite} onChange={(v) => update({ currentSite: v })} />
             <Area label="Business address and service area" hint="Street address if customers visit you, and the areas you serve." value={form.address} onChange={(v) => update({ address: v })} />
             <Area label="Business hours" value={form.businessHours} onChange={(v) => update({ businessHours: v })} />
             <Area label="Social media and Google Business Profile links" hint="One per line." value={form.socialLinks} onChange={(v) => update({ socialLinks: v })} />
@@ -190,6 +188,7 @@ export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons
             <Field label="Main call to action *" hint='e.g. "Book a free consultation"' value={form.mainCta} onChange={(v) => update({ mainCta: v })} />
             <Area label="What problem does your site solve?" value={form.problemSolved} onChange={(v) => update({ problemSolved: v })} />
             <Select label="Which tier are you considering?" options={tierOptions} value={form.tier} onChange={(v) => update({ tier: v })} />
+            <CheckGroup label="Add-ons you want included" options={addons} selected={form.addons} onToggle={(v) => toggle("addons", v)} />
           </>
         )}
 
@@ -227,7 +226,6 @@ export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons
             <Select label="Do you need to collect payments?" options={PAYMENT_OPTIONS} value={form.needsPayments} onChange={(v) => update({ needsPayments: v })} />
             <Select label="Automation preference for lead tracking" options={AUTOMATION_OPTIONS} value={form.automationPreference} onChange={(v) => update({ automationPreference: v })} />
             <Field label="Other tools to connect" hint="CRM, email marketing, POS, analytics." value={form.otherTools} onChange={(v) => update({ otherTools: v })} />
-            <CheckGroup label="Add-ons you want included" options={addons} selected={form.addons} onToggle={(v) => toggle("addons", v)} />
             <CheckGroup label="What media do you have ready?" options={MEDIA_OPTIONS} selected={form.media} onToggle={(v) => toggle("media", v)} />
             <Area label="Notes on media" value={form.mediaNotes} onChange={(v) => update({ mediaNotes: v })} />
             <Field label="Link to your shared folder of files" hint={`Google Drive, Dropbox or similar, with sharing turned on. No folder? Email files to ${SUPPORT_EMAIL} with your business name in the subject.`} value={form.assetsLink} onChange={(v) => update({ assetsLink: v })} />

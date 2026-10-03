@@ -17,7 +17,7 @@ const STRING_FIELDS = [
   "customForm", "bookingTool", "needsPayments", "automationPreference",
   "otherTools", "mediaNotes", "hasDomain", "domainName", "registrar",
   "hostingPreference", "timeline", "budget", "anythingElse", "printedName",
-  "currentSite", "migration", "businessHours", "address", "socialLinks",
+  "currentSite", "businessHours", "address", "socialLinks",
   "keywords", "contentOwner", "assetsLink", "decisionMaker",
 ];
 const ARRAY_FIELDS = ["pages", "media", "forms", "addons"];

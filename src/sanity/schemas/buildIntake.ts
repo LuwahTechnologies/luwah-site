@@ -86,7 +86,6 @@ export default defineType({
     roTxt("mediaNotes", "Media Notes", "content"),
 
     roStr("currentSite", "Current Website", "business"),
-    roStr("migration", "Migration", "business"),
     roTxt("address", "Address / Service Area", "business"),
     roTxt("businessHours", "Business Hours", "business"),
     roTxt("socialLinks", "Social / Google Profile Links", "business"),
