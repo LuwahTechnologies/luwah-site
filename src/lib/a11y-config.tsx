@@ -18,17 +18,18 @@ export const A11Y_LINKS = {
   privacyLabel: "Privacy Policy",
 };
 
-// The mailto needs no JavaScript and no captcha, so a visitor the challenge
-// blocks can still report a barrier.
+// The mailto and the phone link need no captcha, so a visitor the challenge
+// blocks can still report a barrier. /contact is not an alternative because
+// it runs the same Turnstile check.
 export const A11Y_CONTACT_FALLBACK = (
   <>
     You can also email{" "}
     <a href="mailto:hello@luwahtechnologies.com" className="text-a11ybrand-700 underline underline-offset-2">
       hello@luwahtechnologies.com
     </a>{" "}
-    or use the{" "}
-    <a href="/contact" className="text-a11ybrand-700 underline underline-offset-2">
-      contact page
+    or call{" "}
+    <a href="tel:+17204217184" className="text-a11ybrand-700 underline underline-offset-2">
+      +1 (720) 421-7184
     </a>
     .
   </>
