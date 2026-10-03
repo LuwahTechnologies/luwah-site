@@ -13,16 +13,25 @@ What Exists Today
 - src/components/SearchModal.tsx searches in the browser. It does a substring match on a hand-written list of 11 pages plus POSTS and PROJECTS.
 - It matches title, description, category and type only. It never reads page body text.
 - The page list is hardcoded in the component. A new page does not appear until someone edits it.
-- The blog index reads POSTS from src/data/posts.ts and revalidates every 60 seconds. lib/sanity.ts also exists. Not traced: which source wins for live posts. Check this before trusting any index.
+- The blog index reads Sanity first and falls back to POSTS: (await getSanityPosts()) ?? POSTS at src/app/blog/page.tsx:17. POSTS in src/data/posts.ts is used only when Sanity is unset, the read fails or Sanity returns zero posts (src/lib/sanity.ts:164-171). /work follows the same pattern.
+- SearchModal imports only the bundled lists. A post that exists only in Sanity is missing from search today. The fallback search in Design step 5 has the same gap.
 
 Design
 
 1. Add pagefind as a dev dependency.
 2. Add a postbuild step: pagefind --site .next/server/app --output-path public/pagefind
-3. Add public/pagefind to .gitignore. The index is a build artifact.
+   - Keep the command inline in the postbuild script in package.json. Do not move it into scripts/. .dockerignore excludes scripts, so the k3s build would not find it.
+   - Add --glob "**/[!_]*.html" to skip _not-found.html and _global-error.html. Tested: 38 pages instead of 40.
+3. Add public/pagefind to .gitignore and to .dockerignore. The index is a build artifact. Pagefind does not clear its output folder, so stale files could ride into the image.
 4. Change SearchModal to load /pagefind/pagefind.js on first open with a dynamic import, then call its search function.
+   - Warning: a bare import("/pagefind/pagefind.js") fails next build under Turbopack (Module not found). The step 5 fallback only covers runtime, not build.
+   - Use a variable and the ignore comment. This form builds clean and passes the type check:
+     const PAGEFIND = "/pagefind/pagefind.js"
+     import(/* webpackIgnore: true */ PAGEFIND)
+   - Pagefind keeps .html on every result URL except Home, for example /about.html. next start returns 404 for .html paths. Strip the .html suffix from each result URL before linking.
+   - Pagefind titles a result with the first h1, not the page title tag.
 5. If the import fails, fall back to the current local search. This also covers next dev, where no index exists.
-6. Mark non-content areas with data-pagefind-ignore: header, footer, cookie banner, accessibility widget.
+6. Add one data-pagefind-body attribute to <main id="main-content"> at src/app/layout.tsx:110. Pagefind then indexes only that element and skips the header, footer and accessibility widget. This replaces a data-pagefind-ignore list.
 7. Keep result types (Page, Blog, Case Study) by tagging pages with data-pagefind-filter or by reading the URL prefix.
 
 Alternatives
@@ -32,15 +41,16 @@ Alternatives
   - Not chosen as the default: it is a custom indexer to maintain. Pagefind gives ranking and excerpts.
   - Choose this instead if the spike fails.
 - Hosted search such as Algolia.
-  - Not chosen: a new vendor, a key to manage, and cost. Overkill for about 30 pages.
+  - Not chosen: a new vendor, a key to manage, and cost. Overkill for about 40 pages.
 
 Risks and Open Questions
 
 - Pagefind reads HTML files. Only prerendered pages exist in .next/server/app. Dynamic pages are not indexed. Confirm which routes are prerendered.
 - Pages with revalidate = 60 change after build. The index reflects the build, not the live page. A new Sanity post will not be searchable until the next deploy. Option: call a rebuild hook when Sanity publishes.
-- Render: confirm next start serves files that postbuild wrote into public/. Not verified.
-- k3s: the Dockerfile uses standalone output. Confirm the image copies public/pagefind. Not verified.
-- The .next/server/app layout is an internal Next detail. A Next upgrade can move it. The spike should pin the path in one script.
+- Render: checked in review. buildCommand runs npm run build, so postbuild runs. next start serves files that exist in public/ at startup, and a scratch app returned 200 for /pagefind/pagefind.js. One earlier start returned 404 and was not reproduced, so keep spike item 2.
+- Render: files written to public/ after the server starts return 404. A rebuild hook means a full deploy.
+- k3s: checked in review. The Dockerfile copies public/ after RUN npm run build, so the index is inside the image. The standalone server.js serves ./public. The pagefind linux binaries are static musl builds, so Alpine is fine. The pod root filesystem is read-only, so the index cannot be rebuilt at runtime. Confirm with spike item 5.
+- The .next/server/app layout is an internal Next detail. A Next upgrade can move it. Verified for Next 16.3.6: it holds the prerendered HTML, including blog and work slug pages. Keep the path in the postbuild command so there is one place to change.
 - Index size: check the size of public/pagefind after the build. It loads only on first search.
 
 Failure Scenarios
@@ -48,14 +58,18 @@ Failure Scenarios
 - Index missing or fails to load.
   - Detection: console error on first search, or an empty result for a known page.
   - Recovery: the fallback local search runs. Fix the build step.
+- Search result link returns 404.
+  - Detection: spike item 4. Click a result and expect 200.
+  - Recovery: strip the .html suffix from result URLs.
 - Index stale after a Sanity edit.
   - Detection: a new post is missing from search results.
   - Recovery: redeploy. Longer term, trigger a rebuild on publish.
 
 Spike Checklist
 
-- [ ] Run the build and the pagefind command. Confirm the page count is above 25.
-- [ ] Run next start and open /pagefind/pagefind.js. Confirm it returns 200.
+- [ ] Run the build and the pagefind command. Confirm the page count is 38 or more and that no 404 or global-error page is indexed.
+- [ ] Run next start and open /pagefind/pagefind.js. Confirm it returns 200. Repeat on a second clean start.
 - [ ] Search for a phrase that appears only in body text. Confirm a hit.
+- [ ] Click a result. Confirm the page loads with 200, not the 404 page.
 - [ ] Build the k3s image and confirm public/pagefind is inside it.
-- [ ] Check the blog source question above.
+- [ ] Decide how Sanity-only posts become searchable. Today they are missing from search.
