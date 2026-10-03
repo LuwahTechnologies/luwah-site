@@ -4,7 +4,7 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata = pageMetadata({
   title: "About Daniel Cooke",
   description:
-    "6+ years of enterprise data engineering, now helping small businesses automate. Fortune 10 experience. Aurora, Colorado.",
+    "Nearly a decade of enterprise data engineering for Fortune 500 companies, now helping small businesses automate. Aurora, Colorado.",
   path: "/about",
 });
 
