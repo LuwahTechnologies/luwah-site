@@ -87,6 +87,7 @@ export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons
   const [resetSignal, setResetSignal] = useState(0);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [showErrors, setShowErrors] = useState(false);
+  const [verifyPrompt, setVerifyPrompt] = useState(false);
   const [focusSignal, setFocusSignal] = useState(0);
   const fieldsRef = useRef<HTMLDivElement>(null);
 
@@ -147,7 +148,7 @@ export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons
   const handleSubmit = async () => {
     if (status === "sending") return;
     if (!canAdvance()) return blocked();
-    if (!turnstileToken) return setShowErrors(true);
+    if (!turnstileToken) return setVerifyPrompt(true);
     setStatus("sending");
     try {
       const res = await fetch("/api/build-intake", {
@@ -167,7 +168,7 @@ export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons
   const notice =
     status === "error"
       ? "Something went wrong. Please try again or email hello@luwahtechnologies.com"
-      : showErrors && step === STEPS.length - 1 && canAdvance() && !turnstileToken
+      : verifyPrompt && !turnstileToken
         ? "Complete the verification check above, then submit again."
         : "";
 

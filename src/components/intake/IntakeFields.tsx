@@ -99,7 +99,7 @@ export function Radio({ label, options, value, onChange, error }: {
       <Label text={label} groupId={labelId} />
       <div className="flex flex-wrap gap-2">
         {options.map((o) => (
-          <button key={o} type="button" aria-pressed={value === o} onClick={() => onChange(o)}
+          <button key={o} type="button" aria-pressed={value === o} aria-describedby={describedBy(error && errId)} onClick={() => onChange(o)}
             className="intake-focus rounded-md px-3 py-2 text-sm transition-all"
             style={{
               border: "1px solid var(--color-border)",
@@ -127,7 +127,7 @@ export function CheckGroup({ label, options, selected, onToggle, error }: {
         {options.map((o) => {
           const on = selected.includes(o);
           return (
-            <button key={o} type="button" aria-pressed={on} onClick={() => onToggle(o)}
+            <button key={o} type="button" aria-pressed={on} aria-describedby={describedBy(error && errId)} onClick={() => onToggle(o)}
               className="intake-focus flex min-h-11 items-center gap-2.5 rounded-md px-3 py-2 text-left text-sm transition-all"
               style={{
                 border: `1px solid ${on ? "var(--color-copper-border)" : "var(--color-border)"}`,
