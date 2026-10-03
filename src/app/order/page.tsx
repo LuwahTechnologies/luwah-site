@@ -5,7 +5,7 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata = pageMetadata({
   title: "Order a Website",
   description:
-    "Pick a website tier and add-ons, see your price, and request a quote. Fixed pricing from $300. Custom builds from $4,000 by quote. Luwah Technologies.",
+    "Pick a website tier and add-ons, see your price, and request a quote. Fixed pricing from $450. Custom builds from $4,000 by quote. Luwah Technologies.",
   path: "/order",
 });
 
