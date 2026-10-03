@@ -171,7 +171,7 @@ export const DEFAULT_CATALOG: WebCatalog = {
     { key: "light", name: "Website Care Light", priceLabel: "$110/mo", includes: "Uptime and error monitoring, security updates, email support (48-hr response), 2 hrs/mo of changes." },
     { key: "standard", name: "Website Care Standard", priceLabel: "$200/mo", includes: "Everything in Light, plus priority email (24-hr response), 4 hrs/mo of changes." },
     { key: "premium", name: "Website Care Premium", priceLabel: "$300/mo", includes: "Everything in Standard, plus same-day response, 6 hrs/mo of changes, and accessibility checks. Extra hours are billed at the hourly rate." },
-    { key: "payg", name: "Pay as you go", priceLabel: "$110/hr", includes: "No subscription. Help on specific issues, 1 hour minimum. The rate becomes $130/hr on January 1, 2027." },
+    { key: "payg", name: "Pay as you go", priceLabel: "$110/hr", includes: "No subscription. Help on specific issues, 1 hour minimum." },
   ],
   legal:
     "Standard rates shown. Custom quotes may differ based on scope and timeline. Colorado professional services are exempt from sales tax per §39-26-104, C.R.S. Pricing effective 2026-10-03, subject to change.",
