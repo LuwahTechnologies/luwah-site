@@ -61,7 +61,7 @@ export default defineConfig({
                   ])
               ),
             S.divider(),
-            // Web-build offering: orders and intakes from the /order and /intake forms.
+            // Web-build and automation offerings: orders and intakes from /order and /intake/*.
             S.listItem()
               .id("webOrders")
               .title("Web Orders")
@@ -78,6 +78,15 @@ export default defineConfig({
                 S.documentList()
                   .title("Build Intakes")
                   .filter('_type == "buildIntake"')
+                  .defaultOrdering([{ field: "submittedAt", direction: "desc" }])
+              ),
+            S.listItem()
+              .id("automationIntakes")
+              .title("Automation Intakes")
+              .child(
+                S.documentList()
+                  .title("Automation Intakes")
+                  .filter('_type == "automationIntake"')
                   .defaultOrdering([{ field: "submittedAt", direction: "desc" }])
               ),
             S.divider(),

@@ -18,12 +18,13 @@
 import { describe, it, before, after } from "node:test";
 import assert from "node:assert/strict";
 import { spawn, spawnSync } from "node:child_process";
-import { rmSync } from "node:fs";
+import { rmSync, readFileSync } from "node:fs";
 import net from "node:net";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { createMockSanity } from "./mock-sanity.mjs";
 import { PROJECTS } from "../../src/data/projects.ts";
+import { AUTOMATION_HOSTING_OPTIONS } from "../../src/lib/intakeOptions.ts";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, "../..");
@@ -204,6 +205,123 @@ describe("smoke", { timeout: 15 * 60 * 1000 }, () => {
       assert.match(h1(res.text), /Get in touch/);
     });
 
+    it("renders the intake fork with both paths", async () => {
+      const res = await get("/intake");
+      assert.equal(res.status, 200);
+      assert.match(h1(res.text), /Start your intake/);
+      assert.match(res.text, /href="\/intake\/website"/);
+      assert.match(res.text, /href="\/intake\/automation"/);
+    });
+
+    it("renders the website intake", async () => {
+      const res = await get("/intake/website");
+      assert.equal(res.status, 200);
+      assert.match(h1(res.text), /Website build intake/);
+    });
+
+    it("renders the automation intake", async () => {
+      const res = await get("/intake/automation");
+      assert.equal(res.status, 200);
+      assert.match(h1(res.text), /Automation and operations intake/);
+    });
+
+    it("rejects an automation intake with an unexpected field", async () => {
+      const res = await fetch(`${base}/api/automation-intake`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ unexpected: "x" }),
+      });
+      assert.equal(res.status, 400);
+      assert.match((await res.json()).error, /Unexpected field/);
+    });
+
+    describe("automation intake pre-Turnstile validation", () => {
+      const valid = {
+        contactName: "Test User",
+        email: "test@example.com",
+        phone: "555-0100",
+        processDescription: "Manual invoicing",
+        trigger: "New order",
+        destination: "QuickBooks",
+        successDescription: "Invoice sent",
+        hosting: "Managed by Luwah",
+        printedName: "Test User",
+        agreed: true,
+      };
+      let n = 0;
+      // Each call gets its own forwarded IP so the 5 per minute limiter never trips.
+      const post = (body, raw) =>
+        fetch(`${base}/api/automation-intake`, {
+          method: "POST",
+          headers: { "content-type": "application/json", "x-forwarded-for": `10.9.0.${++n}` },
+          body: raw ?? JSON.stringify(body),
+        });
+      const expect400 = async (body, re, raw) => {
+        const res = await post(body, raw);
+        assert.equal(res.status, 400);
+        if (re) assert.match((await res.json()).error, re);
+      };
+
+      it("rejects a non-JSON body", () => expect400(null, /Invalid request body/, "not json"));
+      it("rejects an array body", () => expect400([], /Invalid request body/));
+      it("rejects a null body", () => expect400(null, /Invalid request body/, "null"));
+      it("rejects missing required fields", () => expect400({ ...valid, trigger: "  " }, /Missing required/));
+      it("rejects agreed not true", () => expect400({ ...valid, agreed: "true" }, /Missing required/));
+      it("rejects a bad email", () => expect400({ ...valid, email: "nope" }, /Invalid email/));
+      it("rejects a hosting value outside the options", () => expect400({ ...valid, hosting: "Cloud 9" }, /Invalid field value/));
+      it("rejects a bad timeline", () => expect400({ ...valid, timeline: "Yesterday" }, /Invalid field value/));
+      it("rejects a bad budget", () => expect400({ ...valid, budget: "$1" }, /Invalid field value/));
+      it("rejects an unknown tool", () => expect400({ ...valid, currentTools: ["Nope"] }, /Invalid field value/));
+      for (const bad of ["0", "201", "1.5", "abc", "-3", "1e2"]) {
+        it(`rejects hoursPerWeek ${bad}`, () => expect400({ ...valid, hoursPerWeek: bad }, /Invalid field value/));
+      }
+      it("rejects hoursPerWeek as a number or null", async () => {
+        await expect400({ ...valid, hoursPerWeek: 5 }, /Invalid field value/);
+        await expect400({ ...valid, hoursPerWeek: null }, /Invalid field value/);
+      });
+      for (const bad of ["ftp://x.com/a", "javascript:alert(1)", "example.com", "https://a b"]) {
+        it(`rejects currentStateLink ${bad}`, () => expect400({ ...valid, currentStateLink: bad }, /Invalid field value/));
+      }
+      it("accepts boundary values past validation (stops at Turnstile, not 400)", async () => {
+        for (const extra of [{ hoursPerWeek: "1" }, { hoursPerWeek: "200" }, { hoursPerWeek: "" }, { currentStateLink: "https://loom.com/share/x" }]) {
+          const res = await post({ ...valid, ...extra });
+          assert.notEqual(res.status, 400, JSON.stringify(extra));
+        }
+      });
+      it("rate limits the sixth request from one client", async () => {
+        const ip = "10.99.99.99";
+        const statuses = [];
+        for (let i = 0; i < 6; i++) {
+          const res = await fetch(`${base}/api/automation-intake`, {
+            method: "POST",
+            headers: { "content-type": "application/json", "x-forwarded-for": ip },
+            body: JSON.stringify({ unexpected: "x" }),
+          });
+          statuses.push(res.status);
+          if (i === 5) assert.ok(res.headers.get("retry-after"));
+        }
+        assert.deepEqual(statuses, [400, 400, 400, 400, 400, 429]);
+      });
+    });
+
+    it("automation form has no file input and no hosting prices", async () => {
+      const res = await get("/intake/automation");
+      assert.doesNotMatch(res.text, /type="file"/i);
+      // Steps 2 to 4 render client side only, so check the form source and option lists.
+      const form = readFileSync(path.join(ROOT, "src/app/intake/automation/AutomationIntakeForm.tsx"), "utf8");
+      assert.doesNotMatch(form, /type="file"/i);
+      assert.deepEqual(AUTOMATION_HOSTING_OPTIONS, ["Managed by Luwah", "Self-hosted n8n", "Not sure, please advise"]);
+      for (const h of AUTOMATION_HOSTING_OPTIONS) assert.doesNotMatch(h, /\$/);
+      assert.doesNotMatch(form, /\bHOSTING_OPTIONS|\bAUTOMATION_OPTIONS|@\/data\//);
+    });
+
+    it("website intake still has no file input and links stay on /intake/website", async () => {
+      const res = await get("/intake/website");
+      assert.doesNotMatch(res.text, /type="file"/i);
+      const order = await get("/order");
+      assert.doesNotMatch(order.text, /href="\/intake"/);
+    });
+
     it("renders a Sanity-driven route from the bundled content", async () => {
       const res = await get(`/work/${BUNDLED.slug}`);
       assert.equal(res.status, 200);
@@ -220,6 +338,8 @@ describe("smoke", { timeout: 15 * 60 * 1000 }, () => {
       const sitemap = await get("/sitemap.xml");
       assert.equal(sitemap.status, 200);
       assert.match(sitemap.text, new RegExp(`/work/${BUNDLED.slug}<`));
+      assert.match(sitemap.text, /\/intake\/website</);
+      assert.match(sitemap.text, /\/intake\/automation</);
       const robots = await get("/robots.txt");
       assert.equal(robots.status, 200);
       // "Disallow: /review" alone is a prefix rule and would also block the
