@@ -41,7 +41,7 @@ const SERVICES = [
     icon: Globe,
     title: "Website Design & Development",
     description:
-      "Custom-built, fast-loading websites tailored to your brand, no templates, no monthly fees, full ownership.",
+      "Custom-built, fast-loading websites tailored to your brand, no templates, no lock-in, full ownership.",
     showOnMobile: true,
   },
 ];

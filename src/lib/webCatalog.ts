@@ -84,9 +84,9 @@ export const DEFAULT_CATALOG: WebCatalog = {
     },
     {
       key: "tier-1b",
-      name: "Tier 1B",
-      price: 800,
-      priceLabel: "$800",
+      name: "Tier 2",
+      price: 1000,
+      priceLabel: "$1,000",
       pages: "Website + Booking",
       summary: "Showcase site with embedded scheduling.",
       perPage: true,
@@ -100,9 +100,9 @@ export const DEFAULT_CATALOG: WebCatalog = {
     },
     {
       key: "tier-2",
-      name: "Tier 2",
-      price: 1500,
-      priceLabel: "$1,500",
+      name: "Tier 3",
+      price: 2000,
+      priceLabel: "$2,000",
       pages: "Premium Web Service",
       summary: "Full custom booking and admin portal.",
       highlight: true,
@@ -137,7 +137,7 @@ export const DEFAULT_CATALOG: WebCatalog = {
     { key: "hosting-basic", name: "Website hosting, Basic", oneTime: 0, oneTimeLabel: "No setup fee", monthlyLabel: "$15/mo",
       description: "I host, monitor, and update your site so you do not have to. Includes uptime monitoring and security updates." },
     { key: "hosting-established", name: "Website hosting, Established", oneTime: 0, oneTimeLabel: "No setup fee", monthlyLabel: "$30/mo",
-      description: "For larger sites with more pages and more traffic. Includes everything in Basic plus faster support." },
+      description: "For larger sites that need more Render resources: more cron jobs, more custom domains, and more bandwidth. Includes everything in Basic." },
     { key: "spreadsheet-leads", name: "Spreadsheet lead capture", oneTime: 100, oneTimeLabel: "+$100 per sheet", variable: true,
       description: "Form submissions flow automatically into a Google Sheet you can sort, filter, and share. Priced per sheet." },
     { key: "local-seo", name: "Local SEO setup", oneTime: 0, oneTimeLabel: "Priced per project", variable: true,
@@ -165,9 +165,9 @@ export const DEFAULT_CATALOG: WebCatalog = {
   ],
   supportPlans: [
     { key: "self-serve", name: "Self-Serve", priceLabel: "Free", includes: "Full documentation, best-effort email support, community forum." },
-    { key: "light", name: "Light", priceLabel: "$50/mo", includes: "Email support (24-hr response), 2 hrs/mo customization, monthly check-ins." },
-    { key: "standard", name: "Standard", priceLabel: "$300/mo", includes: "Priority email + Slack, 8 hrs/mo, bi-weekly check-ins, security patches." },
-    { key: "premium", name: "Premium", priceLabel: "$750+/mo", includes: "24/7 on-call, dedicated Slack, 20 hrs/mo, weekly strategy calls, audits." },
+    { key: "light", name: "Website Care Light", priceLabel: "$50/mo", includes: "Email support (24-hr response), 2 hrs/mo customization, monthly check-ins." },
+    { key: "standard", name: "Website Care Standard", priceLabel: "$300/mo", includes: "Priority email + Slack, 8 hrs/mo, bi-weekly check-ins, security patches." },
+    { key: "premium", name: "Website Care Premium", priceLabel: "$750+/mo", includes: "24/7 on-call, dedicated Slack, 20 hrs/mo, weekly strategy calls, audits." },
     { key: "payg", name: "Pay as you go", priceLabel: "$110/hr", includes: "No subscription. Help on specific issues, 1 hour minimum. The rate becomes $130/hr on January 1, 2027." },
   ],
   legal:
@@ -220,6 +220,10 @@ export function computeOrderTotal(
     total += addon.oneTime;
     charged.push(key);
   }
+
+  // A quote-only tier (it carries its own button) is priced after discovery, so
+  // its base is a floor, not a fixed total.
+  if (tier.cta) hasVariable = true;
 
   return { tierName: tier.name, total, hasVariableItems: hasVariable, chargedAddonKeys: charged };
 }

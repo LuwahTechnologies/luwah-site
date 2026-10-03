@@ -43,6 +43,16 @@ export default defineType({
             { name: "perPage", title: "Charges per extra page", type: "boolean" },
             { name: "includedAddons", title: "Included add-on keys", type: "array", of: [{ type: "string" }] },
             { name: "highlight", title: "Highlight", type: "boolean" },
+            {
+              name: "cta",
+              title: "Button (quote-only tiers)",
+              description: "Fill this in for a tier quoted after a call. It adds a button and keeps the tier out of the order form.",
+              type: "object",
+              fields: [
+                { name: "label", title: "Label", type: "string" },
+                { name: "href", title: "Link", type: "string" },
+              ],
+            },
           ],
           preview: { select: { title: "name", subtitle: "priceLabel" } },
         },
