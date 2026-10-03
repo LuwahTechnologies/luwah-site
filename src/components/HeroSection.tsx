@@ -17,7 +17,7 @@ const DEFAULTS = {
   eyebrow: "Workflow automation for small businesses",
   headline: "Automation Consulting",
   subhead:
-    "We build automations across platforms — from cloud workflows to native scripts — so you can eliminate repetitive tasks, cut costs, and focus on work that matters.",
+    "We build automations across platforms (from cloud workflows to native scripts) so you can eliminate repetitive tasks, cut costs, and focus on work that matters.",
   primaryCtaLabel: "Book a Free Consultation",
   primaryCtaHref: "/consultation",
   secondaryCtaLabel: "See Our Work",

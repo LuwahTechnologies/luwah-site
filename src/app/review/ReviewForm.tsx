@@ -128,7 +128,7 @@ export function ReviewForm() {
       <div className="card mb-8 flex items-center justify-between p-5">
         <span className="text-sm" style={{ color: "var(--color-text-muted)" }}>Overall</span>
         <span className="text-2xl font-bold" style={{ fontFamily: "var(--font-display)" }}>
-          {allRated ? `${overall.toFixed(1)} / 5` : "—"}
+          {allRated ? `${overall.toFixed(1)} / 5` : "Not rated"}
         </span>
       </div>
 

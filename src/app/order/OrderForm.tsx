@@ -131,7 +131,7 @@ export function OrderForm({ catalog }: { catalog: WebCatalog }) {
           {tier?.perPage && (
             <div className="mt-6">
               <label className="mb-1.5 block text-sm font-medium">
-                Extra pages (beyond the 4 included) — {fmt(catalog.perPagePrice)} each
+                Extra pages (beyond the 4 included): {fmt(catalog.perPagePrice)} each
               </label>
               <input type="number" min={0} max={50} value={extraPages}
                 onChange={(e) => setExtraPages(Math.max(0, parseInt(e.target.value) || 0))}
