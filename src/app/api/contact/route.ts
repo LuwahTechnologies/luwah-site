@@ -117,7 +117,8 @@ export async function POST(request: Request) {
 
     // The lead is already in Sanity, so a slow or failing n8n should not show
     // the visitor an error. Report it and succeed. If the Sanity write also
-    // failed, nothing holds the lead, so the failure still surfaces as a 500.
+    // failed, only the notification email holds the lead, so the failure still
+    // surfaces as a 500.
     try {
       const webhookResponse = await fetch(webhookUrl, {
         method: "POST",
@@ -137,7 +138,6 @@ export async function POST(request: Request) {
       reportError("api.contact.webhook", webhookError, {
         // Lets you find the lead in Studio and replay it to n8n.
         extra: { submission_id: payload.submission_id },
-        throttleMs: 60_000,
       });
     }
 

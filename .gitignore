@@ -39,3 +39,5 @@ next-env.d.ts
 
 # internal offering source (pricing PDFs and generators), not for the public repo
 LT Website Offering/
+
+.pipeline/

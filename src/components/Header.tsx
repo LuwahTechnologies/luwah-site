@@ -108,17 +108,9 @@ export function Header() {
                 key={group.label}
                 className="relative"
                 onMouseEnter={() => setOpenMenu(group.label)}
-                onFocus={(e) => {
-                  // Keyboard focus only. A tap or click also focuses the button, and the
-                  // button's onClick toggle would then close the menu it just opened.
-                  if (e.target.matches(":focus-visible")) setOpenMenu(group.label);
-                }}
                 onBlur={(e) => {
                   // Close only when focus leaves the whole group, not between its links.
                   if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setOpenMenu(null);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Escape") setOpenMenu(null);
                 }}
               >
                 <button
