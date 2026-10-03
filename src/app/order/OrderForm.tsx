@@ -20,6 +20,7 @@ const STEPS = ["Option", "Add-ons", "Support", "Your details"];
 export function OrderForm({ catalog }: { catalog: WebCatalog }) {
   // Quote-only tiers (Custom Build) go through a consultation, not this form.
   const orderableTiers = catalog.tiers.filter((t) => !t.cta);
+  const quoteTier = catalog.tiers.find((t) => t.cta);
   const firstTier = orderableTiers.find((t) => t.highlight) || orderableTiers[0];
   const [step, setStep] = useState(0);
   const [tierKey, setTierKey] = useState(firstTier?.key || "");
@@ -130,6 +131,12 @@ export function OrderForm({ catalog }: { catalog: WebCatalog }) {
               );
             })}
           </div>
+          {quoteTier?.cta && (
+            <p className="mt-4 text-sm" style={{ color: "var(--color-text-secondary)" }}>
+              Need something custom? {quoteTier.name} starts at {fmt(quoteTier.price)} and is quoted after a discovery call.{" "}
+              <Link href={quoteTier.cta.href} className="underline" style={{ color: "var(--color-copper)" }}>{quoteTier.cta.label}</Link>
+            </p>
+          )}
           {tier?.perPage && (
             <div className="mt-6">
               <label className="mb-1.5 block text-sm font-medium">
