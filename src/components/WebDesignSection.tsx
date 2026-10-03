@@ -43,6 +43,11 @@ export function WebDesignSection({ catalog }: { catalog: WebCatalog }) {
                   </li>
                 ))}
               </ul>
+              {t.cta && (
+                <Link href={t.cta.href} className="btn-secondary mt-5 text-center">
+                  {t.cta.label}
+                </Link>
+              )}
             </div>
           ))}
         </div>
@@ -72,7 +77,7 @@ export function WebDesignSection({ catalog }: { catalog: WebCatalog }) {
 
         {/* Support plans */}
         <h3 className="mt-16 mb-5 text-xl font-semibold" style={{ fontFamily: "var(--font-display)" }}>
-          Support after launch
+          Website Care
         </h3>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {catalog.supportPlans.map((p) => (
