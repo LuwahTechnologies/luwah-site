@@ -172,7 +172,7 @@ export const DEFAULT_CATALOG: WebCatalog = {
     { key: "payg", name: "Pay as you go", priceLabel: "$110/hr", includes: "No subscription. Help on specific issues, 1 hour minimum. The rate becomes $130/hr on January 1, 2027." },
   ],
   legal:
-    "Standard rates shown. Custom quotes may differ based on scope and timeline. Colorado professional services are exempt from sales tax per §39-26-104, C.R.S. Pricing effective 2026-10-02, subject to change.",
+    "Standard rates shown. Custom quotes may differ based on scope and timeline. Colorado professional services are exempt from sales tax per §39-26-104, C.R.S. Pricing effective 2026-10-03, subject to change.",
 };
 
 export interface OrderSelection {
