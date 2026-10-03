@@ -27,7 +27,7 @@ Setup Steps
 - [ ] 4. When asked about location, choose "I deliver goods and services to my customers."
 - [ ] 5. Turn off "I also serve customers at my business address."
 - [ ] 6. Enter the home address when prompted. Confirm the screen says it will not be shown publicly.
-- [ ] 7. Add service areas. Use only the Denver metro cities where you meet or have met clients. Google allows a limited number, so list real ones only.
+- [ ] 7. Add service areas. Use only the Denver metro cities where you meet or have met clients. Google allows a limited number, so list real ones only. Confirmed list: Aurora, Centennial, Arvada. Add a city only after you meet a client there.
 - [ ] 8. Add the phone number and the website URL: https://luwahtechnologies.com
 - [ ] 9. Add hours only if they are real. Skip them if you work by appointment.
 - [ ] 10. Start verification and follow the method Google offers.
@@ -80,5 +80,5 @@ Warning: Never publish the home address to fix a verification problem. Use suppo
 Open Items
 
 - Decide the primary category after seeing the live dropdown.
-- Decide which service areas to list.
+- Service areas: decided. Aurora, Centennial, Arvada.
 - Get client permission before sending anyone the review link.
