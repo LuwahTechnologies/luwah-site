@@ -1,9 +1,11 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Privacy Policy",
-  description: "Luwah Technologies privacy policy. How we collect, use, and protect your data.",
-};
+  description:
+    "Luwah Technologies privacy policy. How we collect, use, and protect your data.",
+  path: "/privacy",
+});
 
 export default function PrivacyPage() {
   return (
@@ -27,7 +29,7 @@ export default function PrivacyPage() {
             <section>
               <h2 className="mb-3 text-lg font-semibold" style={{ color: "var(--color-text-primary)", fontFamily: "var(--font-display)" }}>Information We Collect</h2>
               <p>When you use our consultation intake form, we collect: your name, email address, phone number (optional), business name, industry, current tools you use, your business challenges, budget range, scheduling preferences, and how you found us. We also collect your IP address (hashed for rate limiting) and Cloudflare Turnstile verification status for bot prevention.</p>
-              <p className="mt-3"><strong style={{ color: "var(--color-text-primary)" }}>Progressive Form Data:</strong> Our consultation intake form utilizes progressive data capture. If you begin filling out our intake form, we may securely capture and store the information provided in the initial steps (such as your Name and Email) to facilitate follow-up communications, even if the final submission is not completed.</p>
+              <p className="mt-3"><strong style={{ color: "var(--color-text-primary)" }}>Progressive Form Data:</strong> Our consultation intake form uses progressive data capture. If you begin filling out our intake form, we may securely capture and store the information provided in the initial steps (such as your Name and Email) to facilitate follow-up communications, even if the final submission is not completed.</p>
             </section>
 
             <section>

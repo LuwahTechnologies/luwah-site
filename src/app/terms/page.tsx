@@ -1,9 +1,11 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Terms & Conditions",
-  description: "Luwah Technologies terms and conditions for services and website use.",
-};
+  description:
+    "Luwah Technologies terms and conditions for services and website use.",
+  path: "/terms",
+});
 
 export default function TermsPage() {
   return (

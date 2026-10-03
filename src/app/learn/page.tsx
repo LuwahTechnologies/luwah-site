@@ -1,12 +1,13 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { getGuides } from "@/lib/sanity";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Learn",
   description:
     "Plain-language explainers for small business owners: domains, hosting, VPS, SEO, SSL, and more. By Luwah Technologies.",
-};
+  path: "/learn",
+});
 
 export const revalidate = 60;
 

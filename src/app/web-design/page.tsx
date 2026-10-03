@@ -1,12 +1,13 @@
-import type { Metadata } from "next";
 import { WebDesignSection } from "@/components/WebDesignSection";
 import { getWebCatalog } from "@/lib/getWebCatalog";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Website Design & Build",
   description:
-    "Fixed-price websites from $300. Realtor landing pages, marketing sites, booking systems, and full platforms. Build, deploy, and 30 days of support included.",
-};
+    "Fixed-price websites from $300. Realtor landing pages, marketing sites, and booking systems, plus custom builds from $4,000. Build, deploy, and 30 days of support included.",
+  path: "/web-design",
+});
 
 export const revalidate = 60;
 

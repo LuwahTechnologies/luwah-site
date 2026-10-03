@@ -1,11 +1,12 @@
-import type { Metadata } from "next";
 import { AccessibilityReportForm } from "@/components/a11y/AccessibilityReportForm";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Accessibility Statement",
   description:
     "How Luwah Technologies builds and tests this site for accessibility, what the Accessibility Center can adjust, and how to tell us about a barrier.",
-};
+  path: "/accessibility-statement",
+});
 
 const H2 = "mb-3 text-lg font-semibold";
 const H2_STYLE = { color: "var(--color-text-primary)", fontFamily: "var(--font-display)" };

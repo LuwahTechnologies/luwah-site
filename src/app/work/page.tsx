@@ -1,12 +1,14 @@
-import type { Metadata } from "next";
 import { PROJECTS } from "@/data/projects";
 import { getSanityProjects } from "@/lib/sanity";
 import { WorkContent } from "./WorkContent";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Our Work",
-  description: "Real automation case studies with real results. Lead generation, community messaging, self-hosted infrastructure, and more.",
-};
+  description:
+    "Real automation case studies with real results. Lead generation, community messaging, self-hosted infrastructure, and more.",
+  path: "/work",
+});
 
 export const revalidate = 60;
 

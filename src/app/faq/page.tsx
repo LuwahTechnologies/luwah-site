@@ -1,11 +1,13 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { FAQSection } from "@/components/FAQSection";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "FAQ",
-  description: "Answers to common questions about working with Luwah Technologies: process, pricing, hosting, ownership, and support.",
-};
+  description:
+    "Answers to common questions about working with Luwah Technologies: process, pricing, hosting, ownership, and support.",
+  path: "/faq",
+});
 
 export default function FaqPage() {
   return (

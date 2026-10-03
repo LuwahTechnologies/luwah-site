@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { HeroSection } from "@/components/HeroSection";
 import { ServicesSection } from "@/components/ServicesSection";
@@ -8,6 +9,33 @@ import { getSiteSettings } from "@/lib/sanity";
 import { getApprovedReviews } from "@/lib/reviews";
 import { JsonLd } from "@/components/JsonLd";
 import { webSiteSchema } from "@/lib/structuredData";
+import { absoluteUrl } from "@/lib/seo";
+
+const HOME_TITLE = "Automation and Web Design for Small Businesses | Aurora, CO";
+const HOME_DESCRIPTION =
+  "Custom automation, websites, and tech help for small businesses. n8n, Python, and AI-powered. Free consultation. Aurora, CO.";
+
+// Absolute title, so the layout template does not add the site name twice.
+export const metadata: Metadata = {
+  title: { absolute: HOME_TITLE },
+  description: HOME_DESCRIPTION,
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: "Luwah Technologies",
+    locale: "en_US",
+    url: absoluteUrl("/"),
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
+    images: [{ url: "/images/sharing-img-logo.jpg", width: 869, height: 976, alt: "Luwah Technologies" }],
+  },
+  twitter: {
+    card: "summary",
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
+    images: ["/images/sharing-img-logo.jpg"],
+  },
+};
 
 export const revalidate = 60;
 

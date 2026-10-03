@@ -1,12 +1,13 @@
-import type { Metadata } from "next";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { getApprovedReviews } from "@/lib/reviews";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Client Reviews",
   description:
     "See how clients rate Luwah Technologies on communication, expertise, timeliness, value, and overall experience.",
-};
+  path: "/reviews",
+});
 
 // Per-request on purpose: an approval in Studio shows on the next page load. The
 // webhook filter documented in automation/n8n-ai-blog.md covers siteSettings,

@@ -1,11 +1,12 @@
-import type { Metadata } from "next";
 import version from "./version.json";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "Client Agreements",
   description:
     "The standard agreements Luwah Technologies signs with clients and contractors: Mutual Non-Disclosure Agreement, Master Services Agreement, Work Made for Hire Agreement, and Independent Contractor Agreement. PDF and Word downloads.",
-};
+  path: "/agreements",
+});
 
 // Written by scripts/build-agreements.py on every build, so the page and the
 // documents cannot disagree about the version.

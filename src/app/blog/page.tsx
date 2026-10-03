@@ -1,14 +1,15 @@
-import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { POSTS } from "@/data/posts";
 import { getSanityPosts, type PostSummary } from "@/lib/sanity";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "The Automation Lab | Blog",
   description:
     "Practical articles on small business automation, workflows, and technology strategy from a hands-on consultant.",
-};
+  path: "/blog",
+});
 
 export const revalidate = 60;
 
