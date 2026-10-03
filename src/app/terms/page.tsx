@@ -19,7 +19,7 @@ export default function TermsPage() {
             Terms &amp; Conditions
           </h1>
           <p className="mb-10 text-sm" style={{ color: "var(--color-text-muted)" }}>
-            Last updated: September 2026
+            Last updated: October 2026
           </p>
 
           <div
@@ -33,7 +33,7 @@ export default function TermsPage() {
 
             <section>
               <h2 className="mb-3 text-lg font-semibold" style={{ color: "var(--color-text-primary)", fontFamily: "var(--font-display)" }}>2. Free Consultation</h2>
-              <p>The initial 30-minute discovery consultation is provided at no charge and carries no obligation. Additional consultation time beyond the initial session is billed at $110/hour.</p>
+              <p>The initial 30-minute discovery consultation is provided at no charge and carries no obligation. Additional consultation time beyond the initial session is billed at $110/hour. The rate becomes $130/hour on January 1, 2027.</p>
             </section>
 
             <section>

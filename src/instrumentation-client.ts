@@ -24,5 +24,5 @@ Sentry.init({
 });
 
 // Next 16 calls this on every client navigation. Without it the SDK warns at
-// startup. Tracing stays off, so this records nothing extra.
+// build time. Tracing stays off, so this records nothing extra.
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
