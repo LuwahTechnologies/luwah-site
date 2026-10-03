@@ -166,8 +166,8 @@ export const DEFAULT_CATALOG: WebCatalog = {
   supportPlans: [
     { key: "self-serve", name: "Self-Serve", priceLabel: "Free", includes: "Full documentation, best-effort email support, community forum." },
     { key: "light", name: "Website Care Light", priceLabel: "$110/mo", includes: "Uptime and error monitoring, security updates, email support (48-hr response), 1 hr/mo of changes." },
-    { key: "standard", name: "Website Care Standard", priceLabel: "$175/mo", includes: "Everything in Light, plus priority email (24-hr response), 1.5 hrs/mo of changes, and a plain-language monthly report." },
-    { key: "premium", name: "Website Care Premium", priceLabel: "From $250/mo", includes: "Everything in Standard, plus same-day response, 2 hrs/mo of changes, accessibility checks, and a quarterly security and speed review. More hours quoted on request." },
+    { key: "standard", name: "Website Care Standard", priceLabel: "$200/mo", includes: "Everything in Light, plus priority email (24-hr response), 1.5 hrs/mo of changes, and a plain-language monthly report." },
+    { key: "premium", name: "Website Care Premium", priceLabel: "$300/mo", includes: "Everything in Standard, plus same-day response, 2.5 hrs/mo of changes, accessibility checks, and a quarterly security and speed review. Extra hours are billed at the hourly rate." },
     { key: "payg", name: "Pay as you go", priceLabel: "$110/hr", includes: "No subscription. Help on specific issues, 1 hour minimum. The rate becomes $130/hr on January 1, 2027." },
   ],
   legal:
