@@ -159,7 +159,7 @@ export const DEFAULT_CATALOG: WebCatalog = {
       description: "A secure login to manage your site's content and data from one dashboard. Scoped and priced by the number of pages and any integrations, such as Microsoft." },
     { key: "client-portal", name: "Client portal", oneTime: 600, oneTimeLabel: "From $600", variable: true,
       description: "A private, login-protected area where your clients can view their info, bookings, documents, or order status. Scoped and priced by the features you need." },
-    { key: "review-moderation", name: "Review moderation workflow", oneTime: 500, oneTimeLabel: "From $500", variable: true,
+    { key: "review-moderation", name: "Review moderation workflow", oneTime: 300, oneTimeLabel: "From $300", variable: true,
       description: "Review requests, approval, and publishing so only the reviews you approve go live. Priced by how many sources you use." },
     { key: "accessibility", name: "Accessibility", oneTime: 300, oneTimeLabel: "+$300",
       description: "An accessibility check of your site against WCAG 2.2 AA, with fixes for the issues found." },
