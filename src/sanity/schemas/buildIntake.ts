@@ -85,6 +85,17 @@ export default defineType({
     roArr("media", "Media Ready", "content"),
     roTxt("mediaNotes", "Media Notes", "content"),
 
+    roStr("currentSite", "Current Website", "business"),
+    roStr("migration", "Migration", "business"),
+    roTxt("address", "Address / Service Area", "business"),
+    roTxt("businessHours", "Business Hours", "business"),
+    roTxt("socialLinks", "Social / Google Profile Links", "business"),
+    roStr("keywords", "Search Terms", "content"),
+    roStr("contentOwner", "Who Writes Copy", "content"),
+    roStr("assetsLink", "Shared Files Link", "content"),
+    roStr("decisionMaker", "Approver", "logistics"),
+    roArr("addons", "Add-ons Requested", "scope"),
+
     // Section 6 — Forms & integrations
     roArr("forms", "Forms Needed", "tech"),
     roTxt("customForm", "Custom Form Details", "tech"),

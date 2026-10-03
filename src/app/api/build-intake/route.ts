@@ -17,8 +17,10 @@ const STRING_FIELDS = [
   "customForm", "bookingTool", "needsPayments", "automationPreference",
   "otherTools", "mediaNotes", "hasDomain", "domainName", "registrar",
   "hostingPreference", "timeline", "budget", "anythingElse", "printedName",
+  "currentSite", "migration", "businessHours", "address", "socialLinks",
+  "keywords", "contentOwner", "assetsLink", "decisionMaker",
 ];
-const ARRAY_FIELDS = ["pages", "media", "forms"];
+const ARRAY_FIELDS = ["pages", "media", "forms", "addons"];
 
 function cleanString(v: unknown): string {
   return typeof v === "string" ? v.slice(0, 5000) : "";
@@ -101,6 +103,9 @@ export async function POST(request: Request) {
           { label: "Email", value: cleanString(body.email) },
           { label: "Phone", value: cleanString(body.phone) },
           { label: "Tier", value: cleanString(body.tier) },
+          { label: "Add-ons", value: cleanArray(body.addons).join(", ") },
+          { label: "Current site", value: cleanString(body.currentSite) },
+          { label: "Files", value: cleanString(body.assetsLink) },
           { label: "Timeline", value: cleanString(body.timeline) },
           { label: "Budget", value: cleanString(body.budget) },
         ],
