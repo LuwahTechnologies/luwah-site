@@ -276,7 +276,7 @@ export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons
       </div>
 
       {status === "error" && (
-        <p className="mt-4 text-center text-sm" style={{ color: "#ef4444" }}>
+        <p role="alert" className="mt-4 text-center text-sm" style={{ color: "#ef4444" }}>
           Something went wrong. Please try again or email hello@luwahtechnologies.com
         </p>
       )}
