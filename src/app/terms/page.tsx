@@ -1,5 +1,6 @@
 import { pageMetadata } from "@/lib/seo";
 import { getWebCatalog } from "@/lib/getWebCatalog";
+import { DEFAULT_CATALOG } from "@/lib/webCatalog";
 
 export const metadata = pageMetadata({
   title: "Terms & Conditions",
@@ -12,8 +13,11 @@ export const revalidate = 60;
 
 export default async function TermsPage() {
   const catalog = await getWebCatalog();
-  // Same rate as the Pay as you go plan, so one Studio edit moves both.
-  const hourlyRate = (catalog.supportPlans.find((p) => p.key === "payg")?.priceLabel ?? "$110/hr").replace("/hr", "/hour");
+  // Same rate as the Pay as you go plan, so one Studio edit moves both. A label
+  // that is not a single "$N/hr" falls back to the default instead of rendering oddly.
+  const rateOf = (c: typeof catalog) => c.supportPlans.find((p) => p.key === "payg")?.priceLabel ?? "";
+  const label = /^\$\d+\/hr$/.test(rateOf(catalog)) ? rateOf(catalog) : rateOf(DEFAULT_CATALOG);
+  const hourlyRate = label.replace("/hr", "/hour");
   return (
     <div className="pt-24">
       <section className="py-24 md:py-32">
