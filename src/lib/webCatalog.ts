@@ -86,8 +86,8 @@ export const DEFAULT_CATALOG: WebCatalog = {
     {
       key: "tier-1b",
       name: "Tier 2",
-      price: 1000,
-      priceLabel: "$1,000",
+      price: 1500,
+      priceLabel: "$1,500",
       pages: "Website + Booking",
       summary: "Showcase site with embedded scheduling.",
       perPage: true,
@@ -102,8 +102,8 @@ export const DEFAULT_CATALOG: WebCatalog = {
     {
       key: "tier-2",
       name: "Tier 3",
-      price: 2000,
-      priceLabel: "$2,000",
+      price: 2750,
+      priceLabel: "$2,750",
       pages: "Premium Web Service",
       summary: "Full custom booking and admin portal.",
       highlight: true,
