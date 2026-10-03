@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import { Turnstile } from "@/components/Turnstile";
 import { Field, Area, Select, Radio, CheckGroup } from "@/components/intake/IntakeFields";
-import { TIMELINE_OPTIONS } from "@/lib/intakeOptions";
+import { EMAIL_RE, TIMELINE_OPTIONS } from "@/lib/intakeOptions";
 
 interface TierOption {
   key: string;
@@ -108,6 +108,7 @@ export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons
       if (!form.businessName.trim()) e.businessName = "Enter your business or brand name.";
       if (!form.contactName.trim()) e.contactName = "Enter your name.";
       if (!form.email.trim()) e.email = "Enter your email address.";
+      else if (!EMAIL_RE.test(form.email.trim())) e.email = "Enter an email address like name@example.com.";
     }
     if (step === 1) {
       if (!form.primaryGoal) e.primaryGoal = "Choose a primary goal.";
