@@ -89,7 +89,7 @@ export default defineType({
     roTxt("address", "Address / Service Area", "business"),
     roTxt("businessHours", "Business Hours", "business"),
     roTxt("socialLinks", "Social / Google Profile Links", "business"),
-    roStr("keywords", "Search Terms", "content"),
+    roTxt("keywords", "Search Terms", "content"),
     roStr("contentOwner", "Who Writes Copy", "content"),
     roStr("assetsLink", "Shared Files Link", "content"),
     roStr("decisionMaker", "Approver", "logistics"),
