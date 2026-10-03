@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
@@ -46,11 +45,9 @@ const PROJECTS = [
 ];
 
 export function PortfolioSection() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section className="py-24 md:py-32" ref={ref}>
+    <section className="py-24 md:py-32">
       <div className="mx-auto max-w-[var(--container-max)] px-6">
         <h2
           className="mb-4 text-3xl font-bold md:text-4xl"
@@ -69,11 +66,8 @@ export function PortfolioSection() {
           {PROJECTS.map((project, i) => (
             <Link key={project.slug} href={`/work/${project.slug}`} className="no-underline">
             <motion.article
-              initial={{ opacity: 0 }}
-              animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.4, delay: i * 0.08 }}
-              className="card group flex flex-col overflow-hidden transition-colors duration-200 md:flex-row"
-              style={{ cursor: "pointer" }}
+              className="anim-fade card group flex flex-col overflow-hidden transition-colors duration-200 md:flex-row"
+              style={{ "--anim-delay": `${i * 0.08}s`, cursor: "pointer" } as React.CSSProperties}
               whileHover={{ borderColor: "rgba(212, 146, 79, 0.3)" }}
             >
               <div className="relative h-48 w-full shrink-0 md:h-auto md:w-56">

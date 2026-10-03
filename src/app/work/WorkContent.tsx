@@ -1,20 +1,17 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import type { ProjectSummary } from "@/lib/sanity";
 
 export function WorkContent({ projects }: { projects: ProjectSummary[] }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
 
   const featured = projects[0];
   const rest = projects.slice(1);
 
   return (
-    <div className="pt-24" ref={ref}>
+    <div className="pt-24">
       <section className="py-24 md:py-32">
         <div className="mx-auto max-w-[var(--container-max)] px-6">
           <h1
@@ -34,10 +31,7 @@ export function WorkContent({ projects }: { projects: ProjectSummary[] }) {
           {/* Featured project */}
           <Link href={`/work/${featured.slug}`} className="no-underline">
             <motion.article
-              initial={{ opacity: 0 }}
-              animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.4 }}
-              className="card mb-6 grid overflow-hidden transition-colors duration-200 md:grid-cols-2"
+              className="anim-fade card mb-6 grid overflow-hidden transition-colors duration-200 md:grid-cols-2"
               style={{ cursor: "pointer" }}
               whileHover={{ borderColor: "rgba(212, 146, 79, 0.3)" }}
             >
@@ -96,11 +90,8 @@ export function WorkContent({ projects }: { projects: ProjectSummary[] }) {
             {rest.map((p, i) => (
               <Link key={p.slug} href={`/work/${p.slug}`} className="no-underline">
                 <motion.article
-                  initial={{ opacity: 0 }}
-                  animate={inView ? { opacity: 1 } : {}}
-                  transition={{ duration: 0.4, delay: (i + 1) * 0.08 }}
-                  className="card h-full overflow-hidden transition-colors duration-200"
-                  style={{ cursor: "pointer" }}
+                  className="anim-fade card h-full overflow-hidden transition-colors duration-200"
+                  style={{ "--anim-delay": `${(i + 1) * 0.08}s`, cursor: "pointer" } as React.CSSProperties}
                   whileHover={{ borderColor: "rgba(212, 146, 79, 0.3)" }}
                 >
                   <div className="relative h-48">

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 
 const FAQS = [
@@ -44,15 +44,12 @@ const FAQS = [
 
 export function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
     <section
       id="faq"
       className="py-24 md:py-32"
       style={{ backgroundColor: "var(--color-bg-secondary)" }}
-      ref={ref}
     >
       <div className="mx-auto max-w-[var(--container-max)] px-6">
         <h2
@@ -64,13 +61,10 @@ export function FAQSection() {
 
         <div className="mx-auto max-w-3xl">
           {FAQS.map((faq, i) => (
-            <motion.div
+            <div
               key={i}
-              initial={{ opacity: 0 }}
-              animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.3, delay: i * 0.05 }}
-              className="border-b"
-              style={{ borderColor: "var(--color-border)" }}
+              className="anim-fade border-b"
+              style={{ "--anim-delay": `${i * 0.05}s`, borderColor: "var(--color-border)" } as React.CSSProperties}
             >
               <button
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
@@ -113,7 +107,7 @@ export function FAQSection() {
                   </motion.div>
                 )}
               </AnimatePresence>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

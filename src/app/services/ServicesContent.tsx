@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { ChevronDown } from "lucide-react";
 
@@ -60,11 +60,9 @@ const SERVICE_CATEGORIES = [
 
 export function ServicesContent() {
   const [openCat, setOpenCat] = useState<number | null>(0);
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <div className="pt-24" ref={ref}>
+    <div className="pt-24">
       {/* Hero with image */}
       <section className="py-24 md:py-32">
         <div className="mx-auto max-w-[var(--container-max)] px-6">
@@ -110,12 +108,10 @@ export function ServicesContent() {
           {/* Categories accordion */}
           <div className="flex flex-col gap-3">
             {SERVICE_CATEGORIES.map((cat, catIdx) => (
-              <motion.div
+              <div
                 key={cat.title}
-                initial={{ opacity: 0 }}
-                animate={inView ? { opacity: 1 } : {}}
-                transition={{ duration: 0.4, delay: catIdx * 0.06 }}
-                className="card overflow-hidden"
+                className="anim-fade card overflow-hidden"
+                style={{ "--anim-delay": `${catIdx * 0.06}s` } as React.CSSProperties}
               >
                 <button
                   onClick={() => setOpenCat(openCat === catIdx ? null : catIdx)}
@@ -144,7 +140,7 @@ export function ServicesContent() {
                     }}
                   />
                 </button>
-                <AnimatePresence>
+                <AnimatePresence initial={false}>
                   {openCat === catIdx && (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
@@ -184,7 +180,7 @@ export function ServicesContent() {
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>

@@ -267,7 +267,7 @@ export function ConsultationForm() {
 
           {/* Form */}
           <div className="card p-8">
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={step}
                 initial={{ opacity: 0, x: 20 }}

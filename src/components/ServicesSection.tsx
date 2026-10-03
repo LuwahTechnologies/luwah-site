@@ -1,7 +1,3 @@
-"use client";
-
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
 import Link from "next/link";
 import { Mail, BarChart3, Bot, Workflow, Link2, Globe } from "lucide-react";
 
@@ -51,15 +47,12 @@ const SERVICES = [
 ];
 
 export function ServicesSection() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
     <section
       id="services"
       className="py-24 md:py-32"
       style={{ backgroundColor: "var(--color-bg-secondary)" }}
-      ref={ref}
     >
       <div className="mx-auto max-w-[var(--container-max)] px-6">
         <div className="mb-14 text-center">
@@ -79,12 +72,10 @@ export function ServicesSection() {
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {SERVICES.map((service, i) => (
-            <motion.div
+            <div
               key={service.title}
-              initial={{ opacity: 0 }}
-              animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.4, delay: i * 0.08 }}
-              className={`card p-7${!service.showOnMobile ? " hidden sm:block" : ""}`}
+              className={`anim-fade card p-7${!service.showOnMobile ? " hidden sm:block" : ""}`}
+              style={{ "--anim-delay": `${i * 0.08}s` } as React.CSSProperties}
             >
               <service.icon
                 size={20}
@@ -103,7 +94,7 @@ export function ServicesSection() {
               >
                 {service.description}
               </p>
-            </motion.div>
+            </div>
           ))}
         </div>
 

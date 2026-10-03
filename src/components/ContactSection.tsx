@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
-import { motion, useInView } from "framer-motion";
+import { useCallback, useState } from "react";
+import { motion } from "framer-motion";
 import { Mail, Phone, MapPin } from "lucide-react";
 import { SecureEmail } from "@/components/SecureEmail";
 import { Turnstile } from "@/components/Turnstile";
@@ -28,9 +28,6 @@ export function ContactSection({ contact }: { contact?: ContactInfo }) {
     contact?.location && contact.location.trim() ? contact.location : CONTACT_DEFAULTS.location;
   // Phone hrefs must contain digits and a leading + only.
   const telHref = `tel:${phone.replace(/[^\d+]/g, "")}`;
-
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
   const [formData, setFormData] = useState({
     fullName: "",
     companyName: "",
@@ -75,7 +72,7 @@ export function ContactSection({ contact }: { contact?: ContactInfo }) {
   };
 
   return (
-    <section id="contact" className="py-24 md:py-32" ref={ref}>
+    <section id="contact" className="py-24 md:py-32">
       <div className="mx-auto max-w-[var(--container-max)] px-6">
         <h1
           className="mb-14 text-3xl font-bold md:text-4xl"
@@ -85,11 +82,8 @@ export function ContactSection({ contact }: { contact?: ContactInfo }) {
         </h1>
 
         <div className="grid gap-12 md:grid-cols-2">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.4 }}
-            className="flex flex-col gap-4"
+          <div
+            className="anim-fade flex flex-col gap-4"
           >
             <div className="card p-6">
               <Mail
@@ -150,12 +144,11 @@ export function ContactSection({ contact }: { contact?: ContactInfo }) {
                 {location}
               </p>
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.4, delay: 0.1 }}
+          <div
+            className="anim-fade"
+            style={{ "--anim-delay": "0.1s" } as React.CSSProperties}
           >
             {status === "sent" ? (
               <motion.div
@@ -288,7 +281,7 @@ export function ContactSection({ contact }: { contact?: ContactInfo }) {
                 )}
               </form>
             )}
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

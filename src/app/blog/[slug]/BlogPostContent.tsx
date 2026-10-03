@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import type { BlogPost } from "@/data/posts";
 
@@ -76,11 +75,8 @@ export function BlogPostContent({ post }: { post: BlogPost }) {
           </Link>
 
           {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="mb-10"
+          <div
+            className="anim-fade mb-10"
           >
             <div className="mb-4 flex items-center gap-4">
               <span
@@ -108,15 +104,12 @@ export function BlogPostContent({ post }: { post: BlogPost }) {
             >
               {post.title}
             </h1>
-          </motion.div>
+          </div>
 
           {/* Hero image */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="relative mb-14 h-64 overflow-hidden md:h-96"
-            style={{ borderRadius: "var(--radius-card)" }}
+          <div
+            className="anim-fade relative mb-14 h-64 overflow-hidden md:h-96"
+            style={{ "--anim-delay": "0.1s", borderRadius: "var(--radius-card)" } as React.CSSProperties}
           >
             <Image
               src={post.image}
@@ -126,17 +119,15 @@ export function BlogPostContent({ post }: { post: BlogPost }) {
               sizes="(max-width: 768px) 100vw, 1100px"
               priority
             />
-          </motion.div>
+          </div>
 
           {/* Article body */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-            className="mx-auto max-w-3xl"
+          <div
+            className="anim-fade mx-auto max-w-3xl"
+            style={{ "--anim-delay": "0.2s" } as React.CSSProperties}
           >
             {post.content.map((block, i) => renderParagraph(block, i))}
-          </motion.div>
+          </div>
         </div>
       </article>
     </div>

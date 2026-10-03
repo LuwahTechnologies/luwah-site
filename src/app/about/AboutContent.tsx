@@ -1,7 +1,5 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
 import Image from "next/image";
 import { RefreshCw, Eye, Star, BookOpen, TrendingUp, X } from "lucide-react";
 
@@ -62,25 +60,15 @@ const ANTI_BELIEFS = [
 ];
 
 export function AboutContent() {
-  const storyRef = useRef(null);
-  const valuesRef = useRef(null);
-
-  const antiRef = useRef(null);
-  const storyInView = useInView(storyRef, { once: true, margin: "-80px" });
-  const valuesInView = useInView(valuesRef, { once: true, margin: "-80px" });
-
-  const antiInView = useInView(antiRef, { once: true, margin: "-80px" });
 
   return (
     <div className="pt-24">
       {/* Our Story */}
-      <section className="py-24 md:py-32" ref={storyRef}>
+      <section className="py-24 md:py-32">
         <div className="mx-auto max-w-[var(--container-max)] px-6">
           <div className="grid items-center gap-12 md:grid-cols-2 md:gap-20">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={storyInView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.5 }}
+            <div
+              className="anim-fade"
             >
               <h1
                 className="mb-8 text-4xl font-bold md:text-5xl"
@@ -118,13 +106,11 @@ export function AboutContent() {
                   a small business budget.
                 </p>
               </div>
-            </motion.div>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={storyInView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.5, delay: 0.15 }}
-              className="flex justify-center"
+            <div
+              className="anim-fade flex justify-center"
+              style={{ "--anim-delay": "0.15s" } as React.CSSProperties}
             >
               <div className="flex flex-col items-center gap-4">
                 <div
@@ -163,7 +149,7 @@ export function AboutContent() {
                   </a>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
@@ -172,7 +158,6 @@ export function AboutContent() {
       <section
         className="py-24 md:py-32"
         style={{ backgroundColor: "var(--color-bg-secondary)" }}
-        ref={valuesRef}
       >
         <div className="mx-auto max-w-[var(--container-max)] px-6">
           <h2
@@ -184,12 +169,10 @@ export function AboutContent() {
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {VALUES.map((v, i) => (
-              <motion.div
+              <div
                 key={v.title}
-                initial={{ opacity: 0 }}
-                animate={valuesInView ? { opacity: 1 } : {}}
-                transition={{ duration: 0.4, delay: i * 0.08 }}
-                className="card p-7"
+                className="anim-fade card p-7"
+                style={{ "--anim-delay": `${i * 0.08}s` } as React.CSSProperties}
               >
                 <v.icon
                   size={20}
@@ -208,7 +191,7 @@ export function AboutContent() {
                 >
                   {v.description}
                 </p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -233,7 +216,6 @@ export function AboutContent() {
       <section
         className="py-24 md:py-32"
         style={{ backgroundColor: "var(--color-bg-secondary)" }}
-        ref={antiRef}
       >
         <div className="mx-auto max-w-[var(--container-max)] px-6">
           <h2
@@ -245,12 +227,10 @@ export function AboutContent() {
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {ANTI_BELIEFS.map((item, i) => (
-              <motion.div
+              <div
                 key={item.title}
-                initial={{ opacity: 0 }}
-                animate={antiInView ? { opacity: 1 } : {}}
-                transition={{ duration: 0.4, delay: i * 0.08 }}
-                className="card p-6"
+                className="anim-fade card p-6"
+                style={{ "--anim-delay": `${i * 0.08}s` } as React.CSSProperties}
               >
                 <X
                   size={16}
@@ -269,7 +249,7 @@ export function AboutContent() {
                 >
                   {item.description}
                 </p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
