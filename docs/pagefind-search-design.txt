@@ -1,0 +1,61 @@
+Pagefind Search Design
+
+Owner: Daniel. Status: design only, no code written. README line 55 and line 98 carry the open TODO.
+
+Summary
+
+- Recommendation: build the Pagefind index after next build, from the prerendered HTML in .next/server/app. Keep the current search as the fallback.
+- Why it needs a decision: this app is not a static export, so Pagefind has no ready folder of HTML. The index also goes stale between deploys.
+- Next step: a one-hour spike to prove the index builds and is served on Render and in the k3s image.
+
+What Exists Today
+
+- src/components/SearchModal.tsx searches in the browser. It does a substring match on a hand-written list of 11 pages plus POSTS and PROJECTS.
+- It matches title, description, category and type only. It never reads page body text.
+- The page list is hardcoded in the component. A new page does not appear until someone edits it.
+- The blog index reads POSTS from src/data/posts.ts and revalidates every 60 seconds. lib/sanity.ts also exists. Not traced: which source wins for live posts. Check this before trusting any index.
+
+Design
+
+1. Add pagefind as a dev dependency.
+2. Add a postbuild step: pagefind --site .next/server/app --output-path public/pagefind
+3. Add public/pagefind to .gitignore. The index is a build artifact.
+4. Change SearchModal to load /pagefind/pagefind.js on first open with a dynamic import, then call its search function.
+5. If the import fails, fall back to the current local search. This also covers next dev, where no index exists.
+6. Mark non-content areas with data-pagefind-ignore: header, footer, cookie banner, accessibility widget.
+7. Keep result types (Page, Blog, Case Study) by tagging pages with data-pagefind-filter or by reading the URL prefix.
+
+Alternatives
+
+- Keep the current search and add body text.
+  - Generate a JSON file at build time from POSTS, PROJECTS and page copy.
+  - Not chosen as the default: it is a custom indexer to maintain. Pagefind gives ranking and excerpts.
+  - Choose this instead if the spike fails.
+- Hosted search such as Algolia.
+  - Not chosen: a new vendor, a key to manage, and cost. Overkill for about 30 pages.
+
+Risks and Open Questions
+
+- Pagefind reads HTML files. Only prerendered pages exist in .next/server/app. Dynamic pages are not indexed. Confirm which routes are prerendered.
+- Pages with revalidate = 60 change after build. The index reflects the build, not the live page. A new Sanity post will not be searchable until the next deploy. Option: call a rebuild hook when Sanity publishes.
+- Render: confirm next start serves files that postbuild wrote into public/. Not verified.
+- k3s: the Dockerfile uses standalone output. Confirm the image copies public/pagefind. Not verified.
+- The .next/server/app layout is an internal Next detail. A Next upgrade can move it. The spike should pin the path in one script.
+- Index size: check the size of public/pagefind after the build. It loads only on first search.
+
+Failure Scenarios
+
+- Index missing or fails to load.
+  - Detection: console error on first search, or an empty result for a known page.
+  - Recovery: the fallback local search runs. Fix the build step.
+- Index stale after a Sanity edit.
+  - Detection: a new post is missing from search results.
+  - Recovery: redeploy. Longer term, trigger a rebuild on publish.
+
+Spike Checklist
+
+- [ ] Run the build and the pagefind command. Confirm the page count is above 25.
+- [ ] Run next start and open /pagefind/pagefind.js. Confirm it returns 200.
+- [ ] Search for a phrase that appears only in body text. Confirm a hit.
+- [ ] Build the k3s image and confirm public/pagefind is inside it.
+- [ ] Check the blog source question above.
