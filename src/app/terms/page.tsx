@@ -1,4 +1,5 @@
 import { pageMetadata } from "@/lib/seo";
+import { getWebCatalog } from "@/lib/getWebCatalog";
 
 export const metadata = pageMetadata({
   title: "Terms & Conditions",
@@ -7,7 +8,12 @@ export const metadata = pageMetadata({
   path: "/terms",
 });
 
-export default function TermsPage() {
+export const revalidate = 60;
+
+export default async function TermsPage() {
+  const catalog = await getWebCatalog();
+  // Same rate as the Pay as you go plan, so one Studio edit moves both.
+  const hourlyRate = (catalog.supportPlans.find((p) => p.key === "payg")?.priceLabel ?? "$110/hr").replace("/hr", "/hour");
   return (
     <div className="pt-24">
       <section className="py-24 md:py-32">
@@ -33,7 +39,7 @@ export default function TermsPage() {
 
             <section>
               <h2 className="mb-3 text-lg font-semibold" style={{ color: "var(--color-text-primary)", fontFamily: "var(--font-display)" }}>2. Free Consultation</h2>
-              <p>The initial 30-minute discovery consultation is provided at no charge and carries no obligation. Additional consultation time beyond the initial session is billed at $110/hour.</p>
+              <p>The initial 30-minute discovery consultation is provided at no charge and carries no obligation. Additional consultation time beyond the initial session is billed at {hourlyRate}.</p>
             </section>
 
             <section>
