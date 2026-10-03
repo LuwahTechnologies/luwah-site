@@ -143,7 +143,7 @@ export const DEFAULT_CATALOG: WebCatalog = {
       description: "Form submissions flow automatically into a Google Sheet you can sort, filter, and share. Priced per sheet." },
     { key: "local-seo", name: "Local SEO setup", oneTime: 0, oneTimeLabel: "Priced per project", variable: true,
       description: "Setup that helps you show up in local Google searches and the map pack. Scoped and priced per project." },
-    { key: "stripe", name: "Stripe payments", oneTime: 400, oneTimeLabel: "+$400", monthlyLabel: "2.9% + $0.30/tx",
+    { key: "stripe", name: "Stripe payments", oneTime: 500, oneTimeLabel: "+$500", monthlyLabel: "2.9% + $0.30/tx",
       description: "Accept card payments on your site through Stripe. The setup fee covers the integration; Stripe charges 2.9% plus $0.30 per transaction." },
     { key: "sanity-cms", name: "Sanity CMS / blog module", oneTime: 450, oneTimeLabel: "+$450",
       description: "A simple dashboard to edit your site's text, images, and blog yourself, with no code." },
