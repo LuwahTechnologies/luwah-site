@@ -14,6 +14,9 @@ export const revalidate = 60;
 export default async function IntakePage() {
   const catalog = await getWebCatalog();
   const tiers = catalog.tiers.map((t) => ({ key: t.key, name: t.name, priceLabel: t.priceLabel }));
+  const addons = catalog.addons
+    .filter((a) => a.orderable !== false)
+    .map((a) => `${a.name} (${[a.oneTimeLabel, a.monthlyLabel].filter(Boolean).join(", ")})`);
   return (
     <div className="pt-28 pb-24">
       <div className="mx-auto max-w-2xl px-6">
@@ -22,9 +25,9 @@ export default async function IntakePage() {
         </h1>
         <p className="mb-10 text-base" style={{ color: "var(--color-text-secondary)" }}>
           The more detail you provide, the faster we can begin. Fields marked with an asterisk are
-          required. Takes about 10 minutes.
+          required. Takes about 15 minutes.
         </p>
-        <BuildIntakeForm tiers={tiers} />
+        <BuildIntakeForm tiers={tiers} addons={addons} />
       </div>
     </div>
   );

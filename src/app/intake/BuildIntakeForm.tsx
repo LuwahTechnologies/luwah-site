@@ -41,7 +41,7 @@ const PAYMENT_OPTIONS = ["Yes, I have a Stripe account", "Yes, I need help setti
 const AUTOMATION_OPTIONS = [
   "Free: Google Apps Script",
   "Paid: n8n Cloud workflow engine",
-  "Self-Hosted n8n via Luwah ($500 setup + $12/mo)",
+  "Self-Hosted n8n via Luwah",
   "Not sure, please advise",
 ];
 const MEDIA_OPTIONS = [
@@ -51,6 +51,9 @@ const MEDIA_OPTIONS = [
 const DOMAIN_OPTIONS = ["Yes, I own it already", "No, I need help purchasing one", "Not sure what a domain is"];
 const HOSTING_OPTIONS = ["Managed hosting via Luwah", "I'll host it myself", "Not sure, please advise"];
 const TIMELINE_OPTIONS = ["As soon as possible", "Within 2 weeks", "Within a month", "Flexible: quality over speed"];
+
+const CONTENT_OWNER_OPTIONS = ["I will write it", "Write it for me", "A mix of both"];
+const SUPPORT_EMAIL = "info@luwahtechnologies.com";
 
 const STEPS = ["Business", "Goals & Tier", "Brand", "Pages & Content", "Forms & Media", "Logistics"];
 
@@ -65,6 +68,9 @@ type FormState = {
   automationPreference: string; otherTools: string; media: string[]; mediaNotes: string;
   hasDomain: string; domainName: string; registrar: string; hostingPreference: string;
   timeline: string; budget: string; anythingElse: string; printedName: string; agreed: boolean;
+  addons: string[]; currentSite: string; businessHours: string; address: string;
+  socialLinks: string; keywords: string;
+  contentOwner: string; assetsLink: string; decisionMaker: string;
 };
 
 const EMPTY: FormState = {
@@ -76,9 +82,11 @@ const EMPTY: FormState = {
   needsPayments: "", automationPreference: "", otherTools: "", media: [], mediaNotes: "",
   hasDomain: "", domainName: "", registrar: "", hostingPreference: "", timeline: "", budget: "",
   anythingElse: "", printedName: "", agreed: false,
+  addons: [], currentSite: "", businessHours: "", address: "",
+  socialLinks: "", keywords: "", contentOwner: "", assetsLink: "", decisionMaker: "",
 };
 
-export function BuildIntakeForm({ tiers }: { tiers: TierOption[] }) {
+export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons: string[] }) {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<FormState>(EMPTY);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
@@ -87,7 +95,7 @@ export function BuildIntakeForm({ tiers }: { tiers: TierOption[] }) {
   const handleToken = useCallback((t: string) => setTurnstileToken(t), []);
   const handleExpire = useCallback(() => setTurnstileToken(null), []);
   const update = (patch: Partial<FormState>) => setForm((f) => ({ ...f, ...patch }));
-  const toggle = (field: "pages" | "forms" | "media", value: string) =>
+  const toggle = (field: "pages" | "forms" | "media" | "addons", value: string) =>
     setForm((f) => ({
       ...f,
       [field]: f[field].includes(value) ? f[field].filter((v) => v !== value) : [...f[field], value],
@@ -97,9 +105,9 @@ export function BuildIntakeForm({ tiers }: { tiers: TierOption[] }) {
 
   // Per-step gate on the required fields for that step.
   const canAdvance = () => {
-    if (step === 0) return form.businessName.trim() && form.contactName.trim() && form.email.trim() && form.mission.trim();
+    if (step === 0) return form.businessName.trim() && form.contactName.trim() && form.email.trim();
     if (step === 1) return form.primaryGoal && form.targetAudience.trim() && form.mainCta.trim();
-    if (step === 3) return form.pages.length > 0 && form.homeSections.trim() && form.aboutContent.trim() && form.services.trim();
+    if (step === 3) return form.pages.length > 0 && form.homeSections.trim() && form.services.trim();
     if (step === 4) return form.forms.length > 0;
     if (step === 5) return form.hasDomain && form.timeline && form.printedName.trim() && form.agreed;
     return true;
@@ -163,8 +171,12 @@ export function BuildIntakeForm({ tiers }: { tiers: TierOption[] }) {
             <Field label="Phone" value={form.phone} onChange={(v) => update({ phone: v })} />
             <Field label="Industry / niche" value={form.industry} onChange={(v) => update({ industry: v })} />
             <Field label="City / location" value={form.location} onChange={(v) => update({ location: v })} />
+            <Field label="Current website address" hint="Leave blank if you do not have one. Choose the site migration add-on if we are moving it." value={form.currentSite} onChange={(v) => update({ currentSite: v })} />
+            <Area label="Business address and service area" hint="Street address if customers visit you, and the areas you serve." value={form.address} onChange={(v) => update({ address: v })} />
+            <Area label="Business hours" value={form.businessHours} onChange={(v) => update({ businessHours: v })} />
+            <Area label="Social media and Google Business Profile links" hint="One per line." value={form.socialLinks} onChange={(v) => update({ socialLinks: v })} />
             <Field label="Tagline or slogan" value={form.tagline} onChange={(v) => update({ tagline: v })} />
-            <Area label="Mission statement *" hint="What is your business here to do? Who do you serve and how?" value={form.mission} onChange={(v) => update({ mission: v })} />
+            <Area label="Mission statement" hint="What is your business here to do? Who do you serve and how?" value={form.mission} onChange={(v) => update({ mission: v })} />
             <Area label="Elevator pitch" hint="What you do in 1-2 sentences." value={form.elevatorPitch} onChange={(v) => update({ elevatorPitch: v })} />
           </>
         )}
@@ -176,6 +188,7 @@ export function BuildIntakeForm({ tiers }: { tiers: TierOption[] }) {
             <Field label="Main call to action *" hint='e.g. "Book a free consultation"' value={form.mainCta} onChange={(v) => update({ mainCta: v })} />
             <Area label="What problem does your site solve?" value={form.problemSolved} onChange={(v) => update({ problemSolved: v })} />
             <Select label="Which tier are you considering?" options={tierOptions} value={form.tier} onChange={(v) => update({ tier: v })} />
+            <CheckGroup label="Add-ons you want included" options={addons} selected={form.addons} onToggle={(v) => toggle("addons", v)} />
           </>
         )}
 
@@ -195,10 +208,12 @@ export function BuildIntakeForm({ tiers }: { tiers: TierOption[] }) {
             <CheckGroup label="Which pages do you need? *" options={PAGE_OPTIONS} selected={form.pages} onToggle={(v) => toggle("pages", v)} />
             <Field label="Other pages not listed" value={form.otherPages} onChange={(v) => update({ otherPages: v })} />
             <Area label="Home page sections *" hint="List each section and describe it." value={form.homeSections} onChange={(v) => update({ homeSections: v })} />
-            <Area label="About page content *" value={form.aboutContent} onChange={(v) => update({ aboutContent: v })} />
+            <Area label="About page content" value={form.aboutContent} onChange={(v) => update({ aboutContent: v })} />
             <Area label="Services (name, description, price) *" value={form.services} onChange={(v) => update({ services: v })} />
             <Select label="Do you have testimonials?" options={TESTIMONIAL_OPTIONS} value={form.hasTestimonials} onChange={(v) => update({ hasTestimonials: v })} />
             <Area label="Testimonials, awards, certifications" value={form.testimonials} onChange={(v) => update({ testimonials: v })} />
+            <Select label="Who writes the page copy?" options={CONTENT_OWNER_OPTIONS} value={form.contentOwner} onChange={(v) => update({ contentOwner: v })} />
+            <Area label="Search terms you want to be found for" hint="For example: roofing contractor Aurora CO." value={form.keywords} onChange={(v) => update({ keywords: v })} />
             <Area label="Any other copy you have ready" value={form.otherCopy} onChange={(v) => update({ otherCopy: v })} />
           </>
         )}
@@ -213,6 +228,7 @@ export function BuildIntakeForm({ tiers }: { tiers: TierOption[] }) {
             <Field label="Other tools to connect" hint="CRM, email marketing, POS, analytics." value={form.otherTools} onChange={(v) => update({ otherTools: v })} />
             <CheckGroup label="What media do you have ready?" options={MEDIA_OPTIONS} selected={form.media} onToggle={(v) => toggle("media", v)} />
             <Area label="Notes on media" value={form.mediaNotes} onChange={(v) => update({ mediaNotes: v })} />
+            <Field label="Link to your shared folder of files" hint={`Google Drive, Dropbox or similar, with sharing turned on. No folder? Email files to ${SUPPORT_EMAIL} with your business name in the subject.`} value={form.assetsLink} onChange={(v) => update({ assetsLink: v })} />
           </>
         )}
 
@@ -224,6 +240,7 @@ export function BuildIntakeForm({ tiers }: { tiers: TierOption[] }) {
             <Select label="Hosting preference" options={HOSTING_OPTIONS} value={form.hostingPreference} onChange={(v) => update({ hostingPreference: v })} />
             <Select label="When do you need the site live? *" options={TIMELINE_OPTIONS} value={form.timeline} onChange={(v) => update({ timeline: v })} />
             <Select label="Budget range" options={tierOptions} value={form.budget} onChange={(v) => update({ budget: v })} />
+            <Field label="Who approves the final site?" hint="Name and email if it is not you." value={form.decisionMaker} onChange={(v) => update({ decisionMaker: v })} />
             <Area label="Anything else we should know?" value={form.anythingElse} onChange={(v) => update({ anythingElse: v })} />
             <Field label="Printed name *" hint="Confirms the information is accurate." value={form.printedName} onChange={(v) => update({ printedName: v })} />
             <label className="flex items-start gap-3" style={{ cursor: "pointer" }}>
