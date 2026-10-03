@@ -163,7 +163,7 @@ export const DEFAULT_CATALOG: WebCatalog = {
       description: "Review requests, approval, and publishing so only the reviews you approve go live. Priced by how many sources you use." },
     { key: "accessibility", name: "Accessibility", oneTime: 300, oneTimeLabel: "+$300",
       description: "An accessibility check of your site against WCAG 2.2 AA, with fixes for the issues found." },
-    { key: "site-migration", name: "Site migration from another platform", oneTime: 750, oneTimeLabel: "From $750", variable: true,
+    { key: "site-migration", name: "Site migration from another platform", oneTime: 2500, oneTimeLabel: "From $2,500", variable: true,
       description: "Move your site off a platform that locks you in, so you own your website, email, and data again. Priced after I review the current site." },
   ],
   supportPlans: [
