@@ -25,56 +25,77 @@ export function Label({ text, hint, htmlFor, hintId, groupId }: {
   );
 }
 
-export function Field({ label, hint, value, onChange, type = "text", autoComplete }: {
-  label: string; hint?: string; value: string; onChange: (v: string) => void; type?: string; autoComplete?: string;
+// Shown only after a failed Next or Submit. Linked to its control with aria-describedby.
+const ERROR_COLOR = "#ef4444";
+const errorBorder = (error?: string): React.CSSProperties =>
+  error ? { ...inputStyle, border: `1px solid ${ERROR_COLOR}` } : inputStyle;
+const describedBy = (...ids: (string | false | undefined)[]) => ids.filter(Boolean).join(" ") || undefined;
+
+function ErrorText({ id, text }: { id: string; text?: string }) {
+  if (!text) return null;
+  return <p id={id} className="mt-1 text-xs" style={{ color: ERROR_COLOR }}>{text}</p>;
+}
+
+export function Field({ label, hint, value, onChange, type = "text", autoComplete, error }: {
+  label: string; hint?: string; value: string; onChange: (v: string) => void; type?: string; autoComplete?: string; error?: string;
 }) {
   const id = useId();
   const hintId = `${id}-hint`;
+  const errId = `${id}-err`;
   return (
     <div>
       <Label text={label} hint={hint} htmlFor={id} hintId={hintId} />
-      <input id={id} autoComplete={autoComplete} aria-describedby={hint ? hintId : undefined} type={type} value={value} onChange={(e) => onChange(e.target.value)}
-        className="intake-focus w-full rounded-lg px-4 py-3 text-sm" style={inputStyle} />
+      <input id={id} autoComplete={autoComplete} aria-invalid={error ? true : undefined}
+        aria-describedby={describedBy(hint && hintId, error && errId)} type={type} value={value} onChange={(e) => onChange(e.target.value)}
+        className="intake-focus w-full rounded-lg px-4 py-3 text-sm" style={errorBorder(error)} />
+      <ErrorText id={errId} text={error} />
     </div>
   );
 }
 
-export function Area({ label, hint, value, onChange }: {
-  label: string; hint?: string; value: string; onChange: (v: string) => void;
+export function Area({ label, hint, value, onChange, error }: {
+  label: string; hint?: string; value: string; onChange: (v: string) => void; error?: string;
 }) {
   const id = useId();
   const hintId = `${id}-hint`;
+  const errId = `${id}-err`;
   return (
     <div>
       <Label text={label} hint={hint} htmlFor={id} hintId={hintId} />
-      <textarea id={id} aria-describedby={hint ? hintId : undefined} rows={3} value={value} onChange={(e) => onChange(e.target.value)}
-        className="intake-focus w-full rounded-lg px-4 py-3 text-sm" style={inputStyle} />
+      <textarea id={id} aria-invalid={error ? true : undefined} aria-describedby={describedBy(hint && hintId, error && errId)}
+        rows={3} value={value} onChange={(e) => onChange(e.target.value)}
+        className="intake-focus w-full rounded-lg px-4 py-3 text-sm" style={errorBorder(error)} />
+      <ErrorText id={errId} text={error} />
     </div>
   );
 }
 
-export function Select({ label, options, value, onChange }: {
-  label: string; options: string[]; value: string; onChange: (v: string) => void;
+export function Select({ label, options, value, onChange, error }: {
+  label: string; options: string[]; value: string; onChange: (v: string) => void; error?: string;
 }) {
   const id = useId();
+  const errId = `${id}-err`;
   return (
     <div>
       <Label text={label} htmlFor={id} />
-      <select id={id} value={value} onChange={(e) => onChange(e.target.value)}
-        className="intake-focus w-full rounded-lg px-4 py-3 text-sm" style={inputStyle}>
+      <select id={id} aria-invalid={error ? true : undefined} aria-describedby={describedBy(error && errId)}
+        value={value} onChange={(e) => onChange(e.target.value)}
+        className="intake-focus w-full rounded-lg px-4 py-3 text-sm" style={errorBorder(error)}>
         <option value="">Select…</option>
         {options.map((o) => <option key={o} value={o}>{o}</option>)}
       </select>
+      <ErrorText id={errId} text={error} />
     </div>
   );
 }
 
-export function Radio({ label, options, value, onChange }: {
-  label: string; options: string[]; value: string; onChange: (v: string) => void;
+export function Radio({ label, options, value, onChange, error }: {
+  label: string; options: string[]; value: string; onChange: (v: string) => void; error?: string;
 }) {
   const labelId = useId();
+  const errId = `${labelId}-err`;
   return (
-    <div role="group" aria-labelledby={labelId}>
+    <div role="group" aria-labelledby={labelId} aria-describedby={describedBy(error && errId)} data-invalid={error ? true : undefined}>
       <Label text={label} groupId={labelId} />
       <div className="flex flex-wrap gap-2">
         {options.map((o) => (
@@ -89,16 +110,18 @@ export function Radio({ label, options, value, onChange }: {
           </button>
         ))}
       </div>
+      <ErrorText id={errId} text={error} />
     </div>
   );
 }
 
-export function CheckGroup({ label, options, selected, onToggle }: {
-  label: string; options: string[]; selected: string[]; onToggle: (v: string) => void;
+export function CheckGroup({ label, options, selected, onToggle, error }: {
+  label: string; options: string[]; selected: string[]; onToggle: (v: string) => void; error?: string;
 }) {
   const labelId = useId();
+  const errId = `${labelId}-err`;
   return (
-    <div role="group" aria-labelledby={labelId}>
+    <div role="group" aria-labelledby={labelId} aria-describedby={describedBy(error && errId)} data-invalid={error ? true : undefined}>
       <Label text={label} groupId={labelId} />
       <div className="grid gap-2 sm:grid-cols-2">
         {options.map((o) => {
@@ -119,6 +142,7 @@ export function CheckGroup({ label, options, selected, onToggle }: {
           );
         })}
       </div>
+      <ErrorText id={errId} text={error} />
     </div>
   );
 }
