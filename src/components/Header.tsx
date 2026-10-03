@@ -104,7 +104,19 @@ export function Header() {
           {/* Desktop grouped nav */}
           <nav className="hidden items-center gap-1 lg:flex" onMouseLeave={() => setOpenMenu(null)}>
             {NAV.map((group) => (
-              <div key={group.label} className="relative" onMouseEnter={() => setOpenMenu(group.label)}>
+              <div
+                key={group.label}
+                className="relative"
+                onMouseEnter={() => setOpenMenu(group.label)}
+                onFocus={() => setOpenMenu(group.label)}
+                onBlur={(e) => {
+                  // Close only when focus leaves the whole group, not between its links.
+                  if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setOpenMenu(null);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") setOpenMenu(null);
+                }}
+              >
                 <button
                   className="nav-link flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200"
                   style={{ color: "var(--color-text-secondary)", background: "none", border: "none", cursor: "pointer" }}

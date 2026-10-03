@@ -87,7 +87,7 @@ export async function POST(request: Request) {
     // Store the lead in Sanity so it shows in the admin Studio, independent of
     // n8n. Non-blocking: a Sanity failure is logged but does not drop the lead,
     // which still forwards to n8n below.
-    await saveSubmission({
+    const saved = await saveSubmission({
       formType: "contact",
       leadStatus: payload.lead_status,
       submissionId: payload.submission_id,
@@ -115,18 +115,26 @@ export async function POST(request: Request) {
       ctaLabel: "View in Studio",
     });
 
-    const webhookResponse = await fetch(webhookUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Webhook-Signature": signPayload(payload),
-      },
-      body: JSON.stringify(payload),
-      signal: AbortSignal.timeout(10000),
-    });
+    // The lead is already in Sanity, so a slow or failing n8n should not show
+    // the visitor an error. Report it and succeed. If the Sanity write also
+    // failed, nothing holds the lead, so the failure still surfaces as a 500.
+    try {
+      const webhookResponse = await fetch(webhookUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Webhook-Signature": signPayload(payload),
+        },
+        body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(10000),
+      });
 
-    if (!webhookResponse.ok) {
-      throw new Error(`Webhook responded with ${webhookResponse.status}`);
+      if (!webhookResponse.ok) {
+        throw new Error(`Webhook responded with ${webhookResponse.status}`);
+      }
+    } catch (webhookError) {
+      if (!saved) throw webhookError;
+      reportError("api.contact.webhook", webhookError, { throttleMs: 60_000 });
     }
 
     return NextResponse.json({ success: true });
