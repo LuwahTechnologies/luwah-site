@@ -86,8 +86,8 @@ export const DEFAULT_CATALOG: WebCatalog = {
     {
       key: "tier-1b",
       name: "Tier 2",
-      price: 1000,
-      priceLabel: "$1,000",
+      price: 1500,
+      priceLabel: "$1,500",
       pages: "Website + Booking",
       summary: "Showcase site with embedded scheduling.",
       perPage: true,
@@ -102,8 +102,8 @@ export const DEFAULT_CATALOG: WebCatalog = {
     {
       key: "tier-2",
       name: "Tier 3",
-      price: 2000,
-      priceLabel: "$2,000",
+      price: 2750,
+      priceLabel: "$2,750",
       pages: "Premium Web Service",
       summary: "Full custom booking and admin portal.",
       highlight: true,
@@ -172,7 +172,7 @@ export const DEFAULT_CATALOG: WebCatalog = {
     { key: "payg", name: "Pay as you go", priceLabel: "$110/hr", includes: "No subscription. Help on specific issues, 1 hour minimum. The rate becomes $130/hr on January 1, 2027." },
   ],
   legal:
-    "Standard rates shown. Custom quotes may differ based on scope and timeline. Colorado professional services are exempt from sales tax per §39-26-104, C.R.S. Pricing effective 2026-10-02, subject to change.",
+    "Standard rates shown. Custom quotes may differ based on scope and timeline. Colorado professional services are exempt from sales tax per §39-26-104, C.R.S. Pricing effective 2026-10-03, subject to change.",
 };
 
 export interface OrderSelection {
