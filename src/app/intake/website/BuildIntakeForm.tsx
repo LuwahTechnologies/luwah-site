@@ -162,10 +162,10 @@ export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons
       <div className="flex flex-col gap-5">
         {step === 0 && (
           <>
-            <Field label="Business / brand name *" value={form.businessName} onChange={(v) => update({ businessName: v })} />
-            <Field label="Your name (owner / contact) *" value={form.contactName} onChange={(v) => update({ contactName: v })} />
-            <Field label="Email *" value={form.email} onChange={(v) => update({ email: v })} type="email" />
-            <Field label="Phone" value={form.phone} onChange={(v) => update({ phone: v })} />
+            <Field label="Business / brand name *" value={form.businessName} onChange={(v) => update({ businessName: v })} autoComplete="organization" />
+            <Field label="Your name (owner / contact) *" value={form.contactName} onChange={(v) => update({ contactName: v })} autoComplete="name" />
+            <Field label="Email *" value={form.email} onChange={(v) => update({ email: v })} type="email" autoComplete="email" />
+            <Field label="Phone" value={form.phone} onChange={(v) => update({ phone: v })} autoComplete="tel" />
             <Field label="Industry / niche" value={form.industry} onChange={(v) => update({ industry: v })} />
             <Field label="City / location" value={form.location} onChange={(v) => update({ location: v })} />
             <Field label="Current website address" hint="Leave blank if you do not have one. Choose the site migration add-on if we are moving it." value={form.currentSite} onChange={(v) => update({ currentSite: v })} />

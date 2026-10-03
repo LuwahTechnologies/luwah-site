@@ -119,9 +119,9 @@ export function AutomationIntakeForm() {
       <div className="flex flex-col gap-5">
         {step === 0 && (
           <>
-            <Field label="Your name *" value={form.contactName} onChange={(v) => update({ contactName: v })} />
-            <Field label="Email *" value={form.email} onChange={(v) => update({ email: v })} type="email" />
-            <Field label="Phone *" value={form.phone} onChange={(v) => update({ phone: v })} type="tel" />
+            <Field label="Your name *" value={form.contactName} onChange={(v) => update({ contactName: v })} autoComplete="name" />
+            <Field label="Email *" value={form.email} onChange={(v) => update({ email: v })} type="email" autoComplete="email" />
+            <Field label="Phone *" value={form.phone} onChange={(v) => update({ phone: v })} type="tel" autoComplete="tel" />
             <Area label="What process is slowing you down? *" hint="Describe the task step by step, who does it, and how often." value={form.processDescription} onChange={(v) => update({ processDescription: v })} />
             <Field label="Hours per week spent on it" hint="Whole hours, 1 to 200. Leave blank if you are not sure." value={form.hoursPerWeek} onChange={(v) => update({ hoursPerWeek: v })} type="number" />
           </>

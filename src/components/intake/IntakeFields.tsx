@@ -25,15 +25,15 @@ export function Label({ text, hint, htmlFor, hintId, groupId }: {
   );
 }
 
-export function Field({ label, hint, value, onChange, type = "text" }: {
-  label: string; hint?: string; value: string; onChange: (v: string) => void; type?: string;
+export function Field({ label, hint, value, onChange, type = "text", autoComplete }: {
+  label: string; hint?: string; value: string; onChange: (v: string) => void; type?: string; autoComplete?: string;
 }) {
   const id = useId();
   const hintId = `${id}-hint`;
   return (
     <div>
       <Label text={label} hint={hint} htmlFor={id} hintId={hintId} />
-      <input id={id} aria-describedby={hint ? hintId : undefined} type={type} value={value} onChange={(e) => onChange(e.target.value)}
+      <input id={id} autoComplete={autoComplete} aria-describedby={hint ? hintId : undefined} type={type} value={value} onChange={(e) => onChange(e.target.value)}
         className="intake-focus w-full rounded-lg px-4 py-3 text-sm" style={inputStyle} />
     </div>
   );
