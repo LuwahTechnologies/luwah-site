@@ -4,7 +4,7 @@ import { saveSubmission } from "@/lib/sanityWrite";
 import { verifyTurnstile } from "@/lib/verifyTurnstile";
 import { signPayload } from "@/lib/signPayload";
 import { notifyEmail } from "@/lib/notifyEmail";
-import { rateLimit, clientKey } from "@/lib/rateLimit";
+import { rateLimit, clientKey, clientIp } from "@/lib/rateLimit";
 import { reportError } from "@/lib/report";
 
 export async function POST(request: Request) {
@@ -77,7 +77,7 @@ export async function POST(request: Request) {
         submitted_at: new Date().toISOString(),
         ip_hash: crypto
           .createHash("sha256")
-          .update(request.headers.get("x-forwarded-for") || "unknown")
+          .update(clientIp(request))
           .digest("hex")
           .slice(0, 16),
         source: "contact-form",

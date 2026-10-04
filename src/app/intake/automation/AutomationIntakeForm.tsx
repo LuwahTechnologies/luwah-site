@@ -43,6 +43,7 @@ export function AutomationIntakeForm() {
   const [showErrors, setShowErrors] = useState(false);
   const [verifyPrompt, setVerifyPrompt] = useState(false);
   const [focusSignal, setFocusSignal] = useState(0);
+  const [backSignal, setBackSignal] = useState(0);
   const fieldsRef = useRef<HTMLDivElement>(null);
 
   const handleToken = useCallback((t: string) => setTurnstileToken(t), []);
@@ -93,7 +94,13 @@ export function AutomationIntakeForm() {
 
   const blocked = () => { setShowErrors(true); setFocusSignal((n) => n + 1); };
   const goNext = () => { if (!canAdvance()) return blocked(); setShowErrors(false); setStep(step + 1); };
-  const goBack = () => { setShowErrors(false); setStep(step - 1); };
+  // The Back button unmounts on step 1, so hand focus to the fields container instead of body.
+  useEffect(() => {
+    if (backSignal === 0) return;
+    fieldsRef.current?.focus();
+  }, [backSignal]);
+
+  const goBack = () => { setShowErrors(false); setStep(step - 1); if (step === 1) setBackSignal((n) => n + 1); };
 
   const handleSubmit = async () => {
     if (status === "sending") return;
@@ -154,7 +161,7 @@ export function AutomationIntakeForm() {
         ))}
       </div>
 
-      <div ref={fieldsRef} className="flex flex-col gap-5">
+      <div ref={fieldsRef} tabIndex={-1} className="flex flex-col gap-5 focus:outline-none">
         {step === 0 && (
           <>
             <Field label="Your name *" error={err("contactName")} value={form.contactName} onChange={(v) => update({ contactName: v })} autoComplete="name" />

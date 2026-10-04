@@ -3,7 +3,7 @@ import crypto from "crypto";
 import { writeClient } from "@/lib/sanityWrite";
 import { verifyTurnstile } from "@/lib/verifyTurnstile";
 import { signPayload } from "@/lib/signPayload";
-import { rateLimit, clientKey } from "@/lib/rateLimit";
+import { rateLimit, clientKey, clientIp } from "@/lib/rateLimit";
 import { getWebCatalog } from "@/lib/getWebCatalog";
 import { computeOrderTotal } from "@/lib/webCatalog";
 import { notifyEmail } from "@/lib/notifyEmail";
@@ -62,7 +62,7 @@ export async function POST(request: Request) {
     const submissionId = crypto.randomUUID();
     const ipHash = crypto
       .createHash("sha256")
-      .update(request.headers.get("x-forwarded-for") || "unknown")
+      .update(clientIp(request))
       .digest("hex")
       .slice(0, 16);
     const submittedAt = new Date().toISOString();

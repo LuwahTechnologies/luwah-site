@@ -53,10 +53,20 @@ export function rateLimit(
 }
 
 /**
- * Derives a client key from the forwarded IP. Falls back to a constant so a
- * missing header still shares one bucket rather than bypassing the limit.
+ * Client IP for rate limiting. Prefers cf-connecting-ip, which Cloudflare sets
+ * and overwrites. Otherwise takes the last x-forwarded-for entry, the one the
+ * nearest proxy appended. The first entry is client supplied and spoofable.
+ * Caveat: a request sent straight to the onrender.com origin can still forge
+ * cf-connecting-ip. Lock the origin to Cloudflare to close that.
  */
+export function clientIp(request: Request): string {
+  const cf = request.headers.get("cf-connecting-ip")?.trim();
+  if (cf) return cf;
+  const parts = request.headers.get("x-forwarded-for")?.split(",") ?? [];
+  return parts[parts.length - 1]?.trim() || "unknown";
+}
+
+/** Falls back to a constant so a missing header shares one bucket rather than bypassing the limit. */
 export function clientKey(request: Request, scope: string): string {
-  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-  return `${scope}:${ip}`;
+  return `${scope}:${clientIp(request)}`;
 }

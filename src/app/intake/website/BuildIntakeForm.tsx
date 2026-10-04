@@ -89,6 +89,7 @@ export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons
   const [showErrors, setShowErrors] = useState(false);
   const [verifyPrompt, setVerifyPrompt] = useState(false);
   const [focusSignal, setFocusSignal] = useState(0);
+  const [backSignal, setBackSignal] = useState(0);
   const fieldsRef = useRef<HTMLDivElement>(null);
 
   const handleToken = useCallback((t: string) => setTurnstileToken(t), []);
@@ -143,7 +144,13 @@ export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons
 
   const blocked = () => { setShowErrors(true); setFocusSignal((n) => n + 1); };
   const goNext = () => { if (!canAdvance()) return blocked(); setShowErrors(false); setStep(step + 1); };
-  const goBack = () => { setShowErrors(false); setStep(step - 1); };
+  // The Back button unmounts on step 1, so hand focus to the fields container instead of body.
+  useEffect(() => {
+    if (backSignal === 0) return;
+    fieldsRef.current?.focus();
+  }, [backSignal]);
+
+  const goBack = () => { setShowErrors(false); setStep(step - 1); if (step === 1) setBackSignal((n) => n + 1); };
 
   const handleSubmit = async () => {
     if (status === "sending") return;
@@ -205,7 +212,7 @@ export function BuildIntakeForm({ tiers, addons }: { tiers: TierOption[]; addons
         ))}
       </div>
 
-      <div ref={fieldsRef} className="flex flex-col gap-5">
+      <div ref={fieldsRef} tabIndex={-1} className="flex flex-col gap-5 focus:outline-none">
         {step === 0 && (
           <>
             <Field label="Business / brand name *" error={err("businessName")} value={form.businessName} onChange={(v) => update({ businessName: v })} autoComplete="organization" />

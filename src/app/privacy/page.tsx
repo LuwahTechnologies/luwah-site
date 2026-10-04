@@ -29,6 +29,7 @@ export default function PrivacyPage() {
             <section>
               <h2 className="mb-3 text-lg font-semibold" style={{ color: "var(--color-text-primary)", fontFamily: "var(--font-display)" }}>Information We Collect</h2>
               <p>When you use our consultation intake form, we collect: your name, email address, phone number (optional), business name, industry, current tools you use, your business challenges, budget range, scheduling preferences, and how you found us. We also collect your IP address (hashed for rate limiting) and Cloudflare Turnstile verification status for bot prevention.</p>
+              <p className="mt-3"><strong style={{ color: "var(--color-text-primary)" }}>Project Intake Forms:</strong> Our website build and automation intake forms collect your name, email address, phone number, business and project details, the tools you use, a link you choose to share, your budget range and timeline, and your printed name with a confirmation that the information is accurate. We do not accept file uploads. We also collect a hashed IP address and Turnstile verification status. We store these in Sanity, our content system, and email a copy to our team.</p>
               <p className="mt-3"><strong style={{ color: "var(--color-text-primary)" }}>Progressive Form Data:</strong> Our consultation intake form uses progressive data capture. If you begin filling out our intake form, we may securely capture and store the information provided in the initial steps (such as your Name and Email) to facilitate follow-up communications, even if the final submission is not completed.</p>
             </section>
 
@@ -55,7 +56,7 @@ export default function PrivacyPage() {
             </section>
             <section>
               <h2 className="mb-3 text-lg font-semibold" style={{ color: "var(--color-text-primary)", fontFamily: "var(--font-display)" }}>Data Retention</h2>
-              <p>Consultation records are retained for 2 years from the date of submission. After this period, records are archived or deleted. You may request deletion of your data at any time by contacting us at hello@luwahtechnologies.com.</p>
+              <p>Consultation and intake records are retained for 2 years from the date of submission. After this period, records are archived or deleted. You may request deletion of your data at any time by contacting us at hello@luwahtechnologies.com.</p>
             </section>
 
             <section>

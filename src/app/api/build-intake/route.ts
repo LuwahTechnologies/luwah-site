@@ -3,7 +3,8 @@ import crypto from "crypto";
 import { writeClient } from "@/lib/sanityWrite";
 import { verifyTurnstile } from "@/lib/verifyTurnstile";
 import { signPayload } from "@/lib/signPayload";
-import { rateLimit, clientKey } from "@/lib/rateLimit";
+import { rateLimit, clientKey, clientIp } from "@/lib/rateLimit";
+import { readJson } from "@/lib/readJson";
 import { notifyEmail } from "@/lib/notifyEmail";
 import { reportError } from "@/lib/report";
 
@@ -45,7 +46,10 @@ export async function POST(request: Request) {
       );
     }
 
-    const body = await request.json();
+    const body = (await readJson(request)) as Record<string, any> | null;
+    if (body === null) {
+      return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+    }
 
     if (!body.businessName || !body.contactName || !body.email) {
       return NextResponse.json(
@@ -66,7 +70,7 @@ export async function POST(request: Request) {
     const submittedAt = new Date().toISOString();
     const ipHash = crypto
       .createHash("sha256")
-      .update(request.headers.get("x-forwarded-for") || "unknown")
+      .update(clientIp(request))
       .digest("hex")
       .slice(0, 16);
 

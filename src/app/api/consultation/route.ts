@@ -3,7 +3,7 @@ import crypto from "crypto";
 import { saveSubmission } from "@/lib/sanityWrite";
 import { verifyTurnstile } from "@/lib/verifyTurnstile";
 import { signPayload } from "@/lib/signPayload";
-import { rateLimit, clientKey } from "@/lib/rateLimit";
+import { rateLimit, clientKey, clientIp } from "@/lib/rateLimit";
 import { notifyEmail } from "@/lib/notifyEmail";
 import { reportError } from "@/lib/report";
 
@@ -79,7 +79,7 @@ export async function POST(request: Request) {
         submitted_at: new Date().toISOString(),
         ip_hash: crypto
           .createHash("sha256")
-          .update(request.headers.get("x-forwarded-for") || "unknown")
+          .update(clientIp(request))
           .digest("hex")
           .slice(0, 16),
         turnstile_verified: true,

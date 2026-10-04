@@ -45,7 +45,7 @@ export function Field({ label, hint, value, onChange, type = "text", autoComplet
   return (
     <div>
       <Label text={label} hint={hint} htmlFor={id} hintId={hintId} />
-      <input id={id} autoComplete={autoComplete} aria-invalid={error ? true : undefined}
+      <input id={id} maxLength={5000} autoComplete={autoComplete} aria-invalid={error ? true : undefined}
         aria-describedby={describedBy(hint && hintId, error && errId)} type={type} value={value} onChange={(e) => onChange(e.target.value)}
         className="intake-focus w-full rounded-lg px-4 py-3 text-sm" style={errorBorder(error)} />
       <ErrorText id={errId} text={error} />
@@ -62,7 +62,7 @@ export function Area({ label, hint, value, onChange, error }: {
   return (
     <div>
       <Label text={label} hint={hint} htmlFor={id} hintId={hintId} />
-      <textarea id={id} aria-invalid={error ? true : undefined} aria-describedby={describedBy(hint && hintId, error && errId)}
+      <textarea id={id} maxLength={5000} aria-invalid={error ? true : undefined} aria-describedby={describedBy(hint && hintId, error && errId)}
         rows={3} value={value} onChange={(e) => onChange(e.target.value)}
         className="intake-focus w-full rounded-lg px-4 py-3 text-sm" style={errorBorder(error)} />
       <ErrorText id={errId} text={error} />
@@ -100,7 +100,7 @@ export function Radio({ label, options, value, onChange, error }: {
       <div className="flex flex-wrap gap-2">
         {options.map((o) => (
           <button key={o} type="button" aria-pressed={value === o} aria-describedby={describedBy(error && errId)} onClick={() => onChange(o)}
-            className="intake-focus rounded-md px-3 py-2 text-sm transition-all"
+            className="intake-focus min-h-11 rounded-md px-3 py-2 text-sm transition-all"
             style={{
               border: "1px solid var(--color-border)",
               backgroundColor: value === o ? "var(--color-copper)" : "var(--color-bg-input)",

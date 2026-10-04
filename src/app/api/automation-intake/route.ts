@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { writeClient } from "@/lib/sanityWrite";
 import { verifyTurnstile } from "@/lib/verifyTurnstile";
-import { rateLimit, clientKey } from "@/lib/rateLimit";
+import { rateLimit, clientKey, clientIp } from "@/lib/rateLimit";
+import { readJson } from "@/lib/readJson";
 import { notifyEmail } from "@/lib/notifyEmail";
 import { reportError } from "@/lib/report";
 import {
@@ -50,11 +51,10 @@ export async function POST(request: Request) {
       );
     }
 
-    const parsed: unknown = await request.json().catch(() => null);
-    if (parsed === null || typeof parsed !== "object" || Array.isArray(parsed)) {
+    const body = await readJson(request);
+    if (body === null) {
       return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
     }
-    const body = parsed as Record<string, unknown>;
 
     const unexpected = Object.keys(body).find((k) => !ALLOWED_KEYS.has(k));
     if (unexpected !== undefined) {
@@ -94,7 +94,7 @@ export async function POST(request: Request) {
     const submittedAt = new Date().toISOString();
     const ipHash = crypto
       .createHash("sha256")
-      .update(request.headers.get("x-forwarded-for") || "unknown")
+      .update(clientIp(request))
       .digest("hex")
       .slice(0, 16);
 
@@ -125,8 +125,7 @@ export async function POST(request: Request) {
       const contactName = cleanString(body.contactName);
       const otherTools = cleanString(body.otherTools);
       const toolsLabel = `${tools.join(", ")}${otherTools ? `${tools.length ? ", " : ""}Other: ${otherTools}` : ""}`;
-      // Header safety: strip line breaks and cap length for the subject only.
-      const subjectName = contactName.replace(/[\r\n]+/g, " ").slice(0, 100);
+      const subjectName = contactName.slice(0, 100);
       await notifyEmail({
         subject: `New Luwah Technologies Automation Intake from ${subjectName}`,
         heading: `New automation intake from ${contactName}`,

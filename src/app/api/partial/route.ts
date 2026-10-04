@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { writeClient } from "@/lib/sanityWrite";
-import { rateLimit, clientKey } from "@/lib/rateLimit";
+import { rateLimit, clientKey, clientIp } from "@/lib/rateLimit";
 import { reportError } from "@/lib/report";
 
 /**
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
           submittedAt: new Date().toISOString(),
           ipHash: crypto
             .createHash("sha256")
-            .update(request.headers.get("x-forwarded-for") || "unknown")
+            .update(clientIp(request))
             .digest("hex")
             .slice(0, 16),
           source: `intake-step-${step}`,
