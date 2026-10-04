@@ -178,10 +178,33 @@
                 "combinator": "and"
               },
               "outputKey": "review"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Web Submission Received').item.json.body.form_type }}",
+                    "rightValue": "automation-intake",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "outputKey": "automation-intake"
             }
           ]
         },
-        "options": {}
+        "options": {
+          "fallbackOutput": "extra"
+        }
       },
       "name": "Form Type Switch",
       "type": "n8n-nodes-base.switch",
@@ -306,6 +329,68 @@
           "name": "MySQL account"
         }
       }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO automation_intakes (submission_id, created_at, contact_name, email, phone, process_description, hours_per_week, current_tools, other_tools, `trigger`, destination, current_state_link, success_description, hosting, timeline, budget, printed_name, ip_hash)\nVALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        "options": {
+          "queryReplacement": "={{ [$json.body.submissionId ?? '',($json.body.submittedAt||'').split('.')[0].replace('T',' '),$json.body.contactName ?? '',$json.body.email ?? '',$json.body.phone ?? '',$json.body.processDescription ?? '',$json.body.hoursPerWeek ?? null,($json.body.currentTools||[]).join(', '),$json.body.otherTools ?? '',$json.body.trigger ?? '',$json.body.destination ?? '',$json.body.currentStateLink ?? '',$json.body.successDescription ?? '',$json.body.hosting ?? '',$json.body.timeline ?? '',$json.body.budget ?? '',$json.body.printedName ?? '',$json.body.ipHash ?? ''] }}"
+        }
+      },
+      "name": "INSERT automation_intakes",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.5,
+      "position": [
+        850,
+        860
+      ],
+      "id": "insert-automation_intakes",
+      "credentials": {
+        "mySql": {
+          "id": "qwxdFazAaKXspD9I",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.resend.com/emails",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  from: 'Daniel Cooke <daniel@luwahtechnologies.com>',\n  to: $('Web Submission Received').item.json.body.email,\n  subject: 'We received your automation intake - Luwah Technologies',\n  html: \"<div style='font-family:Arial,sans-serif;max-width:600px;margin:0 auto'><div style='background:#0c0a14;padding:28px;text-align:center'><h1 style='color:#D4924F;margin:0;font-size:22px'>Luwah Technologies</h1></div><div style='padding:28px;background:#f7f7f7;color:#333'><p>Hi \" + String($('Web Submission Received').item.json.body.contactName || 'there').replace(/[<>&]/g, '') + \",</p><p>Thanks for your automation intake. We will review the process you described and reply within 24 hours.</p><p>Discovery is a paid, fixed-price step that comes before any build.</p><p>Daniel, Luwah Technologies</p></div></div>\"\n}) }}",
+        "options": {}
+      },
+      "name": "Confirm automation-intake",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1120,
+        860
+      ],
+      "id": "confirm-automation-intake",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9yTTJOsiiQ7zaoYS",
+          "name": "Resend"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "errorMessage": "={{ 'Unknown form_type: ' + $('Web Submission Received').item.json.body.form_type }}"
+      },
+      "name": "Unknown form_type",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        850,
+        1080
+      ],
+      "id": "unknown-form-type"
     }
   ],
   "connections": {
@@ -387,6 +472,20 @@
             "type": "main",
             "index": 0
           }
+        ],
+        [
+          {
+            "node": "INSERT automation_intakes",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Unknown form_type",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
@@ -406,6 +505,17 @@
         [
           {
             "node": "Confirm build-intake",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "INSERT automation_intakes": {
+      "main": [
+        [
+          {
+            "node": "Confirm automation-intake",
             "type": "main",
             "index": 0
           }

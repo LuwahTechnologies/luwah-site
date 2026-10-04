@@ -1,7 +1,7 @@
 # n8n Web Forms Flow (Orders, Intakes, Reviews)
 
-Handles the three web forms that post to `N8N_WEB_WEBHOOK_URL`: `/order`,
-`/intake`, and `/review`. It mirrors your contact flow: verify the HMAC
+Handles the four web forms that post to `N8N_WEB_WEBHOOK_URL`: `/order`,
+`/intake/website`, `/intake/automation`, and `/review`. It mirrors your contact flow: verify the HMAC
 signature, switch on `form_type`, insert into MySQL, and (for orders and
 intakes) send the customer a Resend confirmation. Reviews are DB-only, because
 the review form does not collect an email.
@@ -79,6 +79,51 @@ CREATE TABLE reviews (
 );
 ```
 
+## Automation intake branch
+
+Adds a fourth `form_type`, `automation-intake`. The Switch now has a fallback
+output. Any unknown `form_type` goes to an `Unknown form_type` Stop and Error
+node, so it shows as a failed execution instead of vanishing.
+
+The INSERT uses query parameters (`?` plus `queryReplacement`), not string
+interpolation, so no field needs hand escaping.
+
+```sql
+CREATE TABLE automation_intakes (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  submission_id VARCHAR(64),
+  created_at DATETIME,
+  contact_name VARCHAR(200),
+  email VARCHAR(200),
+  phone VARCHAR(50),
+  process_description TEXT,
+  hours_per_week INT NULL,
+  current_tools TEXT,
+  other_tools TEXT,
+  `trigger` TEXT,
+  destination TEXT,
+  current_state_link TEXT,
+  success_description TEXT,
+  hosting VARCHAR(100),
+  timeline VARCHAR(100),
+  budget VARCHAR(100),
+  printed_name VARCHAR(200),
+  ip_hash VARCHAR(64)
+);
+```
+
+Turn it on in this order:
+
+1. Create the `automation_intakes` table.
+2. Import the updated `n8n-web-forms.json` into the live n8n, or add the three new nodes and the two Switch outputs by hand. Confirm the MySQL and Resend credentials map.
+3. Confirm `N8N_WEB_WEBHOOK_URL` points at this workflow's `web-submissions` path, not the contact path.
+4. Activate the workflow and send a signed test payload with `form_type` set to `automation-intake`. Check the row and the confirmation email.
+5. Set `N8N_AUTOMATION_INTAKE_FORWARD=true` on Render. The forward stays off until this variable is `true`, even when the URL is set.
+6. Submit one real automation intake and confirm the n8n execution succeeds.
+
+The site stores in Sanity first. A failed forward is logged and does not fail the
+submission while the Sanity write succeeded.
+
 ## Payloads (what the site sends)
 
 All arrive under `body` with a `form_type` discriminator and an
@@ -90,6 +135,10 @@ All arrive under `body` with a `form_type` discriminator and an
 - **build-intake:** `submissionId, businessName, contactName, email, phone,
   industry, tier, timeline, budget, mission, targetAudience, pages[], …, ipHash,
   submittedAt`
+- **automation-intake:** `submissionId, submittedAt, ipHash, status, agreed,
+  contactName, email, phone, processDescription, hoursPerWeek (number, optional),
+  currentTools[], otherTools, trigger, destination, currentStateLink,
+  successDescription, hosting, timeline, budget, printedName`
 - **review:** `reviewerName, company, role, quote, overall,
   ratings{communication, expertise, timeliness, value, recommend},
   metadata{submitted_at, ip_hash}`

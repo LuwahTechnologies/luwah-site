@@ -4,6 +4,7 @@ import { writeClient } from "@/lib/sanityWrite";
 import { verifyTurnstile } from "@/lib/verifyTurnstile";
 import { rateLimit, clientKey, clientIp } from "@/lib/rateLimit";
 import { readJson } from "@/lib/readJson";
+import { signPayload } from "@/lib/signPayload";
 import { notifyEmail } from "@/lib/notifyEmail";
 import { reportError } from "@/lib/report";
 import {
@@ -150,9 +151,30 @@ export async function POST(request: Request) {
       });
     }
 
-    // No n8n forward. The web forms workflow routes on form_type with no fallback, so an unknown type is dropped silently. Add the forward when the workflow has an automation-intake branch.
+    // Off until the live workflow has the automation-intake branch. N8N_WEB_WEBHOOK_URL may point at a
+    // flow that drops unknown form types, so the URL alone must not turn the forward on.
+    const webhookUrl = process.env.N8N_WEB_WEBHOOK_URL;
+    let delivered = false;
+    if (webhookUrl && process.env.N8N_AUTOMATION_INTAKE_FORWARD === "true") {
+      const payload = { form_type: "automation-intake", ...doc, _type: undefined };
+      try {
+        const res = await fetch(webhookUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Webhook-Signature": signPayload(payload),
+          },
+          body: JSON.stringify(payload),
+          signal: AbortSignal.timeout(10000),
+        });
+        delivered = res.ok;
+        if (!res.ok) reportError("api.automation-intake.n8n", new Error(`n8n responded ${res.status}`));
+      } catch (err) {
+        reportError("api.automation-intake.n8n", err);
+      }
+    }
 
-    if (!stored) {
+    if (!stored && !delivered) {
       return NextResponse.json(
         { error: "Intake could not be saved. Please email hello@luwahtechnologies.com" },
         { status: 502 }
