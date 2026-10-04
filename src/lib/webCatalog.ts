@@ -156,7 +156,7 @@ export const DEFAULT_CATALOG: WebCatalog = {
     { key: "twilio", name: "Twilio SMS", oneTime: 500, oneTimeLabel: "+$500",
       description: "Send and receive text messages, such as appointment reminders or SMS alerts to customers. I set up the Twilio account in your name, and Twilio bills your phone number, registration and texting fees to you directly. This price covers my setup." },
     { key: "admin-account", name: "Admin account", oneTime: 800, oneTimeLabel: "From $800", variable: true,
-      description: "A secure login with roles to manage your site's content and data from one dashboard. Scoped and priced by the number of pages and any integrations, such as Microsoft." },
+      description: "A secure login with roles to manage your site's data from one dashboard. Scoped and priced by the number of pages and any integrations, such as Microsoft." },
     { key: "client-portal", name: "Client portal", oneTime: 600, oneTimeLabel: "From $600", variable: true,
       description: "A private, login-protected area where your clients can view their info, bookings, documents, or order status. Scoped and priced by the features you need." },
     { key: "review-moderation", name: "Review moderation workflow", oneTime: 300, oneTimeLabel: "From $300", variable: true,
