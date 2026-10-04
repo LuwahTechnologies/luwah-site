@@ -96,7 +96,7 @@ export function WebDesignSection({ catalog }: { catalog: WebCatalog }) {
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <Link href="/order" className="btn-primary">Build your order</Link>
-            <Link href="/intake" className="btn-secondary">Start the build intake</Link>
+            <Link href="/intake/website" className="btn-secondary">Start the build intake</Link>
           </div>
           <p className="mt-2 max-w-2xl text-xs" style={{ color: "var(--color-text-muted)" }}>
             {catalog.legal}
