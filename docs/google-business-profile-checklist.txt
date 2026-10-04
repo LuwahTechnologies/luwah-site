@@ -1,0 +1,84 @@
+Google Business Profile Checklist: Service-Area Business, Denver Metro
+
+Owner: Daniel. Status: not started. Background and reasoning are in docs/local-seo-no-address.md. This file is the step list.
+
+Note: Google changes the setup screens often. Where a label below is in quotes, check it against the live screen.
+
+Summary
+
+- Goal: a verified profile that shows Denver-metro service areas and never shows a street address.
+- Result to expect: Denver map-pack visibility and a review link. No national reach from this profile.
+- Time: about 30 minutes to set up. Verification can take days.
+
+Before You Start
+
+- [ ] Eligibility: confirmed. Most clients are remote, but you meet Denver-metro clients in person on request. Google requires an in-person element and does not allow online-only businesses. The contact page now says so (PR #61: "In the Denver metro area we can meet you at your business"). Keep this true. Only list areas where you will actually travel to meet a client. If that changes to remote only, stop and use Bing Places, Apple Business Connect, Clutch and G2 instead.
+- [ ] Sign in with a Google account the business owns, not a personal one. Use hello@luwahtechnologies.com if it can be a Google account.
+- [ ] Confirm the exact business name: Luwah Technologies. Do not add keywords or city names to it.
+- [ ] Confirm the phone number: +1 (720) 421-7184. It must match the site.
+- [ ] Have the home address ready for verification only.
+- [ ] Do not use a PO box or a virtual office as the address. Google rejects both for this profile type.
+
+Setup Steps
+
+- [ ] 1. Go to business.google.com and add the business.
+- [ ] 2. Enter the business name exactly as above.
+- [ ] 3. Choose a primary category. Candidates: "Software company", "Web designer", "Computer consultant", "Business management consultant". Check which exist in the dropdown. Pick the one that matches the larger share of revenue.
+- [ ] 4. When asked about location, choose "I deliver goods and services to my customers."
+- [ ] 5. Turn off "I also serve customers at my business address."
+- [ ] 6. Enter the home address when prompted. Confirm the screen says it will not be shown publicly.
+- [ ] 7. Add service areas. Use only the Denver metro cities where you meet or have met clients. Google allows a limited number, so list real ones only. Confirmed list: Aurora, Centennial, Arvada. Add a city only after you meet a client there.
+- [ ] 8. Add the phone number and the website URL: https://luwahtechnologies.com
+- [ ] 9. Add hours only if they are real. Skip them if you work by appointment.
+- [ ] 10. Start verification and follow the method Google offers.
+
+Verification
+
+- Methods: video, postcard, phone, or email. Google picks. Expect video.
+- If video: record the street sign or route, the equipment you work with, and proof you manage the business. Keep the clip continuous.
+- Do not edit the name or category while verification is pending.
+
+After Verification
+
+- [ ] Add services with plain descriptions. Use the real service names from the site.
+- [ ] Add a business description. Write what you do and who you serve. No links, no offers, no keywords stuffed in.
+- [ ] Add photos of work or a logo. Do not add photos of the house.
+- [ ] Copy the review link from the profile dashboard. Send it to Doyle Group, Solephi, and Kany only after each agrees to leave a review.
+- [ ] Confirm the profile view shows service areas and no street address. Search the business name in a private window to check.
+
+Site Checks
+
+- [ ] Phone matches on every page that shows it. Privacy, terms and the accessibility statement all do.
+- [ ] The site shows city, state and ZIP (Aurora, CO 80017) on the contact, privacy, terms and agreements pages. No street address appears anywhere. Decide whether the ZIP stays.
+- [ ] Do not add Review or AggregateRating schema to the site. See docs/local-seo-no-address.md.
+- [ ] Do not switch the Organization schema to LocalBusiness. src/lib/structuredData.ts documents why.
+
+Other Listings To Claim After GBP
+
+- [ ] Bing Places
+- [ ] Apple Business Connect
+- [ ] Clutch
+- [ ] G2
+
+Failure Scenarios
+
+- Suspension for address mismatch.
+  - Detection: profile shows "suspended" or "not verified" in the dashboard.
+  - Recovery: use Google's reinstatement form. Provide proof of the business at the verification address.
+- Profile shows the home address publicly.
+  - Detection: private window search shows a street.
+  - Recovery: open the profile, edit location, confirm the hide-address option is on.
+- Verification fails twice.
+  - Detection: Google offers no more attempts.
+  - Recovery: wait, then retry with a video that shows more of the work setup. Contact Business Profile support.
+- Name edit flagged as keyword stuffing.
+  - Detection: edit rejected or profile suspended after a name change.
+  - Recovery: revert to Luwah Technologies, the name used at setup.
+
+Warning: Never publish the home address to fix a verification problem. Use support instead.
+
+Open Items
+
+- Decide the primary category after seeing the live dropdown.
+- Service areas: decided. Aurora, Centennial, Arvada.
+- Get client permission before sending anyone the review link.
